@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<defs><filter id="g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="bg" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="#0b2230"/><stop offset=".6" stop-color="#03070a"/><stop offset="1" stop-color="#000"/></radialGradient></defs>
+<rect width="512" height="512" fill="url(#bg)"/>
+<g filter="url(#g)" stroke="#5fd8ff" stroke-width="16" stroke-linecap="round" fill="none"><g transform="rotate(0 256 200)"><path d="M256 200V70M256 112l-30-26M256 112l30-26M256 150l-22-20M256 150l22-20"/></g><g transform="rotate(60 256 200)"><path d="M256 200V70M256 112l-30-26M256 112l30-26M256 150l-22-20M256 150l22-20"/></g><g transform="rotate(120 256 200)"><path d="M256 200V70M256 112l-30-26M256 112l30-26M256 150l-22-20M256 150l22-20"/></g><g transform="rotate(180 256 200)"><path d="M256 200V70M256 112l-30-26M256 112l30-26M256 150l-22-20M256 150l22-20"/></g><g transform="rotate(240 256 200)"><path d="M256 200V70M256 112l-30-26M256 112l30-26M256 150l-22-20M256 150l22-20"/></g><g transform="rotate(300 256 200)"><path d="M256 200V70M256 112l-30-26M256 112l30-26M256 150l-22-20M256 150l22-20"/></g><circle cx="256" cy="200" r="16" fill="#5fd8ff" stroke="none"/></g>
+<text x="256" y="440" text-anchor="middle" font-family="Orbitron" font-weight="900" font-size="104" letter-spacing="10" fill="#e9fbff" filter="url(#g)">HOT</text>
+</svg>

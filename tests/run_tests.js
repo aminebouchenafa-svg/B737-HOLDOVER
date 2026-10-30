@@ -1,0 +1,107 @@
+// Tests du cahier des charges §6 + parcours UI. Usage : node tests/run_tests.js [dossier_captures]
+const { chromium, devices } = require('playwright');
+const path = require('path');
+const url = 'file://' + path.join(__dirname, '..', 'index.html');
+const shots = process.argv[2];
+let fail = 0;
+const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++; };
+
+(async () => {
+  const b = await chromium.launch();
+  const ctx = await b.newContext({ ...devices['iPhone 13'] });
+  const p = await ctx.newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.goto(url);
+  if (shots) { await p.waitForTimeout(2200); await p.screenshot({ path: shots + '/01-splash.png' }); }
+
+  // ---- Moteur ----
+  const E = await p.evaluate(() => {
+    const c = (fluid, conc, oat, key) => computeHOT({ fluid, conc, oat, key });
+    return {
+      t1: c('IV', '100/0', -5, 'FZFG'),
+      t2: c('I', null, -2, 'SN_L'),
+      t3a: c('II', '75/25', -12, 'FZRA_L'),
+      t3b: c('II', '75/25', -10, 'FZRA_L'),
+      t4: snowIntensity(1600, true, -6).intensity,
+      t5: concRefusal('50/50', -5, false),
+      t6: c('IV', '100/0', -12, 'FROST'),
+      x1: c('IV', '100/0', 0, 'SN_RA_M'), x2: c('II', '100/0', 2, 'RA_COLDSOAK'),
+      x3: c('I', null, -12, 'FZDZ'), x4: c('I', null, -30, 'FROST'),
+      x5: c('IV', '100/0', -3, 'FZFG'), x6: c('IV', '100/0', -3.5, 'FZFG'),
+      x7: c('IV', '75/25', -14, 'SN_M'), x8: c('IV', '100/0', -26, 'FROST'),
+      x9: concRefusal('75/25', -15, false), x10: concRefusal('50/50', -3, true), x11: concRefusal('50/50', -3, false),
+      q2: c('IV', '100/0', -6, INT_COL[snowIntensity(1600, true, -6).intensity]),
+      d1: decodeCode('Type IV/75 1432'), d2: decodeCode('de-icing complete Type II/75 at 1650'), d3: decodeCode('TYPE I 06:40Z'),
+    };
+  });
+  ok(E.t1.ok && E.t1.hot === '0:15' && E.t1.range.max === '0:35' && E.t1.tableId === 't19', 'Type IV 100/0, -5 °C, FZFG → 0:15 (0:15-0:35, Tableau 19)');
+  ok(E.t2.ok && E.t2.hot === '0:11' && E.t2.tableId === 't2', 'Type I, -2 °C, neige faible → 0:11 (Tableau 2)');
+  ok(!E.t3a.ok, 'Type II 75/25, -12 °C, FZRA_L → aucun HOT');
+  ok(E.t3b.ok && E.t3b.hot === '0:09', 'Type II 75/25, -10 °C, FZRA_L → 0:09');
+  ok(E.t4 === 'Moderate', 'Neige 1600 m, nuit, -6 °C → MODÉRÉE');
+  ok(!!E.t5, 'Type IV 50/50 à -5 °C → refusé (Tableau 52)');
+  ok(E.t6.ok && E.t6.hot === '6:00', 'Givre actif, Type IV 100/0, -12 °C → 6:00');
+  ok(!E.x1.ok, 'SN_RA_M à 0 °C → aucun HOT');
+  ok(E.x2.ok && E.x2.hot === '0:07', 'RA_COLDSOAK Type II 100/0 à +2 °C → 0:07');
+  ok(!E.x3.ok, 'Type I FZDZ sous -10 °C → case vide');
+  ok(E.x4.ok && E.x4.hot === '0:45', 'Givre actif Type I → 0:45 (aluminium)');
+  ok(E.x5.hot === '1:15' && E.x6.hot === '0:15', 'Borne -3 °C : -3 → bande haute, -3.5 → bande suivante');
+  ok(E.x7.ok && E.x7.hot === '0:25', 'Type IV 75/25 -14 °C SN_M → 0:25 (borne incluse)');
+  ok(!E.x8.ok, 'Givre actif sous -25 °C → aucun HOT');
+  ok(!!E.x9 && !!E.x10 && !E.x11, 'Tableau 52 : 75/25 refusé à -15, 50/50 refusé aile froide, 50/50 OK à -3');
+  ok(E.q2.hot === '0:25', 'Quiz Q2 : Type IV 100/0 -6 °C neige modérée → 0:25');
+  ok(E.d1.fluid === 'IV' && E.d1.conc === '75/25' && E.d1.time === '14:32', 'Décodeur « Type IV/75 1432 »');
+  ok(E.d2.fluid === 'II' && E.d2.conc === '75/25' && E.d2.time === '16:50', 'Décodeur « Type II/75 at 1650 »');
+  ok(E.d3.fluid === 'I' && E.d3.time === '06:40', 'Décodeur « TYPE I 06:40Z »');
+
+  // ---- Parcours UI : neige 1600 m nuit -6 °C, Type IV 100/0 ----
+  await p.click('#splash').catch(() => {});
+  await p.waitForTimeout(800);
+  if (shots) await p.screenshot({ path: shots + '/02-home.png', fullPage: true });
+  await p.click('a[href="#calc"]');
+  await p.click('[data-fluid="IV"]');
+  for (const k of ['±', '6']) await p.click(`[data-key="${k}"]`);
+  ok((await p.textContent('.band')).includes('sous -3 à -8'), 'UI : bande OAT affichée');
+  await p.click('#oatOk');
+  ok(await p.$eval('[data-conc="50/50"]', e => e.classList.contains('dis')), 'UI : 50/50 grisé à -6 °C');
+  if (shots) await p.screenshot({ path: shots + '/03-conc.png', fullPage: true });
+  await p.click('[data-conc="100/0"]');
+  if (shots) await p.screenshot({ path: shots + '/04-cond.png', fullPage: true });
+  await p.click('[data-cond="SNOW"]');
+  await p.fill('#visIn', '1600');
+  await p.click('[data-night="1"]');
+  await p.click('[data-metar="-SN"]');
+  ok((await p.textContent('#snowOut')).includes('METAR dit -SN, mais le tableau dit MODÉRÉE : on retient MODÉRÉE'), 'UI : message METAR vs Tableau 50');
+  if (shots) await p.screenshot({ path: shots + '/05-snow.png', fullPage: true });
+  await p.click('#snowOk');
+  ok((await p.textContent('.res .big')).trim() === '0:25', 'UI : résultat 0:25');
+  ok((await p.textContent('.mxref')).includes('Tableau 19, page 34'), 'UI : référence Tableau 19, page 34');
+  ok(await p.$eval('td.hx', e => e.textContent) === '0:25–0:45', 'UI : case surlignée 0:25–0:45');
+  if (shots) await p.screenshot({ path: shots + '/06-result.png', fullPage: true });
+  await p.click('#startBtn');
+  await p.waitForTimeout(1200);
+  if (shots) await p.screenshot({ path: shots + '/07-timer.png', fullPage: true });
+  ok(/\d+:\d\d/.test(await p.textContent('#tt')), 'UI : minuteur actif');
+
+  // ---- Aucun HOT : FZRA modérée ----
+  await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
+  await p.click('[data-fluid="II"]'); await p.click('[data-key="2"]'); await p.click('#oatOk');
+  await p.click('[data-conc="100/0"]'); await p.click('[data-cond="FZRA_MH"]');
+  ok((await p.textContent('.res.none .big')).includes('AUCUN HOT'), 'UI : FZRA modérée → écran rouge AUCUN HOT');
+  if (shots) await p.screenshot({ path: shots + '/08-none.png', fullPage: true });
+
+  // ---- Autres écrans ----
+  for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
+    await p.evaluate(s => location.hash = '#' + s, s); await p.waitForTimeout(150);
+    if (s === 'decode') { await p.fill('#decIn', 'Type IV/75 1432'); ok((await p.textContent('#decOut')).includes('HOT démarré à 14:32'), 'UI : décodeur'); }
+    if (s === 'proc') { await p.click('#listenBtn'); await p.waitForTimeout(1500); }
+    if (s === 'quiz') { await p.click('[data-o="1"]'); }
+    if (shots) await p.screenshot({ path: `${shots}/10-${s}.png`, fullPage: true });
+  }
+  const overflow = await p.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+  ok(!overflow, 'Pas de défilement horizontal de la page');
+  ok(errs.length === 0, 'Aucune erreur JS ' + errs.join(' | '));
+  await b.close();
+  console.log(fail ? `\n${fail} échec(s)` : '\nTous les tests passent');
+  process.exit(fail ? 1 : 0);
+})();

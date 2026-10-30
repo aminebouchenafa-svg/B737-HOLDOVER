@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>737 HOLDOVER</title>
+<meta name="description" content="B737 NG/MAX — Dégivrage / antigivrage et Holdover Time expliqués (MANEX A §8.2.4, FAA HOT Winter 2025-2026).">
+<meta name="theme-color" content="#05070a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="737 HOLDOVER">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="data:image/png;base64,__ICON_180__">
+<link rel="apple-touch-icon" href="data:image/png;base64,__ICON_180__">
+<style>
+@font-face{font-family:'Orbitron';font-weight:400 900;font-display:swap;src:url(data:font/woff2;base64,__FONT_ORB__) format('woff2')}
+@font-face{font-family:'Share Tech Mono';font-weight:400;font-display:swap;src:url(data:font/woff2;base64,__FONT_STM__) format('woff2')}
+@font-face{font-family:'Cinzel';font-weight:600;font-display:block;src:url(data:font/woff2;base64,__FONT_CINZEL__) format('woff2')}
+
+:root{
+  --bg:#05070a; --bg2:#0a0f14; --panel:#0e141b; --panel2:#131c25; --line:#1f2c39; --line2:#2b3d4f;
+  --ice:#5fd8ff; --ice2:#b4efff; --iceglow:rgba(95,216,255,.35);
+  --txt:#e7f2f8; --mut:#8ea3b3; --dim:#5d7180;
+  --ok:#3ef0a0; --warn:#ffb547; --bad:#ff4d5e; --badbg:#2a0a0f; --warnbg:#2a1d07;
+  --r:14px;
+  --mono:'Share Tech Mono',ui-monospace,Menlo,monospace;
+  --head:'Orbitron',system-ui,sans-serif;
+  --body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--body);font-size:17px;line-height:1.45}
+body{min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button{font:inherit;color:inherit}
+a{color:var(--ice)}
+h1,h2,h3{font-family:var(--head);font-weight:700;letter-spacing:.04em;margin:0}
+.mono{font-family:var(--mono)}
+
+/* ---------- Splash ---------- */
+#splash{position:fixed;inset:0;z-index:100;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity .6s ease}
+#splash.hide{opacity:0;pointer-events:none}
+#snow{position:absolute;inset:0;width:100%;height:100%}
+.sp-inner{position:relative;text-align:center;padding:0 16px}
+.wic{font-family:'Cinzel',Georgia,serif;font-weight:600;text-transform:uppercase;letter-spacing:.2em;line-height:1.15;
+  font-size:clamp(28px,10vw,104px);margin:0;padding-left:.2em;
+  background:linear-gradient(178deg,#ffffff 0%,#d9e4ea 28%,#8193a0 47%,#e9f2f6 58%,#a9bac6 78%,#eef7fb 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 14px rgba(95,216,255,.5)) drop-shadow(0 0 2px rgba(200,240,255,.6));
+  opacity:0;transform:scale(.92);animation:wicIn 2s ease-out .15s forwards}
+.wic span{display:block}
+.sp-sub{font-family:var(--mono);color:var(--ice2);font-size:clamp(12px,3.4vw,18px);letter-spacing:.06em;margin-top:22px;opacity:0;animation:fadeIn 1s ease-out 1.4s forwards}
+.sp-sign{position:absolute;bottom:calc(22px + var(--sab));left:0;right:0;text-align:center;font-family:var(--mono);font-size:13px;color:var(--mut);line-height:1.5;opacity:0;animation:fadeIn 1s ease-out 1.6s forwards}
+.sp-skip{position:absolute;top:calc(14px + var(--sat));right:16px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+@keyframes wicIn{to{opacity:1;transform:scale(1)}}
+@keyframes fadeIn{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .wic,.sp-sub,.sp-sign{animation:none;opacity:1;transform:none}
+}
+
+/* ---------- Layout ---------- */
+header.top{position:sticky;top:0;z-index:20;background:rgba(5,7,10,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:calc(10px + var(--sat)) 16px 10px;display:flex;align-items:center;gap:12px}
+.back{width:44px;height:44px;border-radius:12px;border:1px solid var(--line2);background:var(--panel);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.back[hidden]{display:none}
+.top h1{font-size:16px;color:var(--ice);text-shadow:0 0 10px var(--iceglow);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .home-btn{font-family:var(--mono);font-size:12px;color:var(--mut);border:1px solid var(--line2);background:none;border-radius:10px;padding:8px 10px;cursor:pointer}
+main{max-width:860px;margin:0 auto;padding:16px 16px calc(40px + var(--sab))}
+section.screen{display:none}
+section.screen.on{display:block;animation:fadeIn .25s ease-out}
+.lead{color:var(--mut);margin:4px 0 16px}
+
+/* timer banner */
+#tbanner{display:none;position:sticky;top:calc(65px + var(--sat));z-index:19;margin:0 auto;max-width:860px;padding:0 16px}
+#tbanner.on{display:block}
+#tbanner button{width:100%;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:12px;padding:10px 14px;border:1px solid var(--ice);background:#06202b;cursor:pointer;font-family:var(--mono);font-size:16px}
+#tbanner button.warn{border-color:var(--warn);background:var(--warnbg)}
+#tbanner button.bad{border-color:var(--bad);background:var(--badbg);animation:pulse 1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 18px rgba(255,77,94,.6)}}
+
+/* ---------- Components ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:0 0 14px}
+.card h3{font-size:15px;color:var(--ice2);margin-bottom:8px}
+.card p{margin:6px 0}
+.card .ref{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:10px}
+.disclaimer{border:1px solid #6b4a12;background:var(--warnbg);border-radius:var(--r);padding:14px 16px;font-size:14.5px;color:#ffe2b0;margin-bottom:18px}
+.disclaimer b{color:var(--warn)}
+.tiles{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:620px){.tiles{grid-template-columns:1fr 1fr}}
+.tile{display:flex;align-items:center;gap:14px;text-align:left;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:var(--r);padding:16px;cursor:pointer;min-height:84px;text-decoration:none;color:var(--txt)}
+.tile:active{transform:scale(.99)}
+.tile .ic{width:48px;height:48px;flex:none;border-radius:12px;border:1px solid var(--ice);display:flex;align-items:center;justify-content:center;color:var(--ice);box-shadow:0 0 12px var(--iceglow) inset}
+.tile b{font-family:var(--head);font-size:15px;letter-spacing:.03em;display:block}
+.tile small{color:var(--mut);font-size:13.5px}
+.tile.hero{border-color:var(--ice);box-shadow:0 0 22px rgba(95,216,255,.18)}
+.brand{text-align:center;margin:8px 0 18px}
+.brand .logo{font-family:var(--head);font-weight:900;font-size:clamp(30px,9vw,54px);letter-spacing:.06em;color:var(--ice);text-shadow:0 0 18px var(--iceglow),0 0 2px #fff}
+.brand .sub{font-family:var(--mono);color:var(--mut);font-size:13px}
+.sign{font-family:var(--mono);font-size:12.5px;color:var(--dim);text-align:center;line-height:1.6;margin:26px 0 6px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 18px;border-radius:12px;border:1px solid var(--ice);background:#072634;color:var(--ice2);font-family:var(--head);font-size:14px;letter-spacing:.05em;cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--ice);color:#001018;border-color:var(--ice);box-shadow:0 0 18px var(--iceglow);font-weight:800}
+.btn.ghost{background:transparent;border-color:var(--line2);color:var(--mut)}
+.btn.bad{border-color:var(--bad);background:var(--badbg);color:#ffd0d5}
+.btn.block{width:100%}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>.btn{flex:1}
+
+/* wizard */
+.steps{display:flex;gap:6px;margin:0 0 14px}
+.steps i{flex:1;height:5px;border-radius:3px;background:var(--line)}
+.steps i.done{background:var(--ice);box-shadow:0 0 8px var(--iceglow)}
+.qhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+.qhead h2{font-size:20px;line-height:1.3}
+.qhead .k{font-family:var(--mono);color:var(--mut);font-size:13px;display:block;margin-bottom:4px;letter-spacing:.08em}
+.why{flex:none;border:1px solid var(--warn);color:var(--warn);background:transparent;border-radius:999px;padding:8px 14px;font-family:var(--mono);font-size:14px;cursor:pointer}
+.whybox{display:none;border-left:3px solid var(--warn);background:#151008;padding:12px 14px;border-radius:0 10px 10px 0;margin:0 0 14px;font-size:15px;color:#f2dfc0}
+.whybox.on{display:block}
+.whybox p{margin:6px 0}
+.choices{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:620px){.choices.two{grid-template-columns:1fr 1fr}}
+.choice{display:flex;align-items:center;gap:14px;text-align:left;width:100%;min-height:68px;padding:14px 16px;border-radius:14px;border:1px solid var(--line2);background:var(--panel);cursor:pointer}
+.choice b{font-family:var(--head);font-size:16px;letter-spacing:.03em}
+.choice small{display:block;color:var(--mut);font-size:13.5px;margin-top:2px;font-family:var(--body)}
+.choice.sel{border-color:var(--ice);background:#062030;box-shadow:0 0 14px rgba(95,216,255,.2)}
+.choice.dis{opacity:.45;cursor:not-allowed;border-style:dashed}
+.choice .cic{width:44px;height:44px;flex:none;color:var(--ice)}
+.choice.red .cic{color:var(--bad)}
+.choice .reason{color:var(--warn);font-size:13px;display:block;margin-top:4px}
+.subchoices{margin:-2px 0 4px 18px;padding-left:12px;border-left:2px solid var(--ice);display:grid;gap:8px}
+.subchoices .choice{min-height:54px}
+.navrow{display:flex;gap:10px;margin-top:18px}
+.navrow .btn{flex:1}
+
+/* keypad */
+.oatdisp{font-family:var(--mono);font-size:64px;text-align:center;color:var(--ice);text-shadow:0 0 16px var(--iceglow);padding:12px;border:1px solid var(--line2);border-radius:14px;background:#03080c;margin-bottom:10px;min-height:100px}
+.oatdisp .u{font-size:28px;color:var(--mut)}
+.band{font-family:var(--mono);font-size:14px;color:var(--mut);text-align:center;margin:0 0 12px;min-height:20px}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:420px;margin:0 auto}
+.keypad button{min-height:62px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);font-family:var(--mono);font-size:26px;cursor:pointer}
+.keypad button:active{background:#0b2a38}
+.keypad .pm{color:var(--ice)}
+.toggle{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line2);border-radius:12px;background:var(--panel);margin:12px 0;cursor:pointer}
+.toggle input{width:26px;height:26px;accent-color:var(--ice);flex:none}
+.seg{display:flex;border:1px solid var(--line2);border-radius:12px;overflow:hidden;margin:6px 0 14px}
+.seg button{flex:1;min-height:52px;background:var(--panel);border:0;border-right:1px solid var(--line2);font-family:var(--head);font-size:13px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button.sel{background:var(--ice);color:#001018;font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.chips button{min-height:44px;min-width:64px;padding:8px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);font-family:var(--mono);font-size:16px;cursor:pointer}
+.chips button.sel{border-color:var(--ice);background:#062030;color:var(--ice2)}
+label.lbl{display:block;font-family:var(--mono);font-size:13px;color:var(--mut);letter-spacing:.06em;margin-top:6px}
+input.num,input.txt{width:100%;min-height:56px;border-radius:12px;border:1px solid var(--line2);background:#03080c;color:var(--txt);font-family:var(--mono);font-size:24px;padding:10px 14px;margin:6px 0 10px}
+input.num:focus,input.txt:focus{outline:none;border-color:var(--ice);box-shadow:0 0 10px var(--iceglow)}
+.warnbox{border:1px solid var(--warn);background:var(--warnbg);color:#ffe2b0;border-radius:12px;padding:12px 14px;font-size:14.5px;margin:10px 0}
+.badbox{border:1px solid var(--bad);background:var(--badbg);color:#ffd0d5;border-radius:12px;padding:12px 14px;font-size:14.5px;margin:10px 0}
+.infobox{border:1px solid var(--line2);background:var(--panel2);border-radius:12px;padding:12px 14px;font-size:14.5px;margin:10px 0;color:#cfe2ec}
+.intens{font-family:var(--head);font-size:22px;text-align:center;padding:14px;border-radius:12px;border:1px solid var(--ice);background:#062030;margin:10px 0}
+.intens.h{border-color:var(--bad);background:var(--badbg);color:#ffd0d5}
+
+/* result */
+.res{border-radius:18px;padding:20px 16px;text-align:center;border:1px solid var(--ice);background:radial-gradient(120% 90% at 50% 0%,#0b3346 0%,#05141c 70%);box-shadow:0 0 28px rgba(95,216,255,.18);margin-bottom:14px}
+.res .lab{font-family:var(--mono);font-size:13px;letter-spacing:.12em;color:var(--ice2)}
+.res .big{font-family:var(--mono);font-size:clamp(88px,30vw,150px);line-height:1;color:#fff;text-shadow:0 0 22px var(--ice),0 0 4px var(--ice);margin:10px 0 6px}
+.res .range{font-family:var(--mono);color:var(--mut);font-size:15px}
+.res .summary{font-family:var(--mono);color:var(--ice2);font-size:14px;margin-top:10px}
+.res.none{border-color:var(--bad);background:radial-gradient(120% 90% at 50% 0%,#4a0d16 0%,#1a0408 70%);box-shadow:0 0 28px rgba(255,77,94,.3)}
+.res.none .big{font-size:clamp(44px,13vw,80px);color:#ffe3e6;text-shadow:0 0 18px var(--bad)}
+.res.none .lab{color:#ffb3bb}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line2);border-radius:12px;background:#03080c;margin:10px 0}
+table.mx{border-collapse:separate;border-spacing:0;font-family:var(--mono);font-size:13px;min-width:100%}
+table.mx th,table.mx td{border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 8px;text-align:center;white-space:nowrap}
+table.mx thead th{background:#0b141c;color:var(--mut);font-weight:400;font-size:11.5px;white-space:normal;min-width:62px;vertical-align:bottom}
+table.mx th.rh{background:#0b141c;color:var(--mut);text-align:left;font-weight:400;white-space:normal;min-width:104px;max-width:120px;font-size:12px;position:sticky;left:0;z-index:1;box-shadow:2px 0 0 var(--line2)}
+table.mx th.rh b{color:var(--txt);font-weight:400}
+table.mx td.na{color:var(--dim);background:repeating-linear-gradient(45deg,#060b10,#060b10 4px,#0a1118 4px,#0a1118 8px)}
+table.mx .hc{background:#0a2a39 !important;color:var(--ice2) !important}
+table.mx .hr{background:#0a2a39 !important;color:var(--ice2) !important}
+table.mx td.hx{background:var(--ice) !important;color:#001018 !important;font-weight:700;outline:2px solid #fff;outline-offset:-2px;box-shadow:0 0 14px var(--ice)}
+table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-shadow:0 0 14px var(--bad)}
+.mxref{font-family:var(--mono);font-size:13px;color:var(--ice2)}
+.notes{font-size:14px;color:#c6d6df;padding-left:18px;margin:6px 0}
+.notes li{margin:4px 0}
+
+/* timer */
+.timer{text-align:center;border-radius:18px;padding:22px 16px;border:1px solid var(--ice);background:#041219;margin-bottom:14px}
+.timer .t{font-family:var(--mono);font-size:clamp(70px,24vw,140px);line-height:1;color:#fff;text-shadow:0 0 20px var(--ice)}
+.timer .s{font-family:var(--mono);color:var(--mut);margin-top:8px}
+.timer.warn{border-color:var(--warn);background:#1a1204}
+.timer.warn .t{text-shadow:0 0 20px var(--warn);color:#fff3dd}
+.timer.bad{border-color:var(--bad);background:var(--badbg);animation:pulse 1s infinite}
+.timer.bad .t{text-shadow:0 0 20px var(--bad);color:#ffe3e6}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:16px 0 4px}
+.bar i{display:block;height:100%;background:var(--ice);box-shadow:0 0 10px var(--ice);transition:width 1s linear}
+.timer.warn .bar i{background:var(--warn)} .timer.bad .bar i{background:var(--bad)}
+#alarm{position:fixed;inset:0;z-index:90;background:rgba(60,0,8,.96);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+#alarm.on{display:flex}
+#alarm h2{font-size:clamp(30px,9vw,56px);color:#fff;text-shadow:0 0 18px var(--bad);margin-bottom:14px}
+#alarm p{max-width:520px;color:#ffd6db;font-size:18px}
+
+/* learn cards */
+.lcard{position:relative;padding-left:62px}
+.lcard .n{position:absolute;left:14px;top:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--ice);color:var(--ice);font-family:var(--head);display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px var(--iceglow)}
+.lcard ul{margin:6px 0;padding-left:18px}
+
+/* procedure */
+.pstep{border-left:2px solid var(--line2);margin-left:14px;padding:0 0 18px 22px;position:relative}
+.pstep:before{content:attr(data-n);position:absolute;left:-17px;top:0;width:32px;height:32px;border-radius:50%;background:var(--bg);border:1px solid var(--ice);color:var(--ice);font-family:var(--head);font-size:14px;display:flex;align-items:center;justify-content:center}
+.pstep.done:before{content:'✓';background:var(--ice);color:#001018}
+.pstep h3{font-size:15px;color:var(--ice2);padding-top:5px;margin-bottom:8px}
+.pstep .ref{font-family:var(--mono);font-size:12px;color:var(--dim);font-weight:400}
+.chk{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);margin:0 0 8px;cursor:pointer;font-size:15.5px}
+.chk input{width:26px;height:26px;flex:none;accent-color:var(--ice);margin:0}
+.chk.on{border-color:#1d5a70;color:var(--mut)}
+.chk.crit{border-color:#5a1d27}
+.dlg{display:flex;flex-direction:column;gap:10px;margin:10px 0}
+.bub{max-width:88%;padding:10px 14px;border-radius:16px;font-family:var(--mono);font-size:15px}
+.bub small{display:block;font-size:11px;letter-spacing:.1em;opacity:.7;margin-bottom:2px}
+.bub.crew{align-self:flex-end;background:#073246;border:1px solid var(--ice);border-bottom-right-radius:4px}
+.bub.gnd{align-self:flex-start;background:var(--panel2);border:1px solid var(--line2);border-bottom-left-radius:4px}
+.bub.pop{animation:pop .35s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+
+/* quiz */
+.qopt{display:block;width:100%;text-align:left;min-height:56px;padding:12px 16px;border-radius:12px;border:1px solid var(--line2);background:var(--panel);margin:0 0 10px;cursor:pointer;font-size:16px}
+.qopt.right{border-color:var(--ok);background:#062a1c}
+.qopt.wrong{border-color:var(--bad);background:var(--badbg)}
+.qmeta{font-family:var(--mono);color:var(--mut);font-size:13px;margin-bottom:8px}
+.score{font-family:var(--mono);font-size:64px;text-align:center;color:var(--ice);text-shadow:0 0 16px var(--iceglow)}
+
+/* freq */
+.freq{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.freq:last-child{border-bottom:0}
+.freq .f{font-family:var(--mono);font-size:26px;color:var(--ice);text-shadow:0 0 10px var(--iceglow);min-width:118px}
+.dec{font-family:var(--mono);font-size:18px;line-height:1.6}
+.dec .hl{color:var(--ice2)}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+
+<div id="splash" role="button" aria-label="Passer l'introduction">
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="sp-skip">toucher pour passer</div>
+  <div class="sp-inner">
+    <h1 class="wic"><span>Winter is</span><span>Coming</span></h1>
+    <div class="sp-sub">B737 NG/MAX · De-icing &amp; Holdover Time · MANEX A §8.2.4</div>
+  </div>
+  <div class="sp-sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
+</div>
+
+<header class="top">
+  <button class="back" id="backBtn" aria-label="Retour" hidden>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <h1 id="title">737 HOLDOVER</h1>
+  <button class="home-btn" id="homeBtn" hidden>ACCUEIL</button>
+</header>
+<div id="tbanner"><button id="tbBtn"><span id="tbLabel">HOT</span><span id="tbTime">--:--</span></button></div>
+
+<main>
+<!-- ============ HOME ============ -->
+<section class="screen" id="s-home" data-title="737 HOLDOVER">
+  <div class="brand">
+    <div class="logo">737 HOLDOVER</div>
+    <div class="sub">B737 NG/MAX · Dégivrage &amp; antigivrage · MANEX A §8.2.4</div>
+  </div>
+  <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (Rév. 36, tableaux FAA Winter 2025-2026). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
+  <div class="tiles">
+    <a class="tile hero" href="#calc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span><b>Calculateur HOT</b><small>4 questions → le HOT et la case exacte du MANEX</small></span></a>
+    <a class="tile" href="#learn"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3"/><path d="M20 5v13h-6"/></svg></span><span><b>Comprendre en 2 minutes</b><small>Les 7 idées à retenir</small></span></a>
+    <a class="tile" href="#proc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span><span><b>La procédure pas à pas</b><small>Du parking au décollage, à cocher</small></span></a>
+    <a class="tile" href="#decode"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span><span><b>Décoder l'annonce du sol</b><small>« Type IV/75 1432 » → en clair</small></span></a>
+    <a class="tile" href="#quiz"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></svg></span><span><b>Quiz</b><small>10 cas pratiques tirés du MANEX</small></span></a>
+    <a class="tile" href="#yul"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b>Montréal YUL</b><small>Pad AeroMag : fréquences et fluides</small></span></a>
+    <a class="tile" href="#timer"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span><span><b>Minuteur HOT</b><small>Compte à rebours depuis l'heure annoncée</small></span></a>
+    <a class="tile" href="#about"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg></span><span><b>À propos</b><small>Source, version, auteur</small></span></a>
+  </div>
+  <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
+</section>
+
+<!-- ============ LEARN ============ -->
+<section class="screen" id="s-learn" data-title="Comprendre en 2 min">
+  <p class="lead">Une idée par carte. Lisez-les dans l'ordre.</p>
+  <div id="learnCards"></div>
+  <a class="btn primary block" href="#calc">Passer au calculateur HOT</a>
+</section>
+
+<!-- ============ CALC ============ -->
+<section class="screen" id="s-calc" data-title="Calculateur HOT">
+  <div id="calcBody"></div>
+</section>
+
+<!-- ============ TIMER ============ -->
+<section class="screen" id="s-timer" data-title="Minuteur HOT">
+  <div id="timerBody"></div>
+</section>
+
+<!-- ============ PROCEDURE ============ -->
+<section class="screen" id="s-proc" data-title="Procédure pas à pas">
+  <p class="lead">Cochez au fur et à mesure. Les cases sont mémorisées sur cet appareil.</p>
+  <div id="procBody"></div>
+  <button class="btn ghost block" id="procReset">Tout décocher</button>
+</section>
+
+<!-- ============ DECODE ============ -->
+<section class="screen" id="s-decode" data-title="Décoder l'annonce">
+  <p class="lead">Tapez le code annoncé par le sol (ex. <span class="mono">Type IV/75 1432</span>).</p>
+  <input class="txt" id="decIn" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Type IV/75 1432">
+  <div class="chips" id="decQuick"></div>
+  <div id="decOut"></div>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section class="screen" id="s-quiz" data-title="Quiz">
+  <div id="quizBody"></div>
+</section>
+
+<!-- ============ YUL ============ -->
+<section class="screen" id="s-yul" data-title="Montréal YUL">
+  <div class="card">
+    <h3>Pad AeroMag — Montréal-Trudeau (YUL)</h3>
+    <div class="freq"><span class="f">123.425</span><span><b>Montreal Deice</b><br><small style="color:var(--mut)">Contacter 30 min avant</small></span></div>
+    <div class="freq"><span class="f">122.525</span><span><b>Aeromag Pad Control</b></span></div>
+    <div class="freq"><span class="f">123.125</span><span><b>ICEMAN</b></span></div>
+    <div class="ref">MANEX A 8.2.4.8, p. 8-10</div>
+  </div>
+  <div class="card">
+    <h3>Fluides utilisés à YUL</h3>
+    <p><b>Type I</b> — <span class="mono">CHEMCO CHEMR REG1</span></p>
+    <p><b>Type IV</b> — <span class="mono">DOW UCAR ENDURANCE EG106</span></p>
+    <div class="infobox">Le fluide Type IV étant de marque connue, la table de marque du MANEX A (Tableaux 20 à 49) peut donner un HOT différent du Tableau 19 générique utilisé par le calculateur.</div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="screen" id="s-about" data-title="À propos">
+  <div class="brand"><div class="logo" style="font-size:34px">737 HOLDOVER</div><div class="sub">version __VERSION__</div></div>
+  <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (Rév. 36, tableaux FAA Winter 2025-2026). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
+  <div class="card">
+    <h3>Source</h3>
+    <p>MANEX A Air Algérie, §8.2.4 « Dégivrage et antigivrage au sol » — Éd. 02, Rév. 36, NOV.25. Tableaux FAA Holdover Time Guidelines Winter 2025-2026.</p>
+    <p>Tableaux intégrés : 1 (givre actif), 2 (Type I aluminium), 4 (Type II générique), 19 (Type IV générique), 50 (intensité de la neige), 51 et 52 (application des fluides).</p>
+    <p>Aucune valeur n'est interpolée : l'app lit la case du tableau, et retient la valeur basse (règle Air Algérie, 8.2.4.9 NOTE).</p>
+  </div>
+  <div class="card">
+    <h3>Hors ligne</h3>
+    <p>Toutes les données et polices sont dans l'app. Sur iPhone / iPad : Safari → Partager → « Sur l'écran d'accueil ».</p>
+  </div>
+  <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
+</section>
+</main>
+
+<div id="alarm" role="alertdialog" aria-live="assertive">
+  <h2>HOT DÉPASSÉ</h2>
+  <p>Contrôle des surfaces critiques par une personne qualifiée juste avant d'entrer sur la piste. Au moindre doute sur un dépôt pouvant affecter les performances : <b>pas de décollage</b>.</p>
+  <p class="mono" style="font-size:13px;color:#ff9aa5">MANEX A 8.2.4.6.1</p>
+  <button class="btn primary" id="alarmOk" style="margin-top:14px;min-width:200px">COMPRIS</button>
+</div>
+
+<script>
+"use strict";
+/* ================= DATA (MANEX A §8.2.4.9 — FAA HOT Winter 2025-2026) ================= */
+const D = __HOT_JSON__;
+
+/* Table references (MANEX A 8.2.4.9) */
+const REF = {
+  t1:{n:1,p:12,name:'Givre actif'},
+  t2:{n:2,p:14,name:'Type I — aluminium'},
+  t4:{n:4,p:17,name:'Type II générique'},
+  t19:{n:19,p:34,name:'Type IV générique'},
+  t50:{n:50,p:66,name:'Intensité de la neige'},
+  t51:{n:51,p:67,name:'Application Type I'},
+  t52:{n:52,p:68,name:'Application Type II/IV'}
+};
+const refText = id => `MANEX A 8.2.4.9 — Tableau ${REF[id].n}, page ${REF[id].p}`;
+
+const COL_SHORT = {
+  FZFG:'FZFG / brume givrante', SN_FZFG:'SN + FZFG', SN_VL:'SN très faible', SN_L:'SN faible', SN_M:'SN modérée',
+  SN:'SN (≤ modérée)', FZDZ:'FZDZ', FZRA_L:'-FZRA', SN_RA_M:'SN mod. + RA', RA_COLDSOAK:'RA aile froide'
+};
+const INT_FR = {'Very Light':'TRÈS FAIBLE','Light':'FAIBLE','Moderate':'MODÉRÉE','Heavy':'FORTE'};
+const INT_COL = {'Very Light':'SN_VL','Light':'SN_L','Moderate':'SN_M'};
+const GENERIC_NOTE = 'Tables génériques. Si la marque du fluide est connue, la table de la marque dans le MANEX A peut donner un HOT différent.';
+const HOT_REMINDER = 'HOT = repère. Doute ou HOT dépassé → contrôle des surfaces avant décollage.';
+
+/* ================= ENGINE (pure functions) ================= */
+const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+const fmtHM = m => `${Math.floor(m/60)}:${String(m%60).padStart(2,'0')}`;
+
+/* Band "sous X à Y" applies for Y ≤ OAT < X ; first band "Y et au-dessus" for OAT ≥ Y. */
+function pickBand(bands, oat){
+  for (let i=0;i<bands.length;i++){ const b=bands[i]; if (b.min_c===null || oat>=b.min_c) return i; }
+  return bands.length-1;
+}
+
+/* Table 52 — concentrations allowed for Type II/IV by OAT */
+function t52Row(oat){ return oat>=0 ? 0 : oat>=-3 ? 1 : oat>=-14 ? 2 : 3; }
+function allowedConc(oat){
+  if (oat>=-3) return ['100/0','75/25','50/50'];
+  if (oat>=-14) return ['100/0','75/25'];
+  return ['100/0'];
+}
+function concRefusal(conc, oat, coldWing){
+  if (conc==='50/50' && coldWing) return "Aile froide (givre/glace à l'intrados zone réservoirs) : pas de 50/50 Type II/IV pour l'antigivrage (Tableau 52).";
+  if (!allowedConc(oat).includes(conc)){
+    const r = D.table52_typeII_IV_application[t52Row(oat)];
+    return `À ${fmtC(oat)} (bande « ${r.oat} ») le Tableau 52 n'autorise que : ${r.one_step.replace('Type II/IV chauffé ','')}.`;
+  }
+  return null;
+}
+
+/* Table 50 — snow intensity from prevailing visibility (never RVR) */
+function snowIntensity(visM, night, oat){
+  const col = (night?2:0) + (oat>-1?1:0);
+  const rows = D.table50_snow_intensity.rows;
+  let ri = rows.findIndex(r => r.vis_m_max===null || visM<=r.vis_m_max);
+  return { intensity: rows[ri].v[col], row: ri, col };
+}
+
+/* Main lookup. fluid: 'I'|'II'|'IV'; conc: '100/0'|'75/25'|'50/50'; key: table column key, 'FROST', 'OTHER', or 'SNOW_HEAVY' */
+function computeHOT({fluid, conc, oat, key}){
+  const R = {ok:false, fluid, conc, oat, key, notes:[], tableId:null, bandIdx:null, colIdx:null};
+  const none = reason => Object.assign(R, {ok:false, reason});
+  if (key==='OTHER') return none("Neige forte, granules de glace, pluie verglaçante modérée ou forte, grêle ou petite grêle : AUCUN HOT n'existe pour ces conditions.");
+  if (key==='SNOW_HEAVY') { R.tableId='t50'; return none("Neige FORTE (Tableau 50) : AUCUN HOT."); }
+
+  if (key==='FROST'){
+    const t = D.table1_active_frost; R.tableId='t1';
+    R.notes.push(...t.notes.slice(fluid==='I'?0:1,3));
+    if (fluid==='I'){
+      R.frostTypeI = true;
+      const v = t.typeI.aluminum;
+      return Object.assign(R,{ok:true, hot:v, range:{min:v,max:v}, single:true});
+    }
+    const bi = pickBand(t.bands, oat), b = t.bands[bi];
+    R.bandIdx = bi; R.colIdx = fluid==='II'?0:2;
+    if (b.min_c===null && !Object.keys(b.rows).length) return none(`Givre actif sous -25 °C : ${b.note}.`);
+    const row = b.rows[conc];
+    if (!row) return none(`Pas de HOT givre actif pour ${conc} dans la bande « ${b.oat} » (case vide).`);
+    const v = row[R.colIdx];
+    return Object.assign(R,{ok:true, hot:v, range:{min:v,max:v}, single:true});
+  }
+
+  const tbl = fluid==='I' ? D.table2_typeI_aluminum : fluid==='II' ? D.table4_typeII_generic : D.table19_typeIV_generic;
+  R.tableId = fluid==='I' ? 't2' : fluid==='II' ? 't4' : 't19';
+  R.notes.push(...tbl.notes);
+  const ci = tbl.columns.indexOf(key);
+  R.colIdx = ci;
+  const bi = pickBand(tbl.bands, oat), b = tbl.bands[bi];
+  R.bandIdx = bi;
+  let cell;
+  if (fluid==='I') cell = b.values[ci];
+  else {
+    const row = b.rows[conc];
+    if (!row) return none(`Concentration ${conc} non prévue dans la bande « ${b.oat} » (Tableau 52).`);
+    cell = row[ci];
+  }
+  if ((key==='SN_RA_M' || key==='RA_COLDSOAK') && oat<=0)
+    return none(`${key==='SN_RA_M'?'Neige modérée mêlée de pluie':'Pluie sur aile froide'} à 0 °C ou moins : AUCUN HOT.`);
+  if ((key==='FZDZ' || key==='FZRA_L') && fluid!=='I' && oat < -10)
+    return none(`${key==='FZDZ'?'Bruine verglaçante':'Pluie verglaçante faible'} en Type ${fluid} sous -10 °C : AUCUN HOT (note de la bande -8 à -14 °C).`);
+  if (!cell) return none('Aucun HOT dans cette condition (case vide du tableau).');
+  return Object.assign(R,{ok:true, hot:cell.min, range:cell, single:cell.min===cell.max});
+}
+
+function fmtC(t){ return (t>0?'+':'')+t+' °C'; }
+
+/* Ground code decoder — "Type IV/75 1432" */
+function decodeCode(s){
+  const u = (s||'').toUpperCase().replace(/TYPE/g,' ').replace(/%/g,' ').replace(/\bAT\b|\bA\b|\bUTC\b/g,' ');
+  const toks = u.split(/[\s\/,\-]+/).filter(Boolean).map(t=>t.replace(/Z$/,''));
+  const FL = {I:'I',II:'II',III:'III',IV:'IV','1':'I','2':'II','3':'III','4':'IV'};
+  let fluid=null, conc=null, time=null;
+  for (const t of toks){
+    if (!fluid && FL[t]) { fluid = FL[t]; continue; }
+    let m = t.match(/^([01]?\d|2[0-3])[:H.]([0-5]\d)$/);
+    if (!time && m) { time = m[1].padStart(2,'0')+':'+m[2]; continue; }
+    m = t.match(/^([01]\d|2[0-3])([0-5]\d)$/);
+    if (!time && m && t.length===4) { time = m[1]+':'+m[2]; continue; }
+    if (!conc && fluid && ['100','75','50'].includes(t)) { conc = {'100':'100/0','75':'75/25','50':'50/50'}[t]; continue; }
+  }
+  return {fluid, conc, time};
+}
+
+/* ================= UTIL ================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+/* "1432", "14:32", "14h32" → "14:32" (24 h UTC) ; null si invalide */
+function normHM(v){ const m=String(v||'').trim().match(/^([01]?\d|2[0-3])[:hH.]?([0-5]\d)$/); return m ? m[1].padStart(2,'0')+':'+m[2] : null; }
+const utcNowHM = () => { const d=new Date(); return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0'); };
+
+const ICONS = {
+  cloud:'<path d="M14 30h22a8 8 0 0 0 0-16 11 11 0 0 0-21-3A8 8 0 0 0 14 30z"/>',
+};
+function icon(kind){
+  const c = ICONS.cloud;
+  const flake = (x,y)=>`<path d="M${x} ${y-3}v6M${x-2.6} ${y-1.5}l5.2 3M${x-2.6} ${y+1.5}l5.2-3"/>`;
+  const drop = (x,y)=>`<path d="M${x} ${y}l-2 5"/>`;
+  const dot = (x,y)=>`<circle cx="${x}" cy="${y}" r="1.3" fill="currentColor"/>`;
+  const map = {
+    FROST:`<path d="M24 6v28M12 13l24 14M12 27l24-14"/><path d="M20 8l4 4 4-4M20 32l4-4 4 4"/><path d="M6 42h36" stroke-dasharray="3 3"/>`,
+    FZFG:`<path d="M6 16c4-3 8 3 12 0s8 3 12 0 8 3 12 0M6 25c4-3 8 3 12 0s8 3 12 0 8 3 12 0M6 34c4-3 8 3 12 0s8 3 12 0 8 3 12 0"/>`,
+    SNOW: c+flake(16,38)+flake(26,41)+flake(35,37),
+    SN_FZFG: c+flake(18,37)+flake(31,37)+`<path d="M6 44c4-2 8 2 12 0s8 2 12 0 8 2 12 0"/>`,
+    FZDZ: c+dot(15,37)+dot(22,41)+dot(29,37)+dot(35,42)+dot(19,45),
+    FZRA_L: c+drop(18,35)+drop(28,35)+`<path d="M6 45h36"/>`,
+    FZRA_MH: c+drop(14,35)+drop(21,35)+drop(28,35)+drop(35,35)+`<path d="M6 45h36"/>`,
+    SNRA: c+flake(17,38)+drop(27,35)+flake(36,38),
+    RA_COLDSOAK: c+drop(20,34)+drop(30,34)+`<path d="M5 44c10-4 28-4 38 0" />`,
+    OTHER: c+`<circle cx="16" cy="38" r="2.6"/><circle cx="26" cy="41" r="2.6"/><circle cx="35" cy="37" r="2.6"/>`
+  };
+  return `<svg class="cic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${map[kind]||''}</svg>`;
+}
+
+/* ================= SPLASH ================= */
+(function splash(){
+  const el = $('#splash'), cv = $('#snow');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let run = !reduce, raf;
+  if (run){
+    const ctx = cv.getContext('2d'); let W,H,dpr=Math.min(devicePixelRatio||1,2), flakes=[];
+    const size = () => { W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); };
+    size(); addEventListener('resize', size);
+    const N = Math.min(160, Math.round(W*H/7000));
+    for (let i=0;i<N;i++) flakes.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*2+0.6, s:Math.random()*0.6+0.25, d:Math.random()*Math.PI*2});
+    let last=0;
+    const frame = t => {
+      if (!run) return;
+      raf = requestAnimationFrame(frame);
+      if (t-last < 15) return; last=t;
+      ctx.clearRect(0,0,W,H);
+      for (const f of flakes){
+        f.y += f.s*f.r*0.6; f.d += 0.01; f.x += Math.sin(f.d)*0.3;
+        if (f.y>H+4){ f.y=-4; f.x=Math.random()*W; }
+        ctx.globalAlpha = 0.35 + f.r/4;
+        ctx.fillStyle = '#dff6ff';
+        ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,Math.PI*2); ctx.fill();
+      }
+    };
+    raf = requestAnimationFrame(frame);
+  }
+  let done=false;
+  const close = () => { if(done) return; done=true; el.classList.add('hide'); setTimeout(()=>{ run=false; cancelAnimationFrame(raf); el.remove(); }, 650); };
+  el.addEventListener('click', close);
+  setTimeout(close, 3200);
+})();
+
+/* ================= ROUTER ================= */
+const SCREENS = ['home','learn','calc','timer','proc','decode','quiz','yul','about'];
+function route(){
+  let h = (location.hash||'#home').slice(1); if (!SCREENS.includes(h)) h='home';
+  document.querySelectorAll('section.screen').forEach(s=>s.classList.toggle('on', s.id==='s-'+h));
+  const sec = $('#s-'+h);
+  $('#title').textContent = sec.dataset.title;
+  $('#backBtn').hidden = h==='home'; $('#homeBtn').hidden = h==='home';
+  if (h==='calc') renderCalc();
+  if (h==='timer') renderTimer();
+  if (h==='quiz' && !Q.started) renderQuiz();
+  scrollTo(0,0);
+}
+addEventListener('hashchange', route);
+$('#backBtn').onclick = () => {
+  if (location.hash==='#calc' && calcBack()) return;
+  location.hash = '#home';
+};
+$('#homeBtn').onclick = () => location.hash = '#home';
+
+/* ================= LEARN ================= */
+const LEARN = [
+  ['Avion propre', `<p><b>Aucun décollage</b> avec givre, glace, neige ou slush adhérant aux surfaces critiques.</p>
+   <p>Tolérances :</p><ul><li>fine couche de givre sur le dessus du fuselage (les inscriptions restent visibles) ;</li><li>≤ 3 mm à l'intrados, au droit des réservoirs.</li></ul>`, '8.2.4.1 · 8.2.4.6.2'],
+  ['Dégivrer ≠ antigivrer', `<p><b>Dégivrer</b> = enlever (fluide chaud).</p><p><b>Antigivrer</b> = protéger pendant un temps limité : c'est le <b>HOT</b> (Holdover Time).</p>`, '8.2.4.3'],
+  ['Une étape / deux étapes', `<p><b>Une étape</b> : le même mélange dégivre et protège.</p><p><b>Deux étapes</b> : on dégivre, puis on antigivre <b>avant que le 1er fluide gèle</b>, en ≈ 3 min.</p>`, '8.2.4.3 · 8.2.4.6.3'],
+  ['Les 4 fluides', `<ul><li><b>Type I</b> : fluide fin, chaud, HOT court. Plus concentré ≠ plus long.</li><li><b>Type II / IV</b> : épaissis, HOT plus long, dépend de la dilution ; maximum en <span class="mono">100/0</span>.</li><li><b>Type III</b> : intermédiaire.</li></ul>`, '8.2.4.4'],
+  ['Le chrono démarre quand ?', `<p>Au <b>début de l'application</b> (une étape) ou au <b>début de la 2e étape</b> (deux étapes).</p><p>L'heure annoncée par le sol et notée à l'ATL démarre le HOT.</p>`, '8.2.4.5 · 8.2.4.7.3'],
+  ['Règle d\'or Air Algérie', `<p>On n'utilise que <b>le temps le plus court</b> de la case.</p><p>Le HOT n'est qu'un repère : les fortes précipitations, le vent, le souffle réacteur ou une aile plus froide que l'air le <b>raccourcissent</b>.</p>`, '8.2.4.9 NOTE'],
+  ['En Algérie / à l\'étranger', `<p><b>En Algérie</b> : pas de dégivrage. Le mécanicien contrôle les surfaces critiques et le CDB décide de faire ou d'annuler le vol.</p><p><b>À l'étranger</b> : à la demande du CDB, l'escale contacte le sous-traitant. La décision finale d'accepter l'avion et de partir appartient au <b>CDB</b>.</p>`, '8.2.4.2']
+];
+$('#learnCards').innerHTML = LEARN.map((c,i)=>`<div class="card lcard"><span class="n">${i+1}</span><h3>${c[0]}</h3>${c[1]}<div class="ref">MANEX A ${c[2]}</div></div>`).join('');
+
+/* ================= CALCULATOR ================= */
+const S = { fluid:null, oatStr:'', coldWing:false, conc:null, cond:null, sub:null, vis:null, night:false, metarInt:null, start:null };
+let step = 'fluid';
+const oatVal = () => (S.oatStr===''||S.oatStr==='-') ? null : Number(S.oatStr);
+
+function stepList(){
+  const l = ['fluid','oat'];
+  if (S.fluid && S.fluid!=='I') l.push('conc');
+  l.push('cond');
+  if (S.cond==='SNOW') l.push('snow');
+  l.push('result');
+  return l;
+}
+function go(s){ step=s; renderCalc(); scrollTo(0,0); }
+function next(){ const l=stepList(); go(l[Math.min(l.indexOf(step)+1,l.length-1)]); }
+function calcBack(){ const l=stepList(), i=l.indexOf(step); if (i>0){ go(l[i-1]); return true; } return false; }
+function resetCalc(){ Object.assign(S,{fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:false,metarInt:null,start:null}); go('fluid'); }
+
+const COND_UI = [
+  {k:'FROST', t:'Givre actif', d:'Givre qui se forme (active frost)'},
+  {k:'FZFG', t:'FZFG', d:D.conditions.FZFG},
+  {k:'SNOW', t:'Neige', d:'Neige / grains de neige / neige en granules — intensité via la visibilité'},
+  {k:'SN_FZFG', t:'Neige + FZFG', d:D.conditions.SN_FZFG},
+  {k:'FZDZ', t:'FZDZ', d:'Bruine verglaçante'},
+  {k:'FZRA_L', t:'-FZRA', d:D.conditions.FZRA_L},
+  {k:'SNRA', t:'Neige + pluie', d:'Neige mêlée de pluie ou de bruine'},
+  {k:'RA_COLDSOAK', t:'Pluie sur aile froide', d:'Cold-soaked wing'},
+  {k:'FZRA_MH', t:'FZRA / +FZRA', d:'Pluie verglaçante modérée ou forte', red:true},
+  {k:'OTHER', t:'Autres', d:'Neige forte, granules de glace (PL), grêle (GR/GS)', red:true}
+];
+const SUBS = {
+  FZDZ:[{v:'sure',t:'Bruine verglaçante identifiée avec certitude',d:'→ colonne FZDZ'},{v:'unsure',t:'Pas certain que ce soit de la bruine',d:'→ utiliser pluie verglaçante faible (-FZRA)'}],
+  SNRA:[{v:'M',t:'Neige MODÉRÉE + pluie',d:'→ colonne « SN mod. + RA »'},{v:'L',t:'Neige très faible / faible + pluie ou bruine',d:'→ utiliser pluie verglaçante faible (-FZRA)'},{v:'H',t:'Neige FORTE + pluie',d:'→ aucun HOT',red:true}]
+};
+
+/* final key used in the table */
+function condKey(){
+  const c=S.cond;
+  if (c==='FZDZ') return S.sub==='unsure' ? 'FZRA_L' : 'FZDZ';
+  if (c==='SNRA') return S.sub==='M' ? 'SN_RA_M' : S.sub==='L' ? 'FZRA_L' : 'OTHER';
+  if (c==='FZRA_MH' || c==='OTHER') return 'OTHER';
+  if (c==='SNOW'){
+    const si = snowIntensity(S.vis, S.night, oatVal());
+    if (si.intensity==='Heavy') return 'SNOW_HEAVY';
+    return S.fluid==='II' ? 'SN' : INT_COL[si.intensity];
+  }
+  return c;
+}
+
+const WHY = {
+  fluid:`<p><b>Type I</b> : fluide fin, chauffé, HOT court. Le B737 a des surfaces critiques en aluminium → <b>Tableau 2</b>.</p>
+    <p><b>Type II / IV</b> : fluides épaissis, HOT plus long (Tableaux 4 et 19 génériques).</p>
+    <p><b>Type III</b> : non utilisé sur B737 dans cette app — sa table dépend de la marque (MANEX Tableaux 16-18).</p>
+    <p>En deux étapes, c'est le fluide de la <b>2e étape</b> qui compte pour le HOT.</p>`,
+  oat:`<p>Les tableaux sont découpés en <b>bandes de température</b>. Une bande « sous -3 à -8 °C » couvre -8 ≤ OAT &lt; -3. À exactement -3 °C on est dans « -3 °C et au-dessus ».</p>
+    <p>L'OAT fixe aussi les concentrations autorisées en Type II/IV (Tableau 52).</p>
+    <p><b>Givre actif de longue durée</b> : utiliser l'OAT la plus froide rencontrée depuis l'application.</p>`,
+  conc:`<p><span class="mono">100/0</span> = 100 % fluide pur. <span class="mono">75/25</span> = 75 % fluide / 25 % eau. Plus le fluide est dilué, plus le HOT est court.</p>
+    <p>Tableau 52 : à -3 °C et au-dessus → 100/0, 75/25, 50/50 ; sous -3 à -14 °C → 100/0 ou 75/25 ; sous -14 °C → 100/0 seulement.</p>
+    <p>Givre ou glace à l'intrados zone réservoirs (aile froide) → pas de 50/50.</p>`,
+  cond:`<p>Choisissez la précipitation <b>réellement en cours</b>. Chaque condition = une colonne du tableau.</p>
+    <p>Neige forte, granules de glace, FZRA modérée/forte, grêle → <b>aucun HOT</b> (en rouge).</p>
+    <p>Pour la neige, l'intensité ne se lit pas dans le METAR mais dans le <b>Tableau 50</b>, avec la visibilité.</p>`,
+  snow:`<p>Le Tableau 50 donne l'intensité à partir de la <b>visibilité dominante</b> (METAR/SPECI ou observée par l'équipage), du jour/nuit et de l'OAT.</p>
+    <p><b>Jamais la RVR</b> : elle surestime la visibilité dans la neige.</p>
+    <p>L'intensité du tableau <b>prime</b> sur celle du METAR.</p>`
+};
+
+function qhead(k, label, title){
+  return `<div class="qhead"><div><span class="k">${label}</span><h2>${title}</h2></div><button class="why" data-why="${k}">Pourquoi ?</button></div><div class="whybox" id="why-${k}">${WHY[k]}</div>`;
+}
+function stepsBar(){
+  const l = stepList().filter(s=>s!=='result'), i=l.indexOf(step);
+  return `<div class="steps">${l.map((_,j)=>`<i class="${j<=i||step==='result'?'done':''}"></i>`).join('')}</div>`;
+}
+function label(){ const l=stepList().filter(s=>s!=='result'); return `ÉTAPE ${l.indexOf(step)+1} / ${l.length}`; }
+
+function renderCalc(){
+  const B = $('#calcBody'); let h='';
+  if (step!=='result') h += stepsBar();
+  const oat = oatVal();
+
+  if (step==='fluid'){
+    h += qhead('fluid', label(), 'Quel fluide le sol applique-t-il ?');
+    h += '<div class="choices">';
+    [['I','Type I','Fluide fin, chauffé, HOT court · Tableau 2 (aluminium)'],
+     ['II','Type II','Épaissi · Tableau 4 générique'],
+     ['IV','Type IV','Épaissi, HOT le plus long · Tableau 19 générique'],
+     ['III','Type III','Non utilisé B737 — marque spécifique']].forEach(([v,t,d])=>{
+      h += `<button class="choice ${S.fluid===v?'sel':''} ${v==='III'?'dis':''}" data-fluid="${v}"><span><b>${t}</b><small>${d}</small></span></button>`;
+    });
+    h += '</div><div id="t3msg"></div>';
+  }
+
+  else if (step==='oat'){
+    h += qhead('oat', label(), 'Température extérieure (OAT) ?');
+    h += `<div class="oatdisp">${S.oatStr===''?'<span style="color:var(--dim)">--</span>':esc(S.oatStr)}<span class="u"> °C</span></div>`;
+    let band='';
+    if (oat!==null){
+      const t = S.fluid==='I'?D.table2_typeI_aluminum:S.fluid==='II'?D.table4_typeII_generic:D.table19_typeIV_generic;
+      band = 'Bande : « '+t.bands[pickBand(t.bands,oat)].oat+' »';
+      if (oat<-60||oat>40) band='<span style="color:var(--bad)">Valeur hors plage</span>';
+    }
+    h += `<div class="band">${band}</div>`;
+    h += '<div class="keypad">' + ['7','8','9','4','5','6','1','2','3','±','0','⌫'].map(k=>`<button data-key="${k}" class="${k==='±'?'pm':''}">${k}</button>`).join('') + '</div>';
+    h += `<div class="infobox">Givre actif de longue durée : entrez l'<b>OAT la plus froide</b> rencontrée depuis l'application.</div>`;
+    h += `<div class="navrow"><button class="btn primary" id="oatOk" ${oat===null||oat<-60||oat>40?'disabled':''}>Valider</button></div>`;
+  }
+
+  else if (step==='conc'){
+    h += qhead('conc', label(), 'Quelle concentration ?');
+    h += `<p class="lead" style="margin-top:-4px">Type ${S.fluid} à ${fmtC(oat)} — Tableau 52</p>`;
+    h += `<label class="toggle"><input type="checkbox" id="coldWing" ${S.coldWing?'checked':''}><span>Givre ou glace à l'<b>intrados</b> dans la zone des réservoirs (aile froide)</span></label>`;
+    h += '<div class="choices">';
+    [['100/0','100 % fluide · HOT maximum'],['75/25','75 % fluide / 25 % eau'],['50/50','50 % fluide / 50 % eau · HOT court']].forEach(([v,d])=>{
+      const why = concRefusal(v, oat, S.coldWing);
+      h += `<button class="choice ${S.conc===v?'sel':''} ${why?'dis':''}" data-conc="${v}" ${why?'aria-disabled="true"':''}><span><b class="mono" style="font-size:22px">${v}</b><small>${d}</small>${why?`<span class="reason">✕ ${esc(why)}</span>`:''}</span></button>`;
+    });
+    h += '</div>';
+  }
+
+  else if (step==='cond'){
+    h += qhead('cond', label(), 'Quelle condition météo ?');
+    h += '<div class="choices two">';
+    COND_UI.forEach(c=>{
+      h += `<button class="choice ${S.cond===c.k?'sel':''} ${c.red?'red':''}" data-cond="${c.k}">${icon(c.k)}<span><b>${c.t}</b><small>${esc(c.d)}</small></span></button>`;
+      if (S.cond===c.k && SUBS[c.k]){
+        h += '<div class="subchoices">' + SUBS[c.k].map(s=>`<button class="choice ${S.sub===s.v?'sel':''} ${s.red?'red':''}" data-sub="${s.v}"><span><b style="font-size:14px">${s.t}</b><small>${s.d}</small></span></button>`).join('') + '</div>';
+      }
+    });
+    h += '</div>';
+    if (S.fluid==='II' || S.fluid==='IV'){
+      if (oat < -10) h += `<div class="infobox">À ${fmtC(oat)} : FZDZ et -FZRA en Type ${S.fluid} → aucun HOT sous -10 °C.</div>`;
+    }
+    if (oat<=0) h += `<div class="infobox">À ${fmtC(oat)} : « Neige modérée + pluie » et « Pluie sur aile froide » → aucun HOT à 0 °C et en dessous.</div>`;
+  }
+
+  else if (step==='snow'){
+    h += qhead('snow', label(), 'Neige : visibilité et luminosité');
+    h += `<div class="badbox"><b>RVR interdite.</b> Utilisez la visibilité METAR/SPECI (en mètres) ou celle observée par l'équipage — jamais la RVR.</div>`;
+    h += `<label class="lbl" for="visIn">VISIBILITÉ METAR (m)</label><input class="num" id="visIn" inputmode="numeric" pattern="[0-9]*" placeholder="ex. 1600" value="${S.vis??''}">`;
+    h += '<div class="chips">' + [400,800,1200,1600,2000,2400,2800,3200,4000,4800,6000,9999].map(v=>`<button data-vis="${v}" class="${S.vis===v?'sel':''}">${v}</button>`).join('') + '</div>';
+    h += `<label class="lbl">JOUR / NUIT</label><div class="seg"><button data-night="0" class="${!S.night?'sel':''}">☀ JOUR</button><button data-night="1" class="${S.night?'sel':''}">☾ NUIT</button></div>`;
+    h += `<label class="lbl">INTENSITÉ ANNONCÉE PAR LE METAR (facultatif)</label><div class="chips">${[['-SN','-SN'],['SN','SN'],['+SN','+SN'],['','non précisé']].map(([v,t])=>`<button data-metar="${v}" class="${S.metarInt===v?'sel':''}">${t}</button>`).join('')}</div>`;
+    h += '<div id="snowOut"></div>';
+    h += `<div class="navrow"><button class="btn primary" id="snowOk" ${S.vis?'':'disabled'}>Voir le HOT</button></div>`;
+  }
+
+  else if (step==='result'){
+    h += renderResult();
+  }
+
+  B.innerHTML = h;
+  if (step==='snow') updateSnow();
+  if (step==='result'){ const hx=B.querySelector('td.hx'); if (hx){ const w=hx.closest('.tblwrap'); w.scrollLeft = hx.offsetLeft - 110 - (w.clientWidth-110)/2 + hx.clientWidth/2; } }
+}
+
+function updateSnow(){
+  const out = $('#snowOut'); if (!out) return;
+  if (!S.vis){ out.innerHTML=''; $('#snowOk').disabled=true; return; }
+  $('#snowOk').disabled=false;
+  const si = snowIntensity(S.vis, S.night, oatVal());
+  const fr = INT_FR[si.intensity];
+  let h = `<div class="intens ${si.intensity==='Heavy'?'h':''}">Intensité Tableau 50 : ${fr}</div>`;
+  if (S.metarInt!==null && S.metarInt!==''){
+    const mfr = {'-SN':'FAIBLE','SN':'MODÉRÉE','+SN':'FORTE'}[S.metarInt];
+    if (mfr!==fr) h += `<div class="warnbox">METAR dit <b class="mono">${S.metarInt}</b>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.</div>`;
+    else h += `<div class="infobox">METAR <span class="mono">${S.metarInt}</span> et Tableau 50 concordent : <b>${fr}</b>.</div>`;
+  }
+  if (si.intensity==='Heavy') h += `<div class="badbox">Neige forte → <b>AUCUN HOT</b>.</div>`;
+  h += t50Table(si);
+  out.innerHTML = h;
+  const hx=out.querySelector('td.hx'); if (hx){ const w=hx.closest('.tblwrap'); w.scrollLeft = hx.offsetLeft - 110 - (w.clientWidth-110)/2 + hx.clientWidth/2; }
+}
+
+function t50Table(si){
+  const t = D.table50_snow_intensity;
+  let h = `<div class="mxref">${refText('t50')}</div><div class="tblwrap"><table class="mx"><thead><tr><th class="rh">Visibilité</th>${t.columns.map((c,j)=>`<th class="${j===si.col?'hc':''}">${c}</th>`).join('')}</tr></thead><tbody>`;
+  t.rows.forEach((r,i)=>{
+    h += `<tr><th class="rh ${i===si.row?'hr':''}">${r.label}</th>${r.v.map((v,j)=>`<td class="${i===si.row&&j===si.col?'hx':''}">${INT_FR[v]}</td>`).join('')}</tr>`;
+  });
+  return h + '</tbody></table></div>';
+}
+
+function cellTxt(c){ if (!c) return '—'; if (typeof c==='string') return c; return c.min===c.max ? c.min : `${c.min}–${c.max}`; }
+
+function hotTable(R){
+  if (R.tableId==='t1'){
+    const t=D.table1_active_frost;
+    if (R.frostTypeI){
+      return `<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">Type I — givre actif</th><th class="hc">Aluminium</th><th>Composite</th></tr></thead><tbody><tr><th class="rh hr">${t.typeI.note}</th><td class="hx">${t.typeI.aluminum}</td><td>${t.typeI.composite}</td></tr></tbody></table></div>`;
+    }
+    let h=`<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">OAT · conc.</th>${t.columns.map((c,j)=>`<th class="${j===R.colIdx?'hc':''}">${c}</th>`).join('')}</tr></thead><tbody>`;
+    t.bands.forEach((b,bi)=>{
+      const concs = Object.keys(b.rows);
+      if (!concs.length){ h+=`<tr><th class="rh ${bi===R.bandIdx?'hr':''}">${b.oat}</th><td colspan="3" class="na ${bi===R.bandIdx?'hx':''}">${b.note||'—'}</td></tr>`; return; }
+      concs.forEach((c,k)=>{
+        const hr = bi===R.bandIdx && c===R.conc;
+        h+=`<tr><th class="rh ${hr?'hr':''}">${b.oat}<br><b>${c}</b></th>${b.rows[c].map((v,j)=>`<td class="${hr&&j===R.colIdx?'hx':''}">${v}</td>`).join('')}</tr>`;
+      });
+    });
+    return h+'</tbody></table></div>';
+  }
+  const tbl = R.tableId==='t2'?D.table2_typeI_aluminum:R.tableId==='t4'?D.table4_typeII_generic:D.table19_typeIV_generic;
+  let h=`<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">OAT${R.tableId!=='t2'?' · conc.':''}</th>${tbl.columns.map((c,j)=>`<th class="${j===R.colIdx?'hc':''}">${COL_SHORT[c]}</th>`).join('')}</tr></thead><tbody>`;
+  tbl.bands.forEach((b,bi)=>{
+    if (R.tableId==='t2'){
+      const hr = bi===R.bandIdx;
+      h+=`<tr><th class="rh ${hr?'hr':''}">${b.oat}</th>${b.values.map((v,j)=>`<td class="${v?'':'na'} ${hr&&j===R.colIdx?'hx':''}">${cellTxt(v)}</td>`).join('')}</tr>`;
+      return;
+    }
+    const concs = Object.keys(b.rows);
+    concs.forEach((c,k)=>{
+      const hr = bi===R.bandIdx && c===R.conc;
+      h+=`<tr${k===0&&bi?' style="border-top:2px solid var(--line2)"':''}><th class="rh ${hr?'hr':''}">${b.oat}<br><b>${c}</b>${b.note&&k===0?`<br><small style="color:var(--warn)">${b.note}</small>`:''}</th>${b.rows[c].map((v,j)=>`<td class="${v?'':'na'} ${hr&&j===R.colIdx?'hx':''}">${cellTxt(v)}</td>`).join('')}</tr>`;
+    });
+  });
+  return h+'</tbody></table></div>';
+}
+
+function summaryTxt(){
+  const oat=oatVal(), key=condKey();
+  const cname = S.cond==='FROST'?'Givre actif':key==='SNOW_HEAVY'?'Neige forte':key==='OTHER'?(S.cond==='SNRA'?'Neige forte + pluie':COND_UI.find(c=>c.k===S.cond).t):COL_SHORT[key]||key;
+  return `Type ${S.fluid}${S.fluid!=='I'?' '+S.conc:''} · ${fmtC(oat)} · ${cname}`;
+}
+
+function renderResult(){
+  const oat=oatVal(), key=condKey();
+  const R = computeHOT({fluid:S.fluid, conc:S.conc, oat, key});
+  window.__lastResult = R;
+  let h='';
+  if (R.ok){
+    const zero = toMin(R.hot)===0;
+    h += `<div class="res"><div class="lab">HOT RETENU · VALEUR BASSE DE LA CASE</div><div class="big">${R.hot}</div>
+      <div class="range">${R.single?'Valeur unique de la case':'Fourchette MANEX : '+R.range.min+' – '+R.range.max}</div>
+      <div class="summary">${esc(summaryTxt())}</div></div>`;
+    if (zero) h += `<div class="badbox">HOT de 0:00 : pratiquement aucune protection.</div>`;
+  } else {
+    h += `<div class="res none"><div class="lab">RÉSULTAT</div><div class="big">AUCUN HOT</div><div class="range" style="color:#ffc2c9">${esc(R.reason)}</div><div class="summary" style="color:#ffc2c9">${esc(summaryTxt())}</div></div>`;
+  }
+  if (S.cond==='SNOW'){
+    const si = snowIntensity(S.vis, S.night, oat), fr=INT_FR[si.intensity];
+    const mfr = S.metarInt ? {'-SN':'FAIBLE','SN':'MODÉRÉE','+SN':'FORTE'}[S.metarInt] : null;
+    h += `<div class="infobox">Neige : visibilité ${S.vis} m, ${S.night?'nuit':'jour'}, ${fmtC(oat)} → intensité <b>${fr}</b> (Tableau 50).${mfr && mfr!==fr?` METAR dit <span class="mono">${S.metarInt}</span>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.`:''}</div>`;
+  }
+  if (S.cond==='SN_FZFG') h += `<div class="warnbox">Neige + FZFG : si la neige est forte → aucun HOT.</div>`;
+  if (R.ok && toMin(R.hot)>0){
+    h += `<div class="card"><h3>Démarrer le minuteur</h3><p style="color:var(--mut);font-size:14px;margin-top:0">Heure de début annoncée par le sol (UTC) — début de l'application, ou début de la 2e étape.</p>
+      <input class="num" id="startIn" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${S.start||utcNowHM()}">
+      <div class="row"><button class="btn primary" id="startBtn">▶ Démarrer le HOT</button></div></div>`;
+  }
+  h += `<div class="card"><h3>Voici la case du MANEX</h3>`;
+  if (R.tableId){ h += `<div class="mxref">${refText(R.tableId)}${R.tableId==='t1'?' — '+(S.fluid==='I'?'Type I':'Type '+S.fluid):''}</div>`; }
+  if (R.tableId==='t50'){ h += t50Table(snowIntensity(S.vis,S.night,oat)); }
+  else if (R.tableId){ h += hotTable(R); h += `<p style="font-size:13px;color:var(--mut)">Case surlignée = ligne (OAT${S.fluid!=='I'?' + concentration':''}) × colonne (condition). Faites défiler le tableau horizontalement.</p>`; }
+  else { h += `<div class="infobox">${esc(D.conditions.OTHER)}</div>`; }
+  h += '</div>';
+  h += `<div class="card"><h3>À retenir</h3><ul class="notes"><li><b>${HOT_REMINDER}</b></li><li>${GENERIC_NOTE}</li>${R.notes.map(n=>`<li>${esc(n)}</li>`).join('')}<li>Seul le temps le plus court de la case est utilisé (MANEX 8.2.4.9 NOTE).</li></ul></div>`;
+  h += `<div class="navrow"><button class="btn ghost" id="modBtn">◀ Modifier</button><button class="btn" id="newBtn">Nouveau calcul</button></div>`;
+  return h;
+}
+
+/* calc events (delegated) */
+$('#calcBody').addEventListener('click', e=>{
+  const t = e.target.closest('button,input'); if (!t) return;
+  if (t.dataset.why){ $('#why-'+t.dataset.why).classList.toggle('on'); return; }
+  if (t.dataset.fluid){
+    if (t.dataset.fluid==='III'){ $('#t3msg').innerHTML = `<div class="warnbox"><b>Type III : non utilisé B737</b> — marque spécifique, voir MANEX Tableaux 16-18.</div>`; return; }
+    if (S.fluid!==t.dataset.fluid){ S.conc=null; }
+    S.fluid=t.dataset.fluid; if (S.fluid==='I') S.conc=null; next(); return;
+  }
+  if (t.dataset.key){
+    const k=t.dataset.key;
+    if (k==='⌫') S.oatStr=S.oatStr.slice(0,-1);
+    else if (k==='±') S.oatStr = S.oatStr.startsWith('-') ? S.oatStr.slice(1) : '-'+S.oatStr;
+    else { const digits=S.oatStr.replace('-',''); if (digits.length<2) S.oatStr = (digits==='0'? S.oatStr.replace('0','') : S.oatStr) + k; }
+    renderCalc(); return;
+  }
+  if (t.id==='oatOk'){
+    const oat=oatVal();
+    if (S.conc && concRefusal(S.conc, oat, S.coldWing)) S.conc=null;
+    next(); return;
+  }
+  if (t.id==='coldWing'){ S.coldWing=t.checked; if (S.conc && concRefusal(S.conc,oatVal(),S.coldWing)) S.conc=null; renderCalc(); return; }
+  if (t.dataset.conc){
+    if (concRefusal(t.dataset.conc, oatVal(), S.coldWing)) return;
+    S.conc=t.dataset.conc; next(); return;
+  }
+  if (t.dataset.cond){
+    const c=t.dataset.cond;
+    if (S.cond!==c){ S.sub=null; }
+    S.cond=c;
+    if (SUBS[c]){ renderCalc(); return; }
+    next(); return;
+  }
+  if (t.dataset.sub){ S.sub=t.dataset.sub; next(); return; }
+  if (t.dataset.vis){ S.vis=Number(t.dataset.vis); $('#visIn').value=S.vis; document.querySelectorAll('[data-vis]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); return; }
+  if (t.dataset.night!==undefined){ S.night=t.dataset.night==='1'; document.querySelectorAll('[data-night]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); return; }
+  if (t.dataset.metar!==undefined){ S.metarInt=t.dataset.metar; document.querySelectorAll('[data-metar]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); return; }
+  if (t.id==='snowOk'){ next(); return; }
+  if (t.id==='startBtn'){
+    const R=window.__lastResult, v=normHM($('#startIn').value);
+    if (!v){ $('#startIn').focus(); $('#startIn').style.borderColor='var(--bad)'; return; }
+    startTimer(v, toMin(R.range.min), toMin(R.range.max), summaryTxt(), refText(R.tableId));
+    location.hash='#timer'; return;
+  }
+  if (t.id==='modBtn'){ calcBack(); return; }
+  if (t.id==='newBtn'){ resetCalc(); return; }
+});
+$('#calcBody').addEventListener('input', e=>{
+  if (e.target.id==='visIn'){ const v=parseInt(e.target.value,10); S.vis = isNaN(v)?null:v; document.querySelectorAll('[data-vis]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.vis)===S.vis)); updateSnow(); }
+  if (e.target.id==='startIn'){ S.start=e.target.value; }
+});
+
+/* ================= TIMER ================= */
+let T = store.get('hot.timer', null), tickH=null, audioCtx=null, wakeLock=null;
+function startDate(hm){
+  const [h,m]=hm.split(':').map(Number), now=new Date();
+  let d = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), h, m);
+  if (d - now.getTime() > 60*60*1000) d -= 24*3600*1000;   /* start announced before midnight UTC */
+  return d;
+}
+function startTimer(hm, minM, maxM, label, ref){
+  try { audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); audioCtx.resume(); } catch(e){}
+  T = {start:startDate(hm), hm, minM, maxM, label, ref, warned:false, alerted:false};
+  store.set('hot.timer', T); keepAwake(); ensureTick();
+}
+function stopTimer(){ T=null; store.set('hot.timer', null); $('#tbanner').classList.remove('on'); releaseAwake(); renderTimer(); }
+function beep(n=3, f=880){
+  try{
+    if (!audioCtx) return; const t0=audioCtx.currentTime;
+    for (let i=0;i<n;i++){ const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.frequency.value=f; o.type='square';
+      g.gain.setValueAtTime(0.0001,t0+i*0.5); g.gain.exponentialRampToValueAtTime(0.3,t0+i*0.5+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+i*0.5+0.35);
+      o.connect(g).connect(audioCtx.destination); o.start(t0+i*0.5); o.stop(t0+i*0.5+0.4); }
+  }catch(e){}
+}
+async function keepAwake(){ try{ if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); }catch(e){} }
+function releaseAwake(){ try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock=null; }
+document.addEventListener('visibilitychange', ()=>{ if (T && document.visibilityState==='visible') keepAwake(); });
+const fmtClock = ms => { const s=Math.max(0,Math.round(Math.abs(ms)/1000)), h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60; return (h?h+':'+String(m).padStart(2,'0'):String(m).padStart(2,'0'))+':'+String(x).padStart(2,'0'); };
+const hmUTC = ms => { const d=new Date(ms); return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0'); };
+
+function tick(){
+  if (!T){ $('#tbanner').classList.remove('on'); return; }
+  const now=Date.now(), end=T.start+T.minM*60000, rem=end-now;
+  const state = rem<=0 ? 'bad' : rem<=5*60000 ? 'warn' : '';
+  const b=$('#tbBtn'); b.className=state; $('#tbanner').classList.toggle('on', location.hash!=='#timer');
+  $('#tbLabel').textContent = rem<=0 ? 'HOT DÉPASSÉ' : (now<T.start ? 'HOT démarre à '+T.hm : 'HOT restant');
+  $('#tbTime').textContent = (rem<=0?'+':'') + fmtClock(now<T.start ? T.minM*60000 : rem);
+  if (!T.warned && rem<=5*60000 && rem>0 && T.minM>5){ T.warned=true; store.set('hot.timer',T); beep(1,660); try{navigator.vibrate&&navigator.vibrate(300);}catch(e){} }
+  if (!T.alerted && rem<=0){ T.alerted=true; store.set('hot.timer',T); beep(4,880); try{navigator.vibrate&&navigator.vibrate([500,200,500,200,500]);}catch(e){} $('#alarm').classList.add('on'); }
+  if (location.hash==='#timer') updateTimerView(now, rem, state);
+}
+function ensureTick(){ if (!tickH) tickH=setInterval(tick,1000); tick(); }
+$('#tbBtn').onclick = ()=> location.hash='#timer';
+$('#alarmOk').onclick = ()=> $('#alarm').classList.remove('on');
+
+function renderTimer(){
+  const B=$('#timerBody');
+  if (!T){
+    B.innerHTML = `<div class="card"><h3>Aucun minuteur en cours</h3><p>Calculez d'abord le HOT : le minuteur se lance depuis le résultat, sur l'heure de début annoncée par le sol.</p><a class="btn primary block" href="#calc">Calculateur HOT</a></div>
+      <div class="card"><h3>Démarrage manuel</h3><label class="lbl">HEURE DE DÉBUT (UTC)</label><input class="num" id="mStart" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${utcNowHM()}"><label class="lbl">HOT RETENU (h:mm)</label><input class="num" id="mHot" placeholder="0:25" inputmode="numeric"><button class="btn block" id="mGo">▶ Démarrer</button></div>`;
+    $('#mGo').onclick = ()=>{ const v=$('#mHot').value.trim(); const m=v.match(/^(\d{1,2}):([0-5]\d)$/); if(!m){ $('#mHot').focus(); return; } const mm=Number(m[1])*60+Number(m[2]); if(!mm) return; const st=normHM($('#mStart').value); if(!st){ $('#mStart').focus(); return; } startTimer(st, mm, mm, 'HOT saisi manuellement', ''); renderTimer(); };
+    return;
+  }
+  B.innerHTML = `<div class="timer" id="tbox"><div class="lab mono" id="tlab" style="color:var(--ice2);letter-spacing:.12em;font-size:13px">HOT RESTANT</div><div class="t" id="tt">--:--</div>
+    <div class="bar"><i id="tbar" style="width:100%"></i></div>
+    <div class="s">Début ${T.hm} UTC · Fin HOT (valeur basse) <b id="tend"></b> UTC</div>
+    ${T.maxM!==T.minM?`<div class="s" style="font-size:13px">Haut de fourchette : ${hmUTC(T.start+T.maxM*60000)} UTC (non utilisé — règle Air Algérie)</div>`:''}</div>
+    <div class="infobox mono" style="font-size:14px">${esc(T.label)}${T.ref?'<br>'+esc(T.ref):''}</div>
+    <div class="warnbox">${HOT_REMINDER} Les fortes précipitations, le vent, le souffle réacteur ou une aile froide raccourcissent le HOT. Gardez l'écran allumé : l'alerte sonne dans l'app.</div>
+    <button class="btn bad block" id="tStop">■ Arrêter le minuteur</button>`;
+  $('#tStop').onclick = ()=>{ if (confirm('Arrêter le minuteur HOT ?')) stopTimer(); };
+  ensureTick();
+}
+function updateTimerView(now, rem, state){
+  const box=$('#tbox'); if (!box) return;
+  box.className='timer '+state;
+  $('#tend').textContent = hmUTC(T.start+T.minM*60000);
+  if (now<T.start){ $('#tlab').textContent='DÉMARRE À '+T.hm+' UTC'; $('#tt').textContent=fmtClock(T.minM*60000); $('#tbar').style.width='100%'; return; }
+  $('#tlab').textContent = rem<=0 ? 'HOT DÉPASSÉ DEPUIS' : 'HOT RESTANT';
+  $('#tt').textContent = (rem<=0?'+':'')+fmtClock(rem);
+  $('#tbar').style.width = Math.max(0,Math.min(100, rem/(T.minM*60000)*100))+'%';
+}
+
+/* ================= PROCEDURE ================= */
+const DIALOG = [
+  ['gnd','GROUND','Confirm aircraft configured for de-icing / anti-icing.'],
+  ['crew','CREW','Aircraft configured. Request Type I / II / IV, Wings and Flight Control surfaces, Engines.'],
+  ['gnd','GROUND','Starting de-icing now.'],
+  ['gnd','GROUND','De-icing complete Type II/75 at 1650. Personnel and equipment clear.'],
+  ['crew','CREW','Type II/75 at 1650, copied.']
+];
+const PROC = [
+  {t:'Prévol', r:'8.2.4.10.1', items:['Visite prévol effectuée','Gel ou neige empêchant les vérifications → escale informée','Carburant supplémentaire prévu']},
+  {t:'Avant dégivrage', r:'8.2.4.6.4 · 8.2.4.8', items:['Check-lists FCOM « Cold Weather Operation » / « Ice and Rain Protection » (SP)','Avion configuré pour le dégivrage','APU / moteurs au ralenti possibles — conditionnement d\'air OFF','PNC et passagers informés']},
+  {t:'Phraséologie sol', r:'8.2.4.8', dialog:true, items:['Contact établi avec l\'équipe de dégivrage, demande transmise']},
+  {t:'Pendant', r:'8.2.4.10.2', items:['Écoute ATC et technicien maintenue','En urgence : contacter la tour et le responsable du dégivrage']},
+  {t:'Après', r:'8.2.4.7.2 · 8.2.4.7.3', after:true, items:['Code relu : Type / concentration / heure UTC','Minuteur HOT démarré','Check-list après dégivrage','ATL : heure de début, type de fluide (celui de la 2e étape si deux étapes), mélange']},
+  {t:'Avant le décollage', r:'8.2.4.6.1', crit:true, items:['HOT dépassé ou moindre doute → contrôle des surfaces critiques par une personne qualifiée (OPL) juste avant d\'entrer sur la piste','Doute sur un dépôt pouvant affecter les performances → PAS DE DÉCOLLAGE']}
+];
+let checks = store.get('hot.proc', {});
+function renderProc(){
+  let h='';
+  PROC.forEach((p,i)=>{
+    const all = p.items.every((_,j)=>checks[i+'.'+j]);
+    h += `<div class="pstep ${all?'done':''}" data-n="${i+1}"><h3>${p.t} <span class="ref">${p.r}</span></h3>`;
+    if (p.dialog){
+      h += `<p style="font-size:14px;color:var(--mut);margin:0 0 8px">Dialogue type CREW / GROUND — le texte de référence est au MANEX A 8.2.4.8.</p><button class="btn block" id="listenBtn">🎧 Mode écoute</button><div class="dlg" id="dlg"></div>`;
+    }
+    h += p.items.map((it,j)=>{ const k=i+'.'+j; return `<label class="chk ${checks[k]?'on':''} ${p.crit?'crit':''}"><input type="checkbox" data-chk="${k}" ${checks[k]?'checked':''}><span>${esc(it)}</span></label>`; }).join('');
+    if (p.after) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#decode">Décoder le code</a><a class="btn" href="#timer">Minuteur</a></div>`;
+    h += '</div>';
+  });
+  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">Pièges <span class="ref">8.2.4.6.5 · Tableau 52</span></h3>
+    <div class="warnbox">Ne jamais remettre un antigivrant froid sur une couche existante : nettoyer d'abord au mélange chaud.</div>
+    <div class="warnbox">Pare-brise : enlever toute trace de Type II/IV — ne pas utiliser les essuie-glaces pour cela.</div>
+    <div class="warnbox"><b>Verglas d'aile froide</b> (glace transparente) quand beaucoup de carburant froid reste dans les réservoirs, même jusqu'à +15 °C OAT.</div>
+    <div class="warnbox">Aile froide → pas de 50/50 Type II/IV.</div></div>`;
+  $('#procBody').innerHTML = h;
+}
+$('#procBody').addEventListener('change', e=>{ const k=e.target.dataset.chk; if(!k) return; checks[k]=e.target.checked; store.set('hot.proc',checks); renderProc(); });
+$('#procBody').addEventListener('click', e=>{
+  if (e.target.closest('#listenBtn')){
+    const box=$('#dlg'); box.innerHTML=''; let i=0;
+    const add=()=>{ if(i>=DIALOG.length) return; const [c,w,txt]=DIALOG[i++]; box.insertAdjacentHTML('beforeend',`<div class="bub ${c} pop"><small>${w}</small>${esc(txt)}</div>`); if(i<DIALOG.length) setTimeout(add,1300); };
+    add();
+  }
+});
+$('#procReset').onclick = ()=>{ checks={}; store.set('hot.proc',checks); renderProc(); };
+renderProc();
+
+/* ================= DECODER ================= */
+let lastDec=null;
+function renderDecode(){
+  const v=$('#decIn').value, out=$('#decOut');
+  if (!v.trim()){ out.innerHTML=''; return; }
+  const d=decodeCode(v); lastDec=d;
+  if (!d.fluid){ out.innerHTML=`<div class="warnbox">Type de fluide non reconnu. Format attendu : <span class="mono">Type IV/75 1432</span>.</div>`; return; }
+  let h='<div class="card dec">';
+  if (d.fluid==='III'){ out.innerHTML=`<div class="warnbox"><b>Type III</b> : non utilisé B737 — marque spécifique, voir MANEX Tableaux 16-18.</div>`; return; }
+  h += `<div><span class="hl">Type ${d.fluid}</span>`;
+  if (d.fluid==='I') h += ` — mélange eau/glycol chauffé (une concentration plus forte n'allonge pas le HOT)`;
+  else if (d.conc){ const [a,b]=d.conc.split('/'); h += `, <span class="hl">${a} % fluide / ${b} % eau</span>`; }
+  else h += ` — <span style="color:var(--warn)">concentration non annoncée : la faire préciser</span>`;
+  h += '</div>';
+  if (d.time) h += `<div>Début <span class="hl">${d.time} UTC</span> → HOT démarré à <span class="hl">${d.time}</span></div>`;
+  else h += `<div style="color:var(--warn)">Heure de début non annoncée : la faire préciser.</div>`;
+  h += `<div style="font-size:13px;color:var(--mut);margin-top:6px">En deux étapes, ce code concerne la 2e étape. À inscrire à l'ATL.</div></div>`;
+  h += `<button class="btn primary block" id="decGo">Calculer le HOT</button>`;
+  out.innerHTML=h;
+  $('#decGo').onclick = ()=>{
+    Object.assign(S,{fluid:d.fluid, conc:d.fluid==='I'?null:d.conc, oatStr:'', cond:null, sub:null, vis:null, metarInt:null, start:d.time});
+    step='oat'; location.hash='#calc'; renderCalc();
+  };
+}
+$('#decIn').addEventListener('input', renderDecode);
+$('#decQuick').innerHTML = ['Type IV/75 1432','Type II/100 0915','Type I 0640','Type IV/100 2350'].map(s=>`<button>${s}</button>`).join('');
+$('#decQuick').addEventListener('click', e=>{ if(e.target.tagName==='BUTTON'){ $('#decIn').value=e.target.textContent; renderDecode(); } });
+
+/* ================= QUIZ ================= */
+const QUIZ = [
+  {q:'METAR « 1600 -SN M06 », de nuit. Quelle intensité de neige retenir ?', o:['Faible (comme le METAR)','Modérée','Forte','Très faible'], a:1, e:'Tableau 50 : 1600 m, nuit, OAT ≤ -1 °C → MODÉRÉE. Le tableau prime sur le METAR.', r:'Tableau 50'},
+  {q:'Même cas (1600 m, nuit, -6 °C, neige), Type IV 100/0. Quel HOT retenir ?', o:['0:25','0:45','0:25–0:45, au choix','0:15'], a:0, e:'Tableau 19, bande sous -3 à -8 °C, 100/0, neige modérée : 0:25–0:45. Règle Air Algérie : on retient la valeur basse, 0:25.', r:'Tableau 19 · 8.2.4.9 NOTE'},
+  {q:'Procédure en deux étapes : quand démarre le HOT ?', o:['Au début de la 1re étape','À la fin de la 2e étape','Au début de la 2e étape','À la mise en route'], a:2, e:'Le HOT démarre au début de la 2e étape (antigivrage).', r:'8.2.4.5'},
+  {q:'Pluie verglaçante modérée (FZRA). Quel HOT ?', o:['Celui de la colonne -FZRA','Aucun HOT','La moitié du HOT -FZRA','0:05'], a:1, e:'Pluie verglaçante modérée et forte : aucun HOT.', r:'8.2.4.9 — conditions « Other »'},
+  {q:'Deux étapes : Type I puis Type IV/75. Quel fluide noter à l\'ATL ?', o:['Type I','Type IV/75 (2e étape)','Les deux, sans mélange','Aucun'], a:1, e:'On note le fluide de la 2e étape, son mélange et l\'heure de début.', r:'8.2.4.7.3'},
+  {q:'Le HOT est dépassé avant l\'alignement. Peut-on décoller ?', o:['Non, jamais','Oui, si moins de 5 min de dépassement','Oui, seulement après contrôle des surfaces critiques et en l\'absence de doute','Oui, le HOT n\'est qu\'un repère'], a:2, e:'HOT dépassé ou doute → contrôle des surfaces critiques par une personne qualifiée juste avant la piste. Doute sur un dépôt → pas de décollage.', r:'8.2.4.6.1'},
+  {q:'Type IV 50/50 à -5 °C ?', o:['Autorisé','Refusé : sous -3 à -14 °C seulement 100/0 ou 75/25','Autorisé si deux étapes','Autorisé de jour'], a:1, e:'Tableau 52 : sous -3 à -14 °C, Type II/IV en 100/0 ou 75/25 uniquement.', r:'Tableau 52'},
+  {q:'Type I, -2 °C, neige faible. Quel HOT ?', o:['0:18','0:11','0:06','0:45'], a:1, e:'Tableau 2, -3 °C et au-dessus, neige faible : 0:11–0:18 → 0:11.', r:'Tableau 2'},
+  {q:'Type II 75/25, -12 °C, pluie verglaçante faible. Quel HOT ?', o:['0:09','0:20','Aucun HOT','0:15'], a:2, e:'FZDZ et -FZRA : aucun HOT sous -10 °C en Type II/IV. (À -10 °C exactement : 0:09.)', r:'Tableau 4'},
+  {q:'Givre actif, Type IV 100/0, -12 °C. Quel HOT ?', o:['8:00','2:00','6:00','0:45'], a:2, e:'Tableau 1, bande sous -10 à -14 °C, Type IV 100/0 : 6:00.', r:'Tableau 1'}
+];
+const Q = {i:0, score:0, answered:false, started:false};
+function renderQuiz(){
+  const B=$('#quizBody'); Q.started=true;
+  if (Q.i>=QUIZ.length){
+    B.innerHTML = `<div class="card" style="text-align:center"><h3>Résultat</h3><div class="score">${Q.score}/${QUIZ.length}</div><p>${Q.score>=8?'Très bien.':'Relisez « Comprendre en 2 minutes » et réessayez.'}</p><button class="btn primary block" id="qRe">Recommencer</button></div>`;
+    $('#qRe').onclick=()=>{ Q.i=0; Q.score=0; Q.answered=false; renderQuiz(); }; return;
+  }
+  const it=QUIZ[Q.i];
+  B.innerHTML = `<div class="qmeta">QUESTION ${Q.i+1} / ${QUIZ.length} · SCORE ${Q.score}</div><div class="card"><h3 style="font-family:var(--body);font-size:18px;color:var(--txt);letter-spacing:0">${esc(it.q)}</h3></div>
+    ${it.o.map((o,j)=>`<button class="qopt" data-o="${j}">${esc(o)}</button>`).join('')}<div id="qfb"></div>`;
+  Q.answered=false;
+}
+$('#quizBody').addEventListener('click', e=>{
+  const b=e.target.closest('[data-o]');
+  if (b && !Q.answered){
+    Q.answered=true; const it=QUIZ[Q.i], j=Number(b.dataset.o);
+    if (j===it.a) Q.score++;
+    document.querySelectorAll('.qopt').forEach((x,k)=>{ if(k===it.a) x.classList.add('right'); else if(k===j) x.classList.add('wrong'); });
+    $('#qfb').innerHTML = `<div class="${j===it.a?'infobox':'warnbox'}"><b>${j===it.a?'Correct.':'Non.'}</b> ${esc(it.e)}<div class="mono" style="font-size:12px;margin-top:6px;opacity:.8">MANEX A — ${esc(it.r)}</div></div><button class="btn primary block" id="qNext">${Q.i+1<QUIZ.length?'Question suivante':'Voir le score'}</button>`;
+    return;
+  }
+  if (e.target.id==='qNext'){ Q.i++; renderQuiz(); scrollTo(0,0); }
+});
+
+/* ================= BOOT ================= */
+if (T) ensureTick();
+route();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
