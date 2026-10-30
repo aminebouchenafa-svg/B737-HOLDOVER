@@ -1,5 +1,5 @@
 {
- "source": "MANEX A Air Algérie, §8.2.4.9 — FAA Holdover Time Guidelines Winter 2025-2026 (Éd. 02 Rév. 36, NOV.25). Valeurs vérifiées visuellement sur les pages 12, 14, 17, 34, 66, 67, 68.",
+ "source": "MANEX A Air Algérie, §8.2.4.9 — FAA Holdover Time Guidelines Winter 2026-2027 (Éd. 02, TR 39-4, OCT.26). Tableaux 1, 2, 4 inchangés (pages NOV.25 maintenues) ; Tableaux 20 et 53 mis à jour. Valeurs vérifiées sur les pages 12, 14, 17, 35, 69, 70, 71.",
  "aircraft_note": "B737 NG/MAX : surfaces critiques principalement en aluminium → Type I = Tableau 2 (aluminium).",
  "rule_shortest_time": "MANEX 8.2.4.9 NOTE : seul le temps le plus court de la case doit être utilisé pour juger l'état des surfaces ; une inspection prévol n'est pas requise si le décollage peut s'effectuer durant cette période. HOT toujours utilisé conjointement avec l'inspection d'une personne qualifiée.",
  "hot_start": "Le HOT commence au début de l'application (procédure en une étape) ou au début de la 2e étape (procédure en deux étapes). L'heure notée à l'ATL débute le temps de protection (8.2.4.5, 8.2.4.7.3).",
@@ -590,11 +590,11 @@
   ],
   "notes": [
    "Respecter le LOUT ; envisager le Type I si le Type II ne peut être utilisé",
-   "Si la marque de fluide est connue, la table de la marque (Tableaux 5 à 15) peut donner des HOT différents"
+   "Si la marque de fluide est connue, la table de la marque (Tableaux 5 à 16) peut donner des HOT différents"
   ]
  },
- "table19_typeIV_generic": {
-  "title": "Tableau 19 — Type IV générique",
+ "table20_typeIV_generic": {
+  "title": "Tableau 20 — Type IV générique",
   "columns": [
    "FZFG",
    "SN_FZFG",
@@ -821,7 +821,7 @@
        "max": "1:00"
       },
       {
-       "min": "0:20",
+       "min": "0:15",
        "max": "0:25"
       },
       null,
@@ -869,7 +869,7 @@
      "100/0": [
       {
        "min": "0:15",
-       "max": "0:30"
+       "max": "0:25"
       },
       {
        "min": "0:01",
@@ -901,7 +901,7 @@
      "100/0": [
       {
        "min": "0:15",
-       "max": "0:30"
+       "max": "0:25"
       },
       {
        "min": "0:00",
@@ -933,7 +933,7 @@
      "100/0": [
       {
        "min": "0:15",
-       "max": "0:30"
+       "max": "0:25"
       },
       {
        "min": "0:00",
@@ -961,11 +961,11 @@
   ],
   "notes": [
    "Respecter le LOUT ; envisager le Type I si le Type IV ne peut être utilisé",
-   "Tables de marque : Tableaux 20 à 49 (ex. DOW UCAR Endurance EG106 utilisé à Montréal)"
+   "Tables de marque : Tableaux 21 à 52 (ex. DOW UCAR Endurance EG106 utilisé à Montréal = Tableau 37)"
   ]
  },
- "table50_snow_intensity": {
-  "title": "Tableau 50 — Intensité de la neige selon la visibilité dominante (RVR interdit)",
+ "table53_snow_intensity": {
+  "title": "Tableau 53 — Intensité de la neige selon la visibilité dominante (RVR interdit)",
   "columns": [
    "Jour, OAT ≤ -1 °C",
    "Jour, OAT > -1 °C",
@@ -1059,8 +1059,8 @@
     "v": [
      "Very Light",
      "Very Light",
-     "Very Light",
-     "Very Light"
+     "Light",
+     "Light"
     ]
    },
    {
@@ -1070,7 +1070,7 @@
      "Very Light",
      "Very Light",
      "Very Light",
-     "Very Light"
+     "Light"
     ]
    },
    {
@@ -1091,14 +1091,14 @@
    "Exemple MANEX : 1 SM, nuit, -6 °C, METAR -SN → intensité MODÉRÉE"
   ]
  },
- "table51_typeI_application": {
+ "table54_typeI_application": {
   "one_step": "Mélange chauffé ≥ 60 °C à la buse, point de congélation ≥ 10 °C sous l'OAT ; minimum 1 L/m² après élimination de la contamination",
   "two_step": {
    "first": "≥ 0 °C : eau chaude ou mélange chaud ; < 0 °C : mélange chaud au point de congélation ≤ OAT",
    "second": "Mélange chauffé ≥ 60 °C, point de congélation ≥ 10 °C sous l'OAT, appliqué avant que le 1er fluide gèle (≈ 3 min)"
   }
  },
- "table52_typeII_IV_application": [
+ "table55_typeII_IV_application": [
   {
    "oat": "0 °C et au-dessus",
    "one_step": "Type II/IV chauffé 100/0, 75/25 ou 50/50",
@@ -1120,7 +1120,7 @@
    "second_step": "Type II/IV chauffé ou non, 100/0"
   }
  ],
- "table52_cautions": [
+ "table55_cautions": [
   "Givre ou glace à l'intrados dans la zone des réservoirs (aile froide) : ne pas utiliser le 50/50 Type II/IV pour l'antigivrage",
   "Quantité insuffisante de fluide → perte importante de HOT"
  ]

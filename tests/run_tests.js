@@ -31,15 +31,17 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
       x7: c('IV', '75/25', -14, 'SN_M'), x8: c('IV', '100/0', -26, 'FROST'),
       x9: concRefusal('75/25', -15, false), x10: concRefusal('50/50', -3, true), x11: concRefusal('50/50', -3, false),
       q2: c('IV', '100/0', -6, INT_COL[snowIntensity(1600, true, -6).intensity]),
+      n1: c('IV', '100/0', -10, 'FZRA_L'), n2: c('IV', '100/0', -16, 'FZFG'),
+      n3: snowIntensity(4000, true, -5).intensity, n4: snowIntensity(4800, true, 0).intensity, n5: snowIntensity(4800, true, -5).intensity,
       d1: decodeCode('Type IV/75 1432'), d2: decodeCode('de-icing complete Type II/75 at 1650'), d3: decodeCode('TYPE I 06:40Z'),
     };
   });
-  ok(E.t1.ok && E.t1.hot === '0:15' && E.t1.range.max === '0:35' && E.t1.tableId === 't19', 'Type IV 100/0, -5 °C, FZFG → 0:15 (0:15-0:35, Tableau 19)');
+  ok(E.t1.ok && E.t1.hot === '0:15' && E.t1.range.max === '0:35' && E.t1.tableId === 't20', 'Type IV 100/0, -5 °C, FZFG → 0:15 (0:15-0:35, Tableau 20)');
   ok(E.t2.ok && E.t2.hot === '0:11' && E.t2.tableId === 't2', 'Type I, -2 °C, neige faible → 0:11 (Tableau 2)');
   ok(!E.t3a.ok, 'Type II 75/25, -12 °C, FZRA_L → aucun HOT');
   ok(E.t3b.ok && E.t3b.hot === '0:09', 'Type II 75/25, -10 °C, FZRA_L → 0:09');
   ok(E.t4 === 'Moderate', 'Neige 1600 m, nuit, -6 °C → MODÉRÉE');
-  ok(!!E.t5, 'Type IV 50/50 à -5 °C → refusé (Tableau 52)');
+  ok(!!E.t5, 'Type IV 50/50 à -5 °C → refusé (Tableau 55)');
   ok(E.t6.ok && E.t6.hot === '6:00', 'Givre actif, Type IV 100/0, -12 °C → 6:00');
   ok(!E.x1.ok, 'SN_RA_M à 0 °C → aucun HOT');
   ok(E.x2.ok && E.x2.hot === '0:07', 'RA_COLDSOAK Type II 100/0 à +2 °C → 0:07');
@@ -48,8 +50,11 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   ok(E.x5.hot === '1:15' && E.x6.hot === '0:15', 'Borne -3 °C : -3 → bande haute, -3.5 → bande suivante');
   ok(E.x7.ok && E.x7.hot === '0:25', 'Type IV 75/25 -14 °C SN_M → 0:25 (borne incluse)');
   ok(!E.x8.ok, 'Givre actif sous -25 °C → aucun HOT');
-  ok(!!E.x9 && !!E.x10 && !E.x11, 'Tableau 52 : 75/25 refusé à -15, 50/50 refusé aile froide, 50/50 OK à -3');
+  ok(!!E.x9 && !!E.x10 && !E.x11, 'Tableau 55 : 75/25 refusé à -15, 50/50 refusé aile froide, 50/50 OK à -3');
   ok(E.q2.hot === '0:25', 'Quiz Q2 : Type IV 100/0 -6 °C neige modérée → 0:25');
+  ok(E.n1.hot === '0:15' && E.n1.range.max === '0:25', 'Winter 2026-27 : Type IV 100/0 -10 °C -FZRA → 0:15 (Tableau 20)');
+  ok(E.n2.hot === '0:15' && E.n2.range.max === '0:25', 'Winter 2026-27 : Type IV 100/0 -16 °C FZFG → 0:15–0:25');
+  ok(E.n3 === 'Light' && E.n4 === 'Light' && E.n5 === 'Very Light', 'Winter 2026-27 : Tableau 53 nuit 4000 m → faible ; 4800 m > -1 °C → faible');
   ok(E.d1.fluid === 'IV' && E.d1.conc === '75/25' && E.d1.time === '14:32', 'Décodeur « Type IV/75 1432 »');
   ok(E.d2.fluid === 'II' && E.d2.conc === '75/25' && E.d2.time === '16:50', 'Décodeur « Type II/75 at 1650 »');
   ok(E.d3.fluid === 'I' && E.d3.time === '06:40', 'Décodeur « TYPE I 06:40Z »');
@@ -71,11 +76,11 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   await p.fill('#visIn', '1600');
   await p.click('[data-night="1"]');
   await p.click('[data-metar="-SN"]');
-  ok((await p.textContent('#snowOut')).includes('METAR dit -SN, mais le tableau dit MODÉRÉE : on retient MODÉRÉE'), 'UI : message METAR vs Tableau 50');
+  ok((await p.textContent('#snowOut')).includes('METAR dit -SN, mais le tableau dit MODÉRÉE : on retient MODÉRÉE'), 'UI : message METAR vs Tableau 53');
   if (shots) await p.screenshot({ path: shots + '/05-snow.png', fullPage: true });
   await p.click('#snowOk');
   ok((await p.textContent('.res .big')).trim() === '0:25', 'UI : résultat 0:25');
-  ok((await p.textContent('.mxref')).includes('Tableau 19, page 34'), 'UI : référence Tableau 19, page 34');
+  ok((await p.textContent('.mxref')).includes('Tableau 20, page 35'), 'UI : référence Tableau 20, page 35');
   ok(await p.$eval('td.hx', e => e.textContent) === '0:25–0:45', 'UI : case surlignée 0:25–0:45');
   if (shots) await p.screenshot({ path: shots + '/06-result.png', fullPage: true });
   await p.click('#startBtn');

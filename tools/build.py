@@ -4,7 +4,7 @@ Usage : python3 tools/build.py"""
 import base64, json, pathlib, datetime
 R = pathlib.Path(__file__).resolve().parent.parent
 b64 = lambda p: base64.b64encode((R / p).read_bytes()).decode()
-data = json.loads((R / 'data/hot_tables_manexA_2025-2026.json').read_text(encoding='utf-8'))
+data = json.loads((R / 'data/hot_tables_manexA_2026-2027.json').read_text(encoding='utf-8'))
 version = datetime.date.today().isoformat()
 html = (R / 'src/app.html').read_text(encoding='utf-8')
 for k, v in {

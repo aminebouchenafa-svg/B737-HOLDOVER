@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>737 HOLDOVER</title>
-<meta name="description" content="B737 NG/MAX — Dégivrage / antigivrage et Holdover Time expliqués (MANEX A §8.2.4, FAA HOT Winter 2025-2026).">
+<meta name="description" content="B737 NG/MAX — Dégivrage / antigivrage et Holdover Time expliqués (MANEX A §8.2.4, FAA HOT Winter 2026-2027).">
 <meta name="theme-color" content="#05070a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -70,14 +70,14 @@ section.screen{display:none}
 section.screen.on{display:block;animation:fadeIn .25s ease-out}
 .lead{color:var(--mut);margin:4px 0 16px}
 
-/* timer banner */
-#tbanner{display:none;position:sticky;top:calc(65px + var(--sat));z-index:19;margin:0 auto;max-width:860px;padding:0 16px}
-#tbanner.on{display:block}
-#tbanner button{width:100%;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:12px;padding:10px 14px;border:1px solid var(--ice);background:#06202b;cursor:pointer;font-family:var(--mono);font-size:16px}
-#tbanner button.warn{border-color:var(--warn);background:var(--warnbg)}
-#tbanner button.bad{border-color:var(--bad);background:var(--badbg);animation:pulse 1s infinite}
+/* timer chip (header) */
+#tbBtn{flex:none;display:flex;align-items:center;gap:8px;min-height:44px;border-radius:12px;padding:6px 12px;border:1px solid var(--ice);background:#06202b;cursor:pointer;font-family:var(--mono);font-size:15px;color:var(--ice2);white-space:nowrap}
+#tbBtn[hidden]{display:none}
+#tbBtn #tbLabel{font-size:11px;letter-spacing:.08em;opacity:.85}
+#tbBtn.warn{border-color:var(--warn);background:var(--warnbg);color:#ffe2b0}
+#tbBtn.bad{border-color:var(--bad);background:var(--badbg);color:#ffd0d5;animation:pulse 1s infinite}
 @keyframes pulse{50%{box-shadow:0 0 18px rgba(255,77,94,.6)}}
-
+@media(max-width:420px){#tbBtn #tbLabel{display:none}}
 /* ---------- Components ---------- */
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:0 0 14px}
 .card h3{font-size:15px;color:var(--ice2);margin-bottom:8px}
@@ -261,9 +261,9 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
   </button>
   <h1 id="title">737 HOLDOVER</h1>
+  <button id="tbBtn" hidden aria-label="Minuteur HOT"><span id="tbLabel">HOT</span> <span id="tbTime">--:--</span></button>
   <button class="home-btn" id="homeBtn" hidden>ACCUEIL</button>
 </header>
-<div id="tbanner"><button id="tbBtn"><span id="tbLabel">HOT</span><span id="tbTime">--:--</span></button></div>
 
 <main>
 <!-- ============ HOME ============ -->
@@ -272,7 +272,7 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
     <div class="logo">737 HOLDOVER</div>
     <div class="sub">B737 NG/MAX · Dégivrage &amp; antigivrage · MANEX A §8.2.4</div>
   </div>
-  <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (Rév. 36, tableaux FAA Winter 2025-2026). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
+  <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (TR 39-4 OCT.26, tableaux FAA Winter 2026-2027). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
   <div class="tiles">
     <a class="tile hero" href="#calc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span><b>Calculateur HOT</b><small>4 questions → le HOT et la case exacte du MANEX</small></span></a>
     <a class="tile" href="#learn"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3"/><path d="M20 5v13h-6"/></svg></span><span><b>Comprendre en 2 minutes</b><small>Les 7 idées à retenir</small></span></a>
@@ -326,29 +326,44 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
 <!-- ============ YUL ============ -->
 <section class="screen" id="s-yul" data-title="Montréal YUL">
   <div class="card">
-    <h3>Pad AeroMag — Montréal-Trudeau (YUL)</h3>
-    <div class="freq"><span class="f">123.425</span><span><b>Montreal Deice</b><br><small style="color:var(--mut)">Contacter 30 min avant</small></span></div>
-    <div class="freq"><span class="f">122.525</span><span><b>Aeromag Pad Control</b></span></div>
-    <div class="freq"><span class="f">123.125</span><span><b>ICEMAN</b></span></div>
-    <div class="ref">MANEX A 8.2.4.8, p. 8-10</div>
+    <h3>Fréquences — pad AeroMag (YUL)</h3>
+    <div class="freq"><span class="f">123.425</span><span><b>Montreal Deice</b><br><small style="color:var(--mut)">30 min avant le départ : type avion, fluide(s), surfaces à traiter</small></span></div>
+    <div class="freq"><span class="f">122.525</span><span><b>Aeromag Pad Control</b><br><small style="color:var(--mut)">Accès au pad, entrée et sortie</small></span></div>
+    <div class="freq"><span class="f">123.125</span><span><b>ICEMAN</b><br><small style="color:var(--mut)">Informations dégivrage</small></span></div>
+    <div class="freq"><span class="f" style="font-size:20px">122.075<br>122.275</span><span><b>Apron</b> (repoussage)<br><small style="color:var(--mut)">Ground 121.900 (ou 121.000 selon Apron)</small></span></div>
+    <div class="ref">MANEX A 8.2.4.8</div>
+  </div>
+  <div class="card">
+    <h3>Pas à pas</h3>
+    <ol class="notes" style="padding-left:20px">
+      <li>Au parking : Apron 122.075 / 122.275 pour le repoussage, puis roulage avec Ground 121.900 (ou 121.000).</li>
+      <li>TWY J ou K : arrêt avant le pad. TWY E : arrêt avant TWY H ou I. Contacter <b>Aeromag Pad Control 122.525</b>.</li>
+      <li>Suivre les instructions et les lignes de guidage jusqu'à la baie ; annoncer « brakes set » en position.</li>
+      <li>Sur instruction : <b>ICEMAN 123.125</b>, confirmer avion configuré pour le dégivrage, moteurs au ralenti.</li>
+      <li>Dégivrage moteurs tournants, sauf avis contraire d'ICEMAN.</li>
+      <li>Après inspection, ICEMAN confirme l'avion propre, donne l'<b>heure de début du HOT</b>, les fluides appliqués et que les véhicules sont en zone de sécurité.</li>
+      <li>Sur avis d'ICEMAN : Aeromag Pad Control 122.525. <b>Ne jamais bouger avant l'autorisation de Pad Control de sortir de la baie.</b></li>
+      <li>Sortie : instructions verbales confirmées par panneaux. Au point de sortie (J avant U, K avant C, H ou I avant E), Ground 121.900 / 121.000 seulement sur avis.</li>
+    </ol>
+    <div class="ref">MANEX A 8.2.4.8</div>
   </div>
   <div class="card">
     <h3>Fluides utilisés à YUL</h3>
     <p><b>Type I</b> — <span class="mono">CHEMCO CHEMR REG1</span></p>
     <p><b>Type IV</b> — <span class="mono">DOW UCAR ENDURANCE EG106</span></p>
-    <div class="infobox">Le fluide Type IV étant de marque connue, la table de marque du MANEX A (Tableaux 20 à 49) peut donner un HOT différent du Tableau 19 générique utilisé par le calculateur.</div>
+    <div class="infobox">Le Type IV étant de marque connue, sa table de marque (MANEX A, Tableau 37) peut donner un HOT différent du Tableau 20 générique utilisé par le calculateur.</div>
   </div>
 </section>
 
 <!-- ============ ABOUT ============ -->
 <section class="screen" id="s-about" data-title="À propos">
   <div class="brand"><div class="logo" style="font-size:34px">737 HOLDOVER</div><div class="sub">version __VERSION__</div></div>
-  <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (Rév. 36, tableaux FAA Winter 2025-2026). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
+  <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (TR 39-4 OCT.26, tableaux FAA Winter 2026-2027). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
   <div class="card">
     <h3>Source</h3>
-    <p>MANEX A Air Algérie, §8.2.4 « Dégivrage et antigivrage au sol » — Éd. 02, Rév. 36, NOV.25. Tableaux FAA Holdover Time Guidelines Winter 2025-2026.</p>
+    <p>MANEX A Air Algérie, §8.2.4 « Dégivrage et antigivrage au sol » — Éd. 02, TR 39-4, OCT.26. Tableaux FAA Holdover Time Guidelines Winter 2026-2027.</p>
     <p>Procédure pas à pas complétée par l'OPS INFO B737 « Cold Weather Operations » (CL-AH-DOA-DOC-B737-002 Éd. 06, NOV 22) et le FCOM 737-8D6 SP.16 « Cold Weather Operations ».</p>
-    <p>Tableaux intégrés : 1 (givre actif), 2 (Type I aluminium), 4 (Type II générique), 19 (Type IV générique), 50 (intensité de la neige), 51 et 52 (application des fluides).</p>
+    <p>Tableaux intégrés : 1 (givre actif), 2 (Type I aluminium), 4 (Type II générique), 20 (Type IV générique), 53 (intensité de la neige), 54 et 55 (application des fluides).</p>
     <p>Aucune valeur n'est interpolée : l'app lit la case du tableau, et retient la valeur basse (règle Air Algérie, 8.2.4.9 NOTE).</p>
   </div>
   <div class="card">
@@ -368,7 +383,7 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
 
 <script>
 "use strict";
-/* ================= DATA (MANEX A §8.2.4.9 — FAA HOT Winter 2025-2026) ================= */
+/* ================= DATA (MANEX A §8.2.4.9 — FAA HOT Winter 2026-2027) ================= */
 const D = __HOT_JSON__;
 
 /* Table references (MANEX A 8.2.4.9) */
@@ -376,10 +391,10 @@ const REF = {
   t1:{n:1,p:12,name:'Givre actif'},
   t2:{n:2,p:14,name:'Type I — aluminium'},
   t4:{n:4,p:17,name:'Type II générique'},
-  t19:{n:19,p:34,name:'Type IV générique'},
-  t50:{n:50,p:66,name:'Intensité de la neige'},
-  t51:{n:51,p:67,name:'Application Type I'},
-  t52:{n:52,p:68,name:'Application Type II/IV'}
+  t20:{n:20,p:35,name:'Type IV générique'},
+  t53:{n:53,p:69,name:'Intensité de la neige'},
+  t54:{n:54,p:70,name:'Application Type I'},
+  t55:{n:55,p:71,name:'Application Type II/IV'}
 };
 const refText = id => `MANEX A 8.2.4.9 — Tableau ${REF[id].n}, page ${REF[id].p}`;
 
@@ -410,10 +425,10 @@ function allowedConc(oat){
   return ['100/0'];
 }
 function concRefusal(conc, oat, coldWing){
-  if (conc==='50/50' && coldWing) return "Aile froide (givre/glace à l'intrados zone réservoirs) : pas de 50/50 Type II/IV pour l'antigivrage (Tableau 52).";
+  if (conc==='50/50' && coldWing) return "Aile froide (givre/glace à l'intrados zone réservoirs) : pas de 50/50 Type II/IV pour l'antigivrage (Tableau 55).";
   if (!allowedConc(oat).includes(conc)){
-    const r = D.table52_typeII_IV_application[t52Row(oat)];
-    return `À ${fmtC(oat)} (bande « ${r.oat} ») le Tableau 52 n'autorise que : ${r.one_step.replace('Type II/IV chauffé ','')}.`;
+    const r = D.table55_typeII_IV_application[t52Row(oat)];
+    return `À ${fmtC(oat)} (bande « ${r.oat} ») le Tableau 55 n'autorise que : ${r.one_step.replace('Type II/IV chauffé ','')}.`;
   }
   return null;
 }
@@ -421,7 +436,7 @@ function concRefusal(conc, oat, coldWing){
 /* Table 50 — snow intensity from prevailing visibility (never RVR) */
 function snowIntensity(visM, night, oat){
   const col = (night?2:0) + (oat>-1?1:0);
-  const rows = D.table50_snow_intensity.rows;
+  const rows = D.table53_snow_intensity.rows;
   let ri = rows.findIndex(r => r.vis_m_max===null || visM<=r.vis_m_max);
   return { intensity: rows[ri].v[col], row: ri, col };
 }
@@ -431,7 +446,7 @@ function computeHOT({fluid, conc, oat, key}){
   const R = {ok:false, fluid, conc, oat, key, notes:[], tableId:null, bandIdx:null, colIdx:null};
   const none = reason => Object.assign(R, {ok:false, reason});
   if (key==='OTHER') return none("Neige forte, granules de glace, pluie verglaçante modérée ou forte, grêle ou petite grêle : AUCUN HOT n'existe pour ces conditions.");
-  if (key==='SNOW_HEAVY') { R.tableId='t50'; return none("Neige FORTE (Tableau 50) : AUCUN HOT."); }
+  if (key==='SNOW_HEAVY') { R.tableId='t53'; return none("Neige FORTE (Tableau 53) : AUCUN HOT."); }
 
   if (key==='FROST'){
     const t = D.table1_active_frost; R.tableId='t1';
@@ -450,8 +465,8 @@ function computeHOT({fluid, conc, oat, key}){
     return Object.assign(R,{ok:true, hot:v, range:{min:v,max:v}, single:true});
   }
 
-  const tbl = fluid==='I' ? D.table2_typeI_aluminum : fluid==='II' ? D.table4_typeII_generic : D.table19_typeIV_generic;
-  R.tableId = fluid==='I' ? 't2' : fluid==='II' ? 't4' : 't19';
+  const tbl = fluid==='I' ? D.table2_typeI_aluminum : fluid==='II' ? D.table4_typeII_generic : D.table20_typeIV_generic;
+  R.tableId = fluid==='I' ? 't2' : fluid==='II' ? 't4' : 't20';
   R.notes.push(...tbl.notes);
   const ci = tbl.columns.indexOf(key);
   R.colIdx = ci;
@@ -461,7 +476,7 @@ function computeHOT({fluid, conc, oat, key}){
   if (fluid==='I') cell = b.values[ci];
   else {
     const row = b.rows[conc];
-    if (!row) return none(`Concentration ${conc} non prévue dans la bande « ${b.oat} » (Tableau 52).`);
+    if (!row) return none(`Concentration ${conc} non prévue dans la bande « ${b.oat} » (Tableau 55).`);
     cell = row[ci];
   }
   if ((key==='SN_RA_M' || key==='RA_COLDSOAK') && oat<=0)
@@ -642,19 +657,19 @@ function condKey(){
 
 const WHY = {
   fluid:`<p><b>Type I</b> : fluide fin, chauffé, HOT court. Le B737 a des surfaces critiques en aluminium → <b>Tableau 2</b>.</p>
-    <p><b>Type II / IV</b> : fluides épaissis, HOT plus long (Tableaux 4 et 19 génériques).</p>
-    <p><b>Type III</b> : non utilisé sur B737 dans cette app — sa table dépend de la marque (MANEX Tableaux 16-18).</p>
+    <p><b>Type II / IV</b> : fluides épaissis, HOT plus long (Tableaux 4 et 20 génériques).</p>
+    <p><b>Type III</b> : non utilisé sur B737 dans cette app — sa table dépend de la marque (MANEX Tableaux 17-19).</p>
     <p>En deux étapes, c'est le fluide de la <b>2e étape</b> qui compte pour le HOT.</p>`,
   oat:`<p>Les tableaux sont découpés en <b>bandes de température</b>. Une bande « sous -3 à -8 °C » couvre -8 ≤ OAT &lt; -3. À exactement -3 °C on est dans « -3 °C et au-dessus ».</p>
-    <p>L'OAT fixe aussi les concentrations autorisées en Type II/IV (Tableau 52).</p>
+    <p>L'OAT fixe aussi les concentrations autorisées en Type II/IV (Tableau 55).</p>
     <p><b>Givre actif de longue durée</b> : utiliser l'OAT la plus froide rencontrée depuis l'application.</p>`,
   conc:`<p><span class="mono">100/0</span> = 100 % fluide pur. <span class="mono">75/25</span> = 75 % fluide / 25 % eau. Plus le fluide est dilué, plus le HOT est court.</p>
-    <p>Tableau 52 : à -3 °C et au-dessus → 100/0, 75/25, 50/50 ; sous -3 à -14 °C → 100/0 ou 75/25 ; sous -14 °C → 100/0 seulement.</p>
+    <p>Tableau 55 : à -3 °C et au-dessus → 100/0, 75/25, 50/50 ; sous -3 à -14 °C → 100/0 ou 75/25 ; sous -14 °C → 100/0 seulement.</p>
     <p>Givre ou glace à l'intrados zone réservoirs (aile froide) → pas de 50/50.</p>`,
   cond:`<p>Choisissez la précipitation <b>réellement en cours</b>. Chaque condition = une colonne du tableau.</p>
     <p>Neige forte, granules de glace, FZRA modérée/forte, grêle → <b>aucun HOT</b> (en rouge).</p>
-    <p>Pour la neige, l'intensité ne se lit pas dans le METAR mais dans le <b>Tableau 50</b>, avec la visibilité.</p>`,
-  snow:`<p>Le Tableau 50 donne l'intensité à partir de la <b>visibilité dominante</b> (METAR/SPECI ou observée par l'équipage), du jour/nuit et de l'OAT.</p>
+    <p>Pour la neige, l'intensité ne se lit pas dans le METAR mais dans le <b>Tableau 53</b>, avec la visibilité.</p>`,
+  snow:`<p>Le Tableau 53 donne l'intensité à partir de la <b>visibilité dominante</b> (METAR/SPECI ou observée par l'équipage), du jour/nuit et de l'OAT.</p>
     <p><b>Jamais la RVR</b> : elle surestime la visibilité dans la neige.</p>
     <p>L'intensité du tableau <b>prime</b> sur celle du METAR.</p>`
 };
@@ -678,7 +693,7 @@ function renderCalc(){
     h += '<div class="choices">';
     [['I','Type I','Fluide fin, chauffé, HOT court · Tableau 2 (aluminium)'],
      ['II','Type II','Épaissi · Tableau 4 générique'],
-     ['IV','Type IV','Épaissi, HOT le plus long · Tableau 19 générique'],
+     ['IV','Type IV','Épaissi, HOT le plus long · Tableau 20 générique'],
      ['III','Type III','Non utilisé B737 — marque spécifique']].forEach(([v,t,d])=>{
       h += `<button class="choice ${S.fluid===v?'sel':''} ${v==='III'?'dis':''}" data-fluid="${v}"><span><b>${t}</b><small>${d}</small></span></button>`;
     });
@@ -690,7 +705,7 @@ function renderCalc(){
     h += `<div class="oatdisp">${S.oatStr===''?'<span style="color:var(--dim)">--</span>':esc(S.oatStr)}<span class="u"> °C</span></div>`;
     let band='';
     if (oat!==null){
-      const t = S.fluid==='I'?D.table2_typeI_aluminum:S.fluid==='II'?D.table4_typeII_generic:D.table19_typeIV_generic;
+      const t = S.fluid==='I'?D.table2_typeI_aluminum:S.fluid==='II'?D.table4_typeII_generic:D.table20_typeIV_generic;
       band = 'Bande : « '+t.bands[pickBand(t.bands,oat)].oat+' »';
       if (oat<-60||oat>40) band='<span style="color:var(--bad)">Valeur hors plage</span>';
     }
@@ -702,7 +717,7 @@ function renderCalc(){
 
   else if (step==='conc'){
     h += qhead('conc', label(), 'Quelle concentration ?');
-    h += `<p class="lead" style="margin-top:-4px">Type ${S.fluid} à ${fmtC(oat)} — Tableau 52</p>`;
+    h += `<p class="lead" style="margin-top:-4px">Type ${S.fluid} à ${fmtC(oat)} — Tableau 55</p>`;
     h += `<label class="toggle"><input type="checkbox" id="coldWing" ${S.coldWing?'checked':''}><span>Givre ou glace à l'<b>intrados</b> dans la zone des réservoirs (aile froide)</span></label>`;
     h += '<div class="choices">';
     [['100/0','100 % fluide · HOT maximum'],['75/25','75 % fluide / 25 % eau'],['50/50','50 % fluide / 50 % eau · HOT court']].forEach(([v,d])=>{
@@ -754,11 +769,11 @@ function updateSnow(){
   $('#snowOk').disabled=false;
   const si = snowIntensity(S.vis, S.night, oatVal());
   const fr = INT_FR[si.intensity];
-  let h = `<div class="intens ${si.intensity==='Heavy'?'h':''}">Intensité Tableau 50 : ${fr}</div>`;
+  let h = `<div class="intens ${si.intensity==='Heavy'?'h':''}">Intensité Tableau 53 : ${fr}</div>`;
   if (S.metarInt!==null && S.metarInt!==''){
     const mfr = {'-SN':'FAIBLE','SN':'MODÉRÉE','+SN':'FORTE'}[S.metarInt];
     if (mfr!==fr) h += `<div class="warnbox">METAR dit <b class="mono">${S.metarInt}</b>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.</div>`;
-    else h += `<div class="infobox">METAR <span class="mono">${S.metarInt}</span> et Tableau 50 concordent : <b>${fr}</b>.</div>`;
+    else h += `<div class="infobox">METAR <span class="mono">${S.metarInt}</span> et Tableau 53 concordent : <b>${fr}</b>.</div>`;
   }
   if (si.intensity==='Heavy') h += `<div class="badbox">Neige forte → <b>AUCUN HOT</b>.</div>`;
   h += t50Table(si);
@@ -767,8 +782,8 @@ function updateSnow(){
 }
 
 function t50Table(si){
-  const t = D.table50_snow_intensity;
-  let h = `<div class="mxref">${refText('t50')}</div><div class="tblwrap"><table class="mx"><thead><tr><th class="rh">Visibilité</th>${t.columns.map((c,j)=>`<th class="${j===si.col?'hc':''}">${c}</th>`).join('')}</tr></thead><tbody>`;
+  const t = D.table53_snow_intensity;
+  let h = `<div class="mxref">${refText('t53')}</div><div class="tblwrap"><table class="mx"><thead><tr><th class="rh">Visibilité</th>${t.columns.map((c,j)=>`<th class="${j===si.col?'hc':''}">${c}</th>`).join('')}</tr></thead><tbody>`;
   t.rows.forEach((r,i)=>{
     h += `<tr><th class="rh ${i===si.row?'hr':''}">${r.label}</th>${r.v.map((v,j)=>`<td class="${i===si.row&&j===si.col?'hx':''}">${INT_FR[v]}</td>`).join('')}</tr>`;
   });
@@ -794,7 +809,7 @@ function hotTable(R){
     });
     return h+'</tbody></table></div>';
   }
-  const tbl = R.tableId==='t2'?D.table2_typeI_aluminum:R.tableId==='t4'?D.table4_typeII_generic:D.table19_typeIV_generic;
+  const tbl = R.tableId==='t2'?D.table2_typeI_aluminum:R.tableId==='t4'?D.table4_typeII_generic:D.table20_typeIV_generic;
   let h=`<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">OAT${R.tableId!=='t2'?' · conc.':''}</th>${tbl.columns.map((c,j)=>`<th class="${j===R.colIdx?'hc':''}">${COL_SHORT[c]}</th>`).join('')}</tr></thead><tbody>`;
   tbl.bands.forEach((b,bi)=>{
     if (R.tableId==='t2'){
@@ -834,7 +849,7 @@ function renderResult(){
   if (S.cond==='SNOW'){
     const si = snowIntensity(S.vis, S.night, oat), fr=INT_FR[si.intensity];
     const mfr = S.metarInt ? {'-SN':'FAIBLE','SN':'MODÉRÉE','+SN':'FORTE'}[S.metarInt] : null;
-    h += `<div class="infobox">Neige : visibilité ${S.vis} m, ${S.night?'nuit':'jour'}, ${fmtC(oat)} → intensité <b>${fr}</b> (Tableau 50).${mfr && mfr!==fr?` METAR dit <span class="mono">${S.metarInt}</span>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.`:''}</div>`;
+    h += `<div class="infobox">Neige : visibilité ${S.vis} m, ${S.night?'nuit':'jour'}, ${fmtC(oat)} → intensité <b>${fr}</b> (Tableau 53).${mfr && mfr!==fr?` METAR dit <span class="mono">${S.metarInt}</span>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.`:''}</div>`;
   }
   if (S.cond==='SN_FZFG') h += `<div class="warnbox">Neige + FZFG : si la neige est forte → aucun HOT.</div>`;
   if (R.ok && toMin(R.hot)>0){
@@ -844,7 +859,7 @@ function renderResult(){
   }
   h += `<div class="card"><h3>Voici la case du MANEX</h3>`;
   if (R.tableId){ h += `<div class="mxref">${refText(R.tableId)}${R.tableId==='t1'?' — '+(S.fluid==='I'?'Type I':'Type '+S.fluid):''}</div>`; }
-  if (R.tableId==='t50'){ h += t50Table(snowIntensity(S.vis,S.night,oat)); }
+  if (R.tableId==='t53'){ h += t50Table(snowIntensity(S.vis,S.night,oat)); }
   else if (R.tableId){ h += hotTable(R); h += `<p style="font-size:13px;color:var(--mut)">Case surlignée = ligne (OAT${S.fluid!=='I'?' + concentration':''}) × colonne (condition). Faites défiler le tableau horizontalement.</p>`; }
   else { h += `<div class="infobox">${esc(D.conditions.OTHER)}</div>`; }
   h += '</div>';
@@ -858,7 +873,7 @@ $('#calcBody').addEventListener('click', e=>{
   const t = e.target.closest('button,input'); if (!t) return;
   if (t.dataset.why){ $('#why-'+t.dataset.why).classList.toggle('on'); return; }
   if (t.dataset.fluid){
-    if (t.dataset.fluid==='III'){ $('#t3msg').innerHTML = `<div class="warnbox"><b>Type III : non utilisé B737</b> — marque spécifique, voir MANEX Tableaux 16-18.</div>`; return; }
+    if (t.dataset.fluid==='III'){ $('#t3msg').innerHTML = `<div class="warnbox"><b>Type III : non utilisé B737</b> — marque spécifique, voir MANEX Tableaux 17-19.</div>`; return; }
     if (S.fluid!==t.dataset.fluid){ S.conc=null; }
     S.fluid=t.dataset.fluid; if (S.fluid==='I') S.conc=null; next(); return;
   }
@@ -918,7 +933,7 @@ function startTimer(hm, minM, maxM, label, ref){
   T = {start:startDate(hm), hm, minM, maxM, label, ref, warned:false, alerted:false};
   store.set('hot.timer', T); keepAwake(); ensureTick();
 }
-function stopTimer(){ T=null; store.set('hot.timer', null); $('#tbanner').classList.remove('on'); releaseAwake(); renderTimer(); }
+function stopTimer(){ T=null; store.set('hot.timer', null); $('#tbBtn').hidden=true; releaseAwake(); renderTimer(); }
 function beep(n=3, f=880){
   try{
     if (!audioCtx) return; const t0=audioCtx.currentTime;
@@ -934,11 +949,11 @@ const fmtClock = ms => { const s=Math.max(0,Math.round(Math.abs(ms)/1000)), h=Ma
 const hmUTC = ms => { const d=new Date(ms); return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0'); };
 
 function tick(){
-  if (!T){ $('#tbanner').classList.remove('on'); return; }
+  if (!T){ $('#tbBtn').hidden=true; return; }
   const now=Date.now(), end=T.start+T.minM*60000, rem=end-now;
   const state = rem<=0 ? 'bad' : rem<=5*60000 ? 'warn' : '';
-  const b=$('#tbBtn'); b.className=state; $('#tbanner').classList.toggle('on', location.hash!=='#timer');
-  $('#tbLabel').textContent = rem<=0 ? 'HOT DÉPASSÉ' : (now<T.start ? 'HOT démarre à '+T.hm : 'HOT restant');
+  const b=$('#tbBtn'); b.className=state; b.hidden = location.hash==='#timer';
+  $('#tbLabel').textContent = rem<=0 ? 'HOT DÉPASSÉ' : (now<T.start ? 'DÉBUT '+T.hm : 'HOT');
   $('#tbTime').textContent = (rem<=0?'+':'') + fmtClock(now<T.start ? T.minM*60000 : rem);
   if (!T.warned && rem<=5*60000 && rem>0 && T.minM>5){ T.warned=true; store.set('hot.timer',T); beep(1,660); try{navigator.vibrate&&navigator.vibrate(300);}catch(e){} }
   if (!T.alerted && rem<=0){ T.alerted=true; store.set('hot.timer',T); beep(4,880); try{navigator.vibrate&&navigator.vibrate([500,200,500,200,500]);}catch(e){} $('#alarm').classList.add('on'); }
@@ -977,12 +992,17 @@ function updateTimerView(now, rem, state){
 }
 
 /* ================= PROCEDURE ================= */
-const DIALOG = [
-  ['gnd','GROUND','Confirm aircraft configured for de-icing / anti-icing.'],
-  ['crew','CREW','Aircraft configured. Request Type I / II / IV, Wings and Flight Control surfaces, Engines.'],
-  ['gnd','GROUND','Starting de-icing now.'],
-  ['gnd','GROUND','De-icing complete Type II/75 at 1650. Personnel and equipment clear.'],
-  ['crew','CREW','Type II/75 at 1650, copied.']
+const DIALOG = [  /* MANEX A 8.2.4.8 */
+  ['crew','CREW','Ground, this is AIR ALGERIE 7T Vxx.'],
+  ['gnd','GROUND','AIR ALGERIE 7T Vxx this is ground, what type of de/anti-icing required?'],
+  ['crew','CREW','Request: Type I (or II or IV) de (anti) icing, Wings and Flight Control surfaces… Engines*.'],
+  ['gnd','GROUND','AIR ALGERIE Vxx copy it: Type I (or II), Wings…, Engines… We will advise you when the de (anti) icing operation is over.'],
+  ['crew','CREW','Roger, standing by.'],
+  ['gnd','GROUND','AIR ALGERIE Vxx, we are beginning the de-icing.'],
+  ['gnd','GROUND','AIR ALGERIE Vxx, the de (anti) icing is complete (Type II/75/ at 1650).'],
+  ['crew','CREW','Roger, Type II/75/ at 1650.'],
+  ['gnd','GROUND','Ground material is removed, stand by for the visual signal.'],
+  ['crew','CREW','Standing by for visual signal.']
 ];
 /* Sources : MANEX A §8.2.4 · OPS INFO B737 « Cold Weather Operations » (CL-AH-DOA-DOC-B737-002 Éd.06 NOV22, p.7-9)
    · FCOM 737-8D6 ALG SP.16 « Cold Weather Operations ». Item : texte simple, ou [élément, action, qui, note]. */
@@ -1046,14 +1066,14 @@ function renderProc(){
     const all = p.items.every((_,j)=>checks[i+'.'+j]);
     h += `<div class="pstep ${all?'done':''}" data-n="${i+1}"><h3>${p.t} <span class="ref">${p.r}</span></h3>`;
     if (p.dialog){
-      h += `<p style="font-size:14px;color:var(--mut);margin:0 0 8px">Dialogue type CREW / GROUND — le texte de référence est au MANEX A 8.2.4.8.</p><button class="btn block" id="listenBtn">🎧 Mode écoute</button><div class="dlg" id="dlg"></div>`;
+      h += `<p style="font-size:14px;color:var(--mut);margin:0 0 8px">Dialogue CREW / GROUND du MANEX A 8.2.4.8. * Coordonner avec le personnel au sol l'état des moteurs (tournants ou non).</p><button class="btn block" id="listenBtn">🎧 Mode écoute</button><div class="dlg" id="dlg"></div>`;
     }
     h += p.items.map((it,j)=>{ const k=i+'.'+j; return `<label class="chk ${checks[k]?'on':''} ${p.crit?'crit':''}"><input type="checkbox" data-chk="${k}" ${checks[k]?'checked':''}>${itemHTML(it)}</label>`; }).join('');
     if (p.calc) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#calc">Calculateur HOT</a></div>`;
     if (p.after) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#decode">Décoder le code</a><a class="btn" href="#timer">Minuteur</a></div>`;
     h += '</div>';
   });
-  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">Pièges <span class="ref">MANEX 8.2.4.6.5 · Tableau 52 · ${FC}</span></h3>
+  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">Pièges <span class="ref">MANEX 8.2.4.6.5 · Tableau 55 · ${FC}</span></h3>
     <div class="warnbox">Ne jamais remettre un antigivrant froid sur une couche existante : nettoyer d'abord au mélange chaud.</div>
     <div class="warnbox">Pare-brise : enlever toute trace de Type II/IV — ne pas utiliser les essuie-glaces pour cela.</div>
     <div class="warnbox"><b>Verglas d'aile froide</b> (glace transparente) quand beaucoup de carburant froid reste dans les réservoirs, même jusqu'à +15 °C OAT.</div>
@@ -1081,7 +1101,7 @@ function renderDecode(){
   const d=decodeCode(v); lastDec=d;
   if (!d.fluid){ out.innerHTML=`<div class="warnbox">Type de fluide non reconnu. Format attendu : <span class="mono">Type IV/75 1432</span>.</div>`; return; }
   let h='<div class="card dec">';
-  if (d.fluid==='III'){ out.innerHTML=`<div class="warnbox"><b>Type III</b> : non utilisé B737 — marque spécifique, voir MANEX Tableaux 16-18.</div>`; return; }
+  if (d.fluid==='III'){ out.innerHTML=`<div class="warnbox"><b>Type III</b> : non utilisé B737 — marque spécifique, voir MANEX Tableaux 17-19.</div>`; return; }
   h += `<div><span class="hl">Type ${d.fluid}</span>`;
   if (d.fluid==='I') h += ` — mélange eau/glycol chauffé (une concentration plus forte n'allonge pas le HOT)`;
   else if (d.conc){ const [a,b]=d.conc.split('/'); h += `, <span class="hl">${a} % fluide / ${b} % eau</span>`; }
@@ -1103,13 +1123,13 @@ $('#decQuick').addEventListener('click', e=>{ if(e.target.tagName==='BUTTON'){ $
 
 /* ================= QUIZ ================= */
 const QUIZ = [
-  {q:'METAR « 1600 -SN M06 », de nuit. Quelle intensité de neige retenir ?', o:['Faible (comme le METAR)','Modérée','Forte','Très faible'], a:1, e:'Tableau 50 : 1600 m, nuit, OAT ≤ -1 °C → MODÉRÉE. Le tableau prime sur le METAR.', r:'Tableau 50'},
-  {q:'Même cas (1600 m, nuit, -6 °C, neige), Type IV 100/0. Quel HOT retenir ?', o:['0:25','0:45','0:25–0:45, au choix','0:15'], a:0, e:'Tableau 19, bande sous -3 à -8 °C, 100/0, neige modérée : 0:25–0:45. Règle Air Algérie : on retient la valeur basse, 0:25.', r:'Tableau 19 · 8.2.4.9 NOTE'},
+  {q:'METAR « 1600 -SN M06 », de nuit. Quelle intensité de neige retenir ?', o:['Faible (comme le METAR)','Modérée','Forte','Très faible'], a:1, e:'Tableau 53 : 1600 m, nuit, OAT ≤ -1 °C → MODÉRÉE. Le tableau prime sur le METAR.', r:'Tableau 53'},
+  {q:'Même cas (1600 m, nuit, -6 °C, neige), Type IV 100/0. Quel HOT retenir ?', o:['0:25','0:45','0:25–0:45, au choix','0:15'], a:0, e:'Tableau 20, bande sous -3 à -8 °C, 100/0, neige modérée : 0:25–0:45. Règle Air Algérie : on retient la valeur basse, 0:25.', r:'Tableau 20 · 8.2.4.9 NOTE'},
   {q:'Procédure en deux étapes : quand démarre le HOT ?', o:['Au début de la 1re étape','À la fin de la 2e étape','Au début de la 2e étape','À la mise en route'], a:2, e:'Le HOT démarre au début de la 2e étape (antigivrage).', r:'8.2.4.5'},
   {q:'Pluie verglaçante modérée (FZRA). Quel HOT ?', o:['Celui de la colonne -FZRA','Aucun HOT','La moitié du HOT -FZRA','0:05'], a:1, e:'Pluie verglaçante modérée et forte : aucun HOT.', r:'8.2.4.9 — conditions « Other »'},
   {q:'Deux étapes : Type I puis Type IV/75. Quel fluide noter à l\'ATL ?', o:['Type I','Type IV/75 (2e étape)','Les deux, sans mélange','Aucun'], a:1, e:'On note le fluide de la 2e étape, son mélange et l\'heure de début.', r:'8.2.4.7.3'},
   {q:'Le HOT est dépassé avant l\'alignement. Peut-on décoller ?', o:['Non, jamais','Oui, si moins de 5 min de dépassement','Oui, seulement après contrôle des surfaces critiques et en l\'absence de doute','Oui, le HOT n\'est qu\'un repère'], a:2, e:'HOT dépassé ou doute → contrôle des surfaces critiques par une personne qualifiée juste avant la piste. Doute sur un dépôt → pas de décollage.', r:'8.2.4.6.1'},
-  {q:'Type IV 50/50 à -5 °C ?', o:['Autorisé','Refusé : sous -3 à -14 °C seulement 100/0 ou 75/25','Autorisé si deux étapes','Autorisé de jour'], a:1, e:'Tableau 52 : sous -3 à -14 °C, Type II/IV en 100/0 ou 75/25 uniquement.', r:'Tableau 52'},
+  {q:'Type IV 50/50 à -5 °C ?', o:['Autorisé','Refusé : sous -3 à -14 °C seulement 100/0 ou 75/25','Autorisé si deux étapes','Autorisé de jour'], a:1, e:'Tableau 55 : sous -3 à -14 °C, Type II/IV en 100/0 ou 75/25 uniquement.', r:'Tableau 55'},
   {q:'Type I, -2 °C, neige faible. Quel HOT ?', o:['0:18','0:11','0:06','0:45'], a:1, e:'Tableau 2, -3 °C et au-dessus, neige faible : 0:11–0:18 → 0:11.', r:'Tableau 2'},
   {q:'Type II 75/25, -12 °C, pluie verglaçante faible. Quel HOT ?', o:['0:09','0:20','Aucun HOT','0:15'], a:2, e:'FZDZ et -FZRA : aucun HOT sous -10 °C en Type II/IV. (À -10 °C exactement : 0:09.)', r:'Tableau 4'},
   {q:'Givre actif, Type IV 100/0, -12 °C. Quel HOT ?', o:['8:00','2:00','6:00','0:45'], a:2, e:'Tableau 1, bande sous -10 à -14 °C, Type IV 100/0 : 6:00.', r:'Tableau 1'}

@@ -15,7 +15,7 @@ App pédagogique **B737 NG/MAX — dégivrage / antigivrage et Holdover Time (HO
 | Fichier | Rôle |
 |---|---|
 | `src/app.html` | Gabarit de l'app (HTML/CSS/JS) |
-| `data/hot_tables_manexA_2025-2026.json` | Tableaux MANEX (source unique des valeurs) |
+| `data/hot_tables_manexA_2026-2027.json` | Tableaux MANEX (source unique des valeurs) |
 | `src/fonts/` | Cinzel (sous-ensemble), Orbitron, Share Tech Mono |
 | `tools/build.py` | Assemble `index.html` et `sw.js` |
 | `tools/make_icons.js` | Génère les icônes PWA (Playwright) |
