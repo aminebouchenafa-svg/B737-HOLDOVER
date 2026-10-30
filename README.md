@@ -20,12 +20,16 @@ App pédagogique **B737 NG/MAX — dégivrage / antigivrage et Holdover Time (HO
 | `tools/build.py` | Assemble `index.html` et `sw.js` |
 | `tools/make_icons.js` | Génère les icônes PWA (Playwright) |
 | `tests/run_tests.js` | Tests du cahier des charges §6 + parcours UI (Playwright) |
+| `tests/check_english.js` | Parcourt l'app en anglais et signale tout texte français restant |
 
 ```
 node tools/make_icons.js   # seulement si l'icône change
 python3 tools/build.py
 node tests/run_tests.js
+node tests/check_english.js
 ```
+
+**Langues** : bouton FR | EN dans l'en-tête (choix mémorisé). Les textes sont dans `src/app.html` sous la forme `tr('français','English')` ou `{fr:…, en:…}` ; les textes fixes de la page sont dans l'objet `I18N`.
 
 Prepared by CPT M.A BOUCHENAFA
 Fleet Training Manager B737NG/MAX

@@ -277,6 +277,10 @@ main{padding-bottom:calc(104px + var(--sab))}
 
 body.calm #sky i{animation-play-state:paused}
 .card,.hitem{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(11,19,31,.86)}
+.lang{flex:none;display:flex;padding:0;min-height:40px;border:1px solid rgba(160,210,255,.25);border-radius:10px;overflow:hidden;background:rgba(6,24,38,.55);cursor:pointer}
+.lang span{display:flex;align-items:center;padding:0 9px;font-family:var(--mono);font-size:13px;color:var(--mut);transition:background-color .2s,color .2s}
+.lang span.on{background:var(--ice);color:#001018;font-weight:700;box-shadow:0 0 12px var(--iceglow)}
+.lang:active{box-shadow:0 0 0 1px var(--ice),0 0 22px rgba(95,216,255,.5)}
 /* --- touch halo (bleu glacier) --- */
 .tile,.choice,.btn,.chk,.qopt,.hitem,.status,.keypad button,.chips button,.seg button,.why,.back,#tbBtn,.utc{transition:box-shadow .18s ease,border-color .18s ease,transform .12s ease,background-color .18s ease}
 .tile:active,.choice:not(.dis):active,.btn:not(:disabled):active,.chk:active,.qopt:active,.hitem:active,a.status:active,.keypad button:active,.chips button:active,.seg button:active,.why:active,.back:active,.crumb:active{
@@ -364,7 +368,7 @@ body.calm #sky i{animation-play-state:paused}
 
 <div id="splash" role="button" aria-label="Passer l'introduction">
   <canvas id="snow" aria-hidden="true"></canvas>
-  <div class="sp-skip">toucher pour passer</div>
+  <div class="sp-skip" data-t="skip">toucher pour passer</div>
   <div class="sp-inner">
     <h1 class="wic"><span>Winter is</span><span>Coming</span></h1>
     <div class="sp-sub">B737 NG/MAX · De-icing &amp; Holdover Time · MANEX A §8.2.4</div>
@@ -379,72 +383,74 @@ body.calm #sky i{animation-play-state:paused}
   <h1 id="title">737 HOLDOVER</h1>
   <button id="tbBtn" hidden aria-label="Minuteur HOT"><span id="tbLabel">HOT</span> <span id="tbTime">--:--</span></button>
   <button class="home-btn" id="homeBtn" hidden>ACCUEIL</button>
+  <button class="lang" id="langBtn" aria-label="Langue / Language"><span data-l="fr">FR</span><span data-l="en">EN</span></button>
   <span class="utc" id="utcClock" aria-label="Heure UTC">--:--<b>UTC</b></span>
 </header>
 
 <main>
 <!-- ============ HOME ============ -->
-<section class="screen" id="s-home" data-title="737 HOLDOVER">
+<section class="screen" id="s-home" data-title="737 HOLDOVER" data-title-en="737 HOLDOVER">
   <div class="hello">
     <div><div class="greet" id="hGreet">Bonjour</div><div class="hdate" id="hDate"></div></div>
     <div class="bigutc"><span class="mono" id="hUtc">--:--</span><small>UTC</small></div>
   </div>
   <div id="hStatus"></div>
-  <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (TR 39-4 OCT.26, tableaux FAA Winter 2026-2027). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
+  <div class="disclaimer" data-t="disc"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (TR 39-4 OCT.26, tableaux FAA Winter 2026-2027). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
   <div id="hHist"></div>
-  <h2 class="sect">Outils</h2>
+  <h2 class="sect" data-t="tools">Outils</h2>
   <div class="tiles">
-    <a class="tile hero" href="#calc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span><b>Calculateur HOT</b><small>4 questions → le HOT et la case exacte du MANEX</small></span></a>
-    <a class="tile" href="#learn"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3"/><path d="M20 5v13h-6"/></svg></span><span><b>Comprendre en 2 minutes</b><small>Les 7 idées à retenir</small></span></a>
-    <a class="tile" href="#proc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span><span><b>La procédure pas à pas</b><small id="tProc">Du parking au décollage, à cocher</small></span></a>
-    <a class="tile" href="#decode"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span><span><b>Décoder l'annonce du sol</b><small>« Type IV/75 1432 » → en clair</small></span></a>
+    <a class="tile hero" href="#calc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span><b data-t="t_calc_b">Calculateur HOT</b><small data-t="t_calc_s">4 questions → le HOT et la case exacte du MANEX</small></span></a>
+    <a class="tile" href="#learn"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3"/><path d="M20 5v13h-6"/></svg></span><span><b data-t="t_learn_b">Comprendre en 2 minutes</b><small data-t="t_learn_s">Les 7 idées à retenir</small></span></a>
+    <a class="tile" href="#proc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span><span><b data-t="t_proc_b">La procédure pas à pas</b><small id="tProc">Du parking au décollage, à cocher</small></span></a>
+    <a class="tile" href="#decode"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span><span><b data-t="t_dec_b">Décoder l'annonce du sol</b><small data-t="t_dec_s">« Type IV/75 1432 » → en clair</small></span></a>
     <a class="tile" href="#quiz"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></svg></span><span><b>Quiz</b><small id="tQuiz">10 cas pratiques tirés du MANEX</small></span></a>
-    <a class="tile" href="#yul"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b>Montréal YUL</b><small>Pad AeroMag : fréquences et fluides</small></span></a>
-    <a class="tile" href="#timer"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span><span><b>Minuteur HOT</b><small>Compte à rebours depuis l'heure annoncée</small></span></a>
-    <a class="tile" href="#about"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg></span><span><b>À propos</b><small>Source, version, auteur</small></span></a>
+    <a class="tile" href="#yul"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b data-t="t_yul_b">Montréal YUL</b><small data-t="t_yul_s">Pad AeroMag : fréquences et fluides</small></span></a>
+    <a class="tile" href="#timer"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span><span><b data-t="t_timer_b">Minuteur HOT</b><small data-t="t_timer_s">Compte à rebours depuis l'heure annoncée</small></span></a>
+    <a class="tile" href="#about"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg></span><span><b data-t="t_about_b">À propos</b><small data-t="t_about_s">Source, version, auteur</small></span></a>
   </div>
   <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
 </section>
 
 <!-- ============ LEARN ============ -->
-<section class="screen" id="s-learn" data-title="Comprendre en 2 min">
-  <p class="lead">Une idée par carte. Lisez-les dans l'ordre.</p>
+<section class="screen" id="s-learn" data-title="Comprendre en 2 min" data-title-en="Understand in 2 min">
+  <p class="lead" data-t="learn_lead">Une idée par carte. Lisez-les dans l'ordre.</p>
   <div id="learnCards"></div>
-  <a class="btn primary block" href="#calc">Passer au calculateur HOT</a>
+  <a class="btn primary block" href="#calc" data-t="learn_btn">Passer au calculateur HOT</a>
 </section>
 
 <!-- ============ CALC ============ -->
-<section class="screen" id="s-calc" data-title="Calculateur HOT">
+<section class="screen" id="s-calc" data-title="Calculateur HOT" data-title-en="HOT calculator">
   <div id="calcBody"></div>
 </section>
 
 <!-- ============ TIMER ============ -->
-<section class="screen" id="s-timer" data-title="Minuteur HOT">
+<section class="screen" id="s-timer" data-title="Minuteur HOT" data-title-en="HOT timer">
   <div id="timerBody"></div>
 </section>
 
 <!-- ============ PROCEDURE ============ -->
-<section class="screen" id="s-proc" data-title="Procédure pas à pas">
-  <p class="lead">Cochez au fur et à mesure. Les cases sont mémorisées sur cet appareil.</p>
+<section class="screen" id="s-proc" data-title="Procédure pas à pas" data-title-en="Step-by-step procedure">
+  <p class="lead" data-t="proc_lead">Cochez au fur et à mesure. Les cases sont mémorisées sur cet appareil.</p>
   <div id="procBody"></div>
-  <button class="btn ghost block" id="procReset">Tout décocher</button>
+  <button class="btn ghost block" id="procReset" data-t="proc_reset">Tout décocher</button>
 </section>
 
 <!-- ============ DECODE ============ -->
-<section class="screen" id="s-decode" data-title="Décoder l'annonce">
-  <p class="lead">Tapez le code annoncé par le sol (ex. <span class="mono">Type IV/75 1432</span>).</p>
+<section class="screen" id="s-decode" data-title="Décoder l'annonce" data-title-en="Decode the call">
+  <p class="lead" data-t="dec_lead">Tapez le code annoncé par le sol (ex. <span class="mono">Type IV/75 1432</span>).</p>
   <input class="txt" id="decIn" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Type IV/75 1432">
   <div class="chips" id="decQuick"></div>
   <div id="decOut"></div>
 </section>
 
 <!-- ============ QUIZ ============ -->
-<section class="screen" id="s-quiz" data-title="Quiz">
+<section class="screen" id="s-quiz" data-title="Quiz" data-title-en="Quiz">
   <div id="quizBody"></div>
 </section>
 
 <!-- ============ YUL ============ -->
-<section class="screen" id="s-yul" data-title="Montréal YUL">
+<section class="screen" id="s-yul" data-title="Montréal YUL" data-title-en="Montreal YUL">
+<div data-t="yul">
   <div class="card">
     <h3>Fréquences — pad AeroMag (YUL)</h3>
     <div class="freq"><span class="f">123.425</span><span><b>Montreal Deice</b><br><small style="color:var(--mut)">30 min avant le départ : type avion, fluide(s), surfaces à traiter</small></span></div>
@@ -473,10 +479,12 @@ body.calm #sky i{animation-play-state:paused}
     <p><b>Type IV</b> — <span class="mono">DOW UCAR ENDURANCE EG106</span></p>
     <div class="infobox">Le Type IV étant de marque connue, sa table de marque (MANEX A, Tableau 37) peut donner un HOT différent du Tableau 20 générique utilisé par le calculateur.</div>
   </div>
+</div>
 </section>
 
 <!-- ============ ABOUT ============ -->
-<section class="screen" id="s-about" data-title="À propos">
+<section class="screen" id="s-about" data-title="À propos" data-title-en="About">
+<div data-t="about">
   <div class="brand"><div class="logo" style="font-size:34px">737 HOLDOVER</div><div class="sub">version 2026-10-30</div></div>
   <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (TR 39-4 OCT.26, tableaux FAA Winter 2026-2027). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
   <div class="card">
@@ -491,22 +499,23 @@ body.calm #sky i{animation-play-state:paused}
     <p>Toutes les données et polices sont dans l'app. Sur iPhone / iPad : Safari → Partager → « Sur l'écran d'accueil ».</p>
   </div>
   <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
+</div>
 </section>
 </main>
 
 <nav class="tabbar" id="tabbar" aria-label="Navigation">
-  <a href="#home" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span>Accueil</span></a>
+  <a href="#home" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span data-t="tab_home">Accueil</span></a>
   <a href="#calc" data-tab="calc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></svg><span>HOT</span></a>
-  <a href="#timer" data-tab="timer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg><span>Minuteur</span><i class="badge" id="tabBadge"></i></a>
-  <a href="#proc" data-tab="proc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg><span>Procédure</span></a>
-  <a href="#decode" data-tab="decode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.3" fill="currentColor"/></svg><span>Décoder</span></a>
+  <a href="#timer" data-tab="timer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg><span data-t="tab_timer">Minuteur</span><i class="badge" id="tabBadge"></i></a>
+  <a href="#proc" data-tab="proc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg><span data-t="tab_proc">Procédure</span></a>
+  <a href="#decode" data-tab="decode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.3" fill="currentColor"/></svg><span data-t="tab_dec">Décoder</span></a>
 </nav>
 
 <div id="alarm" role="alertdialog" aria-live="assertive" aria-labelledby="alarmT">
-  <h2 id="alarmT">HOT DÉPASSÉ</h2>
-  <p>Contrôle des surfaces critiques par une personne qualifiée juste avant d'entrer sur la piste. Au moindre doute sur un dépôt pouvant affecter les performances : <b>pas de décollage</b>.</p>
+  <h2 id="alarmT" data-t="al_t">HOT DÉPASSÉ</h2>
+  <p data-t="al_p">Contrôle des surfaces critiques par une personne qualifiée juste avant d'entrer sur la piste. Au moindre doute sur un dépôt pouvant affecter les performances : <b>pas de décollage</b>.</p>
   <p class="mono" style="font-size:13px;color:#ff9aa5">MANEX A 8.2.4.6.1</p>
-  <button class="btn primary" id="alarmOk" style="margin-top:14px;min-width:200px">COMPRIS</button>
+  <button class="btn primary" id="alarmOk" style="margin-top:14px;min-width:200px" data-t="al_ok">COMPRIS</button>
 </div>
 
 <script>
@@ -514,26 +523,54 @@ body.calm #sky i{animation-play-state:paused}
 /* ================= DATA (MANEX A §8.2.4.9 — FAA HOT Winter 2026-2027) ================= */
 const D = {"source":"MANEX A Air Algérie, §8.2.4.9 — FAA Holdover Time Guidelines Winter 2026-2027 (Éd. 02, TR 39-4, OCT.26). Tableaux 1, 2, 4 inchangés (pages NOV.25 maintenues) ; Tableaux 20 et 53 mis à jour. Valeurs vérifiées sur les pages 12, 14, 17, 35, 69, 70, 71.","aircraft_note":"B737 NG/MAX : surfaces critiques principalement en aluminium → Type I = Tableau 2 (aluminium).","rule_shortest_time":"MANEX 8.2.4.9 NOTE : seul le temps le plus court de la case doit être utilisé pour juger l'état des surfaces ; une inspection prévol n'est pas requise si le décollage peut s'effectuer durant cette période. HOT toujours utilisé conjointement avec l'inspection d'une personne qualifiée.","hot_start":"Le HOT commence au début de l'application (procédure en une étape) ou au début de la 2e étape (procédure en deux étapes). L'heure notée à l'ATL débute le temps de protection (8.2.4.5, 8.2.4.7.3).","conditions":{"FZFG":"Brouillard givrant, bruine/brume givrante (freezing mist) ou cristaux de glace","SN_FZFG":"Neige mêlée de brouillard givrant","SN_VL":"Neige / grains de neige / neige en granules — très faible","SN_L":"Neige / grains / granules — faible","SN_M":"Neige / grains / granules — modérée","SN":"Neige / grains de neige / neige en granules (Type II : colonne unique, intensité ≤ modérée)","FZDZ":"Bruine verglaçante (faible, modérée, forte). Si non identifiée avec certitude : utiliser pluie verglaçante faible","FZRA_L":"Pluie verglaçante faible","SN_RA_M":"Neige modérée mêlée de pluie (si neige très faible/faible + pluie/bruine : utiliser pluie verglaçante faible). Aucun HOT à 0 °C et en dessous","RA_COLDSOAK":"Pluie sur aile froide (cold-soaked wing). Aucun HOT à 0 °C et en dessous","OTHER":"Neige forte, granules de glace, pluie verglaçante modérée et forte, grêle et petite grêle → AUCUN HOT"},"table1_active_frost":{"title":"Tableau 1 — Givre actif (active frost)","typeI":{"aluminum":"0:45","composite":"0:35","note":"toutes températures jusqu'au LOUT"},"bands":[{"oat":"-1 °C et au-dessus","min_c":-1,"rows":{"100/0":["8:00","2:00","12:00"],"75/25":["5:00","1:00","5:00"],"50/50":["2:00","0:30","3:00"]}},{"oat":"sous -1 à -3 °C","min_c":-3,"rows":{"100/0":["8:00","2:00","12:00"],"75/25":["5:00","1:00","5:00"],"50/50":["1:30","0:30","3:00"]}},{"oat":"sous -3 à -10 °C","min_c":-10,"rows":{"100/0":["8:00","2:00","10:00"],"75/25":["4:00","1:00","5:00"]}},{"oat":"sous -10 à -14 °C","min_c":-14,"rows":{"100/0":["6:00","2:00","6:00"],"75/25":["1:00","1:00","1:00"]}},{"oat":"sous -14 à -21 °C","min_c":-21,"rows":{"100/0":["3:00","2:00","6:00"]}},{"oat":"sous -21 à -25 °C","min_c":-25,"rows":{"100/0":["2:00","2:00","4:00"]}},{"oat":"sous -25 °C","min_c":null,"rows":{},"note":"Aucun HOT"}],"columns":["Type II","Type III","Type IV"],"notes":["Type I : point de congélation du mélange au moins 10 °C sous l'OAT","Respecter le LOUT","Givre de longue durée : utiliser la bande de l'OAT la plus froide rencontrée entre l'application et le décollage","Type III : la marque doit être connue (AllClear AeroClear MAX, appliqué non chauffé)"]},"table2_typeI_aluminum":{"title":"Tableau 2 — Type I, surfaces aluminium (B737)","columns":["FZFG","SN_FZFG","SN_VL","SN_L","SN_M","FZDZ","FZRA_L","SN_RA_M","RA_COLDSOAK"],"bands":[{"oat":"-3 °C et au-dessus","min_c":-3,"values":[{"min":"0:11","max":"0:17"},{"min":"0:06","max":"0:11"},{"min":"0:18","max":"0:22"},{"min":"0:11","max":"0:18"},{"min":"0:06","max":"0:11"},{"min":"0:09","max":"0:13"},{"min":"0:02","max":"0:05"},{"min":"0:02","max":"0:02"},{"min":"0:02","max":"0:05"}]},{"oat":"sous -3 à -6 °C","min_c":-6,"values":[{"min":"0:08","max":"0:13"},{"min":"0:05","max":"0:08"},{"min":"0:14","max":"0:17"},{"min":"0:08","max":"0:14"},{"min":"0:05","max":"0:08"},{"min":"0:05","max":"0:09"},{"min":"0:02","max":"0:05"},null,null]},{"oat":"sous -6 à -10 °C","min_c":-10,"values":[{"min":"0:06","max":"0:10"},{"min":"0:04","max":"0:06"},{"min":"0:11","max":"0:13"},{"min":"0:06","max":"0:11"},{"min":"0:04","max":"0:06"},{"min":"0:04","max":"0:07"},{"min":"0:02","max":"0:05"},null,null]},{"oat":"sous -10 °C","min_c":null,"values":[{"min":"0:05","max":"0:09"},{"min":"0:02","max":"0:04"},{"min":"0:07","max":"0:08"},{"min":"0:04","max":"0:07"},{"min":"0:02","max":"0:04"},null,null,null,null]}],"notes":["Mélange Type I : point de congélation au moins 10 °C sous l'OAT","Respecter le LOUT","Concentration plus forte de Type I n'augmente pas le HOT (MANEX 8.2.4.4.1)"]},"table4_typeII_generic":{"title":"Tableau 4 — Type II générique","columns":["FZFG","SN_FZFG","SN","FZDZ","FZRA_L","SN_RA_M","RA_COLDSOAK"],"bands":[{"oat":"-3 °C et au-dessus","min_c":-3,"rows":{"100/0":[{"min":"0:55","max":"1:50"},{"min":"0:20","max":"0:40"},{"min":"0:30","max":"0:55"},{"min":"0:35","max":"1:05"},{"min":"0:25","max":"0:35"},{"min":"0:05","max":"0:05"},{"min":"0:07","max":"0:45"}],"75/25":[{"min":"0:40","max":"1:10"},{"min":"0:15","max":"0:25"},{"min":"0:15","max":"0:30"},{"min":"0:25","max":"0:40"},{"min":"0:15","max":"0:25"},{"min":"0:03","max":"0:03"},{"min":"0:04","max":"0:25"}],"50/50":[{"min":"0:15","max":"0:30"},{"min":"0:05","max":"0:10"},{"min":"0:07","max":"0:15"},{"min":"0:09","max":"0:15"},{"min":"0:06","max":"0:09"},null,null]}},{"oat":"sous -3 à -8 °C","min_c":-8,"rows":{"100/0":[{"min":"0:30","max":"0:45"},{"min":"0:15","max":"0:30"},{"min":"0:20","max":"0:40"},{"min":"0:20","max":"0:45"},{"min":"0:15","max":"0:20"},null,null],"75/25":[{"min":"0:25","max":"0:55"},{"min":"0:09","max":"0:15"},{"min":"0:10","max":"0:25"},{"min":"0:15","max":"0:30"},{"min":"0:09","max":"0:20"},null,null]}},{"oat":"sous -8 à -14 °C","min_c":-14,"rows":{"100/0":[{"min":"0:30","max":"0:45"},{"min":"0:10","max":"0:25"},{"min":"0:15","max":"0:30"},{"min":"0:20","max":"0:45"},{"min":"0:15","max":"0:20"},null,null],"75/25":[{"min":"0:25","max":"0:55"},{"min":"0:07","max":"0:15"},{"min":"0:09","max":"0:20"},{"min":"0:15","max":"0:30"},{"min":"0:09","max":"0:20"},null,null]},"note":"FZDZ et FZRA_L : aucun HOT sous -10 °C"},{"oat":"sous -14 à -18 °C","min_c":-18,"rows":{"100/0":[{"min":"0:15","max":"0:20"},{"min":"0:01","max":"0:05"},{"min":"0:02","max":"0:07"},null,null,null,null]}},{"oat":"sous -18 à -25 °C","min_c":-25,"rows":{"100/0":[{"min":"0:15","max":"0:20"},{"min":"0:00","max":"0:02"},{"min":"0:01","max":"0:03"},null,null,null,null]}},{"oat":"sous -25 °C","min_c":null,"rows":{"100/0":[{"min":"0:15","max":"0:20"},{"min":"0:00","max":"0:00"},{"min":"0:00","max":"0:01"},null,null,null,null]}}],"notes":["Respecter le LOUT ; envisager le Type I si le Type II ne peut être utilisé","Si la marque de fluide est connue, la table de la marque (Tableaux 5 à 16) peut donner des HOT différents"]},"table20_typeIV_generic":{"title":"Tableau 20 — Type IV générique","columns":["FZFG","SN_FZFG","SN_VL","SN_L","SN_M","FZDZ","FZRA_L","SN_RA_M","RA_COLDSOAK"],"bands":[{"oat":"-3 °C et au-dessus","min_c":-3,"rows":{"100/0":[{"min":"1:15","max":"2:15"},{"min":"0:20","max":"0:40"},{"min":"1:50","max":"2:15"},{"min":"0:55","max":"1:50"},{"min":"0:25","max":"0:55"},{"min":"0:35","max":"1:10"},{"min":"0:15","max":"0:30"},{"min":"0:06","max":"0:06"},{"min":"0:08","max":"1:05"}],"75/25":[{"min":"1:25","max":"2:40"},{"min":"0:30","max":"0:55"},{"min":"2:05","max":"2:25"},{"min":"1:15","max":"2:05"},{"min":"0:40","max":"1:15"},{"min":"1:00","max":"1:20"},{"min":"0:30","max":"0:50"},{"min":"0:07","max":"0:07"},{"min":"0:09","max":"1:20"}],"50/50":[{"min":"0:30","max":"0:55"},{"min":"0:07","max":"0:20"},{"min":"1:00","max":"1:10"},{"min":"0:25","max":"1:00"},{"min":"0:10","max":"0:25"},{"min":"0:15","max":"0:40"},{"min":"0:09","max":"0:20"},null,null]}},{"oat":"sous -3 à -8 °C","min_c":-8,"rows":{"100/0":[{"min":"0:15","max":"0:35"},{"min":"0:20","max":"0:35"},{"min":"1:35","max":"2:00"},{"min":"0:45","max":"1:35"},{"min":"0:25","max":"0:45"},{"min":"0:25","max":"1:00"},{"min":"0:20","max":"0:25"},null,null],"75/25":[{"min":"0:40","max":"1:20"},{"min":"0:25","max":"0:50"},{"min":"1:50","max":"2:10"},{"min":"1:05","max":"1:50"},{"min":"0:30","max":"1:05"},{"min":"0:20","max":"1:05"},{"min":"0:15","max":"0:25"},null,null]}},{"oat":"sous -8 à -14 °C","min_c":-14,"rows":{"100/0":[{"min":"0:15","max":"0:35"},{"min":"0:15","max":"0:30"},{"min":"1:25","max":"1:50"},{"min":"0:45","max":"1:25"},{"min":"0:20","max":"0:45"},{"min":"0:25","max":"1:00"},{"min":"0:15","max":"0:25"},null,null],"75/25":[{"min":"0:40","max":"1:20"},{"min":"0:20","max":"0:45"},{"min":"1:45","max":"2:00"},{"min":"0:55","max":"1:45"},{"min":"0:25","max":"0:55"},{"min":"0:20","max":"1:05"},{"min":"0:15","max":"0:25"},null,null]},"note":"FZDZ et FZRA_L : aucun HOT sous -10 °C"},{"oat":"sous -14 à -18 °C","min_c":-18,"rows":{"100/0":[{"min":"0:15","max":"0:25"},{"min":"0:01","max":"0:06"},{"min":"0:30","max":"0:45"},{"min":"0:09","max":"0:30"},{"min":"0:02","max":"0:09"},null,null,null,null]}},{"oat":"sous -18 à -25 °C","min_c":-25,"rows":{"100/0":[{"min":"0:15","max":"0:25"},{"min":"0:00","max":"0:02"},{"min":"0:10","max":"0:20"},{"min":"0:03","max":"0:10"},{"min":"0:01","max":"0:03"},null,null,null,null]}},{"oat":"sous -25 °C","min_c":null,"rows":{"100/0":[{"min":"0:15","max":"0:25"},{"min":"0:00","max":"0:01"},{"min":"0:07","max":"0:10"},{"min":"0:02","max":"0:07"},{"min":"0:00","max":"0:02"},null,null,null,null]}}],"notes":["Respecter le LOUT ; envisager le Type I si le Type IV ne peut être utilisé","Tables de marque : Tableaux 21 à 52 (ex. DOW UCAR Endurance EG106 utilisé à Montréal = Tableau 37)"]},"table53_snow_intensity":{"title":"Tableau 53 — Intensité de la neige selon la visibilité dominante (RVR interdit)","columns":["Jour, OAT ≤ -1 °C","Jour, OAT > -1 °C","Nuit, OAT ≤ -1 °C","Nuit, OAT > -1 °C"],"rows":[{"vis_m_max":600,"label":"≤ 400 m (≤ 600)","v":["Heavy","Heavy","Heavy","Heavy"]},{"vis_m_max":1000,"label":"800 m (>600 à ≤1000)","v":["Moderate","Heavy","Heavy","Heavy"]},{"vis_m_max":1400,"label":"1200 m (>1000 à ≤1400)","v":["Moderate","Moderate","Moderate","Heavy"]},{"vis_m_max":1800,"label":"1600 m (>1400 à ≤1800)","v":["Light","Light","Moderate","Moderate"]},{"vis_m_max":2200,"label":"2000 m (>1800 à ≤2200)","v":["Light","Light","Moderate","Moderate"]},{"vis_m_max":2600,"label":"2400 m (>2200 à ≤2600)","v":["Light","Light","Moderate","Moderate"]},{"vis_m_max":3000,"label":"2800 m (>2600 à ≤3000)","v":["Very Light","Light","Light","Light"]},{"vis_m_max":3600,"label":"3200 m (>3000 à ≤3600)","v":["Very Light","Very Light","Light","Light"]},{"vis_m_max":4400,"label":"4000 m (>3600 à ≤4400)","v":["Very Light","Very Light","Light","Light"]},{"vis_m_max":5200,"label":"4800 m (>4400 à ≤5200)","v":["Very Light","Very Light","Very Light","Light"]},{"vis_m_max":null,"label":"≥ 5600 m (>5200)","v":["Very Light","Very Light","Very Light","Very Light"]}],"notes":["Utiliser la visibilité METAR/SPECI ou observée par l'équipage — jamais la RVR","L'intensité donnée par le tableau prime sur l'intensité du METAR","Heavy → aucun HOT","Exemple MANEX : 1 SM, nuit, -6 °C, METAR -SN → intensité MODÉRÉE"]},"table54_typeI_application":{"one_step":"Mélange chauffé ≥ 60 °C à la buse, point de congélation ≥ 10 °C sous l'OAT ; minimum 1 L/m² après élimination de la contamination","two_step":{"first":"≥ 0 °C : eau chaude ou mélange chaud ; < 0 °C : mélange chaud au point de congélation ≤ OAT","second":"Mélange chauffé ≥ 60 °C, point de congélation ≥ 10 °C sous l'OAT, appliqué avant que le 1er fluide gèle (≈ 3 min)"}},"table55_typeII_IV_application":[{"oat":"0 °C et au-dessus","one_step":"Type II/IV chauffé 100/0, 75/25 ou 50/50","second_step":"Type II/IV chauffé ou non, 100/0, 75/25 ou 50/50"},{"oat":"sous 0 à -3 °C","one_step":"Type II/IV chauffé 100/0, 75/25 ou 50/50","second_step":"Type II/IV chauffé ou non, 100/0, 75/25 ou 50/50"},{"oat":"sous -3 à -14 °C","one_step":"Type II/IV chauffé 100/0 ou 75/25","second_step":"Type II/IV chauffé ou non, 100/0 ou 75/25"},{"oat":"sous -14 °C","one_step":"Type II/IV chauffé 100/0","second_step":"Type II/IV chauffé ou non, 100/0"}],"table55_cautions":["Givre ou glace à l'intrados dans la zone des réservoirs (aile froide) : ne pas utiliser le 50/50 Type II/IV pour l'antigivrage","Quantité insuffisante de fluide → perte importante de HOT"]};
 
-/* Table references (MANEX A 8.2.4.9) */
-const REF = {
-  t1:{n:1,p:12,name:'Givre actif'},
-  t2:{n:2,p:14,name:'Type I — aluminium'},
-  t4:{n:4,p:17,name:'Type II générique'},
-  t20:{n:20,p:35,name:'Type IV générique'},
-  t53:{n:53,p:69,name:'Intensité de la neige'},
-  t54:{n:54,p:70,name:'Application Type I'},
-  t55:{n:55,p:71,name:'Application Type II/IV'}
+/* ================= LANGUE / LANGUAGE ================= */
+let LANG = (()=>{ try{ return JSON.parse(localStorage.getItem('hot.lang'))==='en' ? 'en' : 'fr'; }catch(e){ return 'fr'; } })();
+const tr = (fr, en) => LANG==='en' ? en : fr;
+const L = o => (o && typeof o==='object' && !Array.isArray(o) && 'fr' in o) ? (LANG==='en' ? o.en : o.fr) : o;
+const VERSION = '2026-10-30';
+/* Textes des tableaux MANEX (stockés en français) → anglais */
+const DATA_EN = {
+  "Aucun HOT":"No holdover time guidelines exist",
+  "Concentration plus forte de Type I n'augmente pas le HOT (MANEX 8.2.4.4.1)":"A stronger Type I concentration does not increase the HOT (MANEX 8.2.4.4.1)",
+  "FZDZ et FZRA_L : aucun HOT sous -10 °C":"FZDZ and light FZRA: no HOT below -10 °C",
+  "Givre de longue durée : utiliser la bande de l'OAT la plus froide rencontrée entre l'application et le décollage":"Long frost events: use the band of the coldest OAT between fluid application and takeoff",
+  "Jour, OAT > -1 °C":"Day, OAT above -1 °C", "Jour, OAT ≤ -1 °C":"Day, OAT -1 °C and below",
+  "Nuit, OAT > -1 °C":"Night, OAT above -1 °C", "Nuit, OAT ≤ -1 °C":"Night, OAT -1 °C and below",
+  "Mélange Type I : point de congélation au moins 10 °C sous l'OAT":"Type I mixture: freezing point at least 10 °C below OAT",
+  "Neige forte, granules de glace, pluie verglaçante modérée et forte, grêle et petite grêle → AUCUN HOT":"Heavy snow, ice pellets, moderate and heavy freezing rain, small hail and hail → NO HOT",
+  "Respecter le LOUT":"Respect the LOUT (lowest operational use temperature)",
+  "Respecter le LOUT ; envisager le Type I si le Type II ne peut être utilisé":"Respect the LOUT; consider Type I if Type II cannot be used",
+  "Respecter le LOUT ; envisager le Type I si le Type IV ne peut être utilisé":"Respect the LOUT; consider Type I if Type IV cannot be used",
+  "Si la marque de fluide est connue, la table de la marque (Tableaux 5 à 16) peut donner des HOT différents":"If the fluid brand is known, its brand table (Tables 5 to 16) may give different HOTs",
+  "Tables de marque : Tableaux 21 à 52 (ex. DOW UCAR Endurance EG106 utilisé à Montréal = Tableau 37)":"Brand tables: Tables 21 to 52 (e.g. DOW UCAR Endurance EG106 used in Montreal = Table 37)",
+  "Type I : point de congélation du mélange au moins 10 °C sous l'OAT":"Type I: mixture freezing point at least 10 °C below OAT",
+  "Type III : la marque doit être connue (AllClear AeroClear MAX, appliqué non chauffé)":"Type III: the brand must be known (AllClear AeroClear MAX, applied unheated)",
+  "toutes températures jusqu'au LOUT":"all temperatures down to LOUT"
 };
-const refText = id => `MANEX A 8.2.4.9 — Tableau ${REF[id].n}, page ${REF[id].p}`;
+function dt(s){
+  if (LANG!=='en' || typeof s!=='string') return s;
+  if (DATA_EN[s]) return DATA_EN[s];
+  return s.replace(/^(-?\d+) °C et au-dessus$/,'$1 °C and above').replace(/^sous (-?\d+) à (-?\d+) °C$/,'below $1 to $2 °C')
+          .replace(/^sous (-?\d+) °C$/,'below $1 °C').replace(/ à /g,' to ');
+}
 
-const COL_SHORT = {
-  FZFG:'FZFG / brume givrante', SN_FZFG:'SN + FZFG', SN_VL:'SN très faible', SN_L:'SN faible', SN_M:'SN modérée',
-  SN:'SN (≤ modérée)', FZDZ:'FZDZ', FZRA_L:'-FZRA', SN_RA_M:'SN mod. + RA', RA_COLDSOAK:'RA aile froide'
-};
+/* Table references (MANEX A 8.2.4.9) */
+const REF = { t1:{n:1,p:12}, t2:{n:2,p:14}, t4:{n:4,p:17}, t20:{n:20,p:35}, t53:{n:53,p:69}, t54:{n:54,p:70}, t55:{n:55,p:71} };
+const refText = id => `MANEX A 8.2.4.9 — ${tr('Tableau','Table')} ${REF[id].n}, page ${REF[id].p}`;
+const COL_FR = { FZFG:'FZFG / brume givrante', SN_FZFG:'SN + FZFG', SN_VL:'SN très faible', SN_L:'SN faible', SN_M:'SN modérée',
+  SN:'SN (≤ modérée)', FZDZ:'FZDZ', FZRA_L:'-FZRA', SN_RA_M:'SN mod. + RA', RA_COLDSOAK:'RA aile froide' };
+const COL_EN = { FZFG:'FZFG / freezing mist', SN_FZFG:'SN + FZFG', SN_VL:'SN very light', SN_L:'SN light', SN_M:'SN moderate',
+  SN:'SN (≤ moderate)', FZDZ:'FZDZ', FZRA_L:'-FZRA', SN_RA_M:'Mod. SN + RA', RA_COLDSOAK:'RA cold-soaked wing' };
+const colTxt = k => (LANG==='en' ? COL_EN : COL_FR)[k] || k;
 const INT_FR = {'Very Light':'TRÈS FAIBLE','Light':'FAIBLE','Moderate':'MODÉRÉE','Heavy':'FORTE'};
+const INT_EN = {'Very Light':'VERY LIGHT','Light':'LIGHT','Moderate':'MODERATE','Heavy':'HEAVY'};
+const intTxt = v => (LANG==='en' ? INT_EN : INT_FR)[v];
 const INT_COL = {'Very Light':'SN_VL','Light':'SN_L','Moderate':'SN_M'};
-const GENERIC_NOTE = 'Tables génériques. Si la marque du fluide est connue, la table de la marque dans le MANEX A peut donner un HOT différent.';
-const HOT_REMINDER = 'HOT = repère. Doute ou HOT dépassé → contrôle des surfaces avant décollage.';
+const METAR_INT = {'-SN':'Light','SN':'Moderate','+SN':'Heavy'};
+const genericNote = () => tr('Tables génériques. Si la marque du fluide est connue, la table de la marque dans le MANEX A peut donner un HOT différent.',
+  'Generic tables. If the fluid brand is known, its brand table in the MANEX A may give a different HOT.');
+const hotReminder = () => tr('HOT = repère. Doute ou HOT dépassé → contrôle des surfaces avant décollage.',
+  'HOT = guidance only. Any doubt or HOT exceeded → check critical surfaces before takeoff.');
 
 /* ================= ENGINE (pure functions) ================= */
 const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
@@ -545,7 +582,7 @@ function pickBand(bands, oat){
   return bands.length-1;
 }
 
-/* Table 52 — concentrations allowed for Type II/IV by OAT */
+/* Table 55 — concentrations allowed for Type II/IV by OAT */
 function t55Row(oat){ return oat>=0 ? 0 : oat>=-3 ? 1 : oat>=-14 ? 2 : 3; }
 function allowedConc(oat){
   if (oat>=-3) return ['100/0','75/25','50/50'];
@@ -553,15 +590,16 @@ function allowedConc(oat){
   return ['100/0'];
 }
 function concRefusal(conc, oat, coldWing){
-  if (conc==='50/50' && coldWing) return "Aile froide (givre/glace à l'intrados zone réservoirs) : pas de 50/50 Type II/IV pour l'antigivrage (Tableau 55).";
+  if (conc==='50/50' && coldWing) return tr("Aile froide (givre/glace à l'intrados zone réservoirs) : pas de 50/50 Type II/IV pour l'antigivrage (Tableau 55).",
+    "Cold-soaked wing (frost/ice on the lower wing surface at the fuel tanks): no 50/50 Type II/IV for anti-icing (Table 55).");
   if (!allowedConc(oat).includes(conc)){
-    const r = D.table55_typeII_IV_application[t55Row(oat)];
-    return `À ${fmtC(oat)} (bande « ${r.oat} ») le Tableau 55 n'autorise que : ${r.one_step.replace('Type II/IV chauffé ','')}.`;
+    const r = D.table55_typeII_IV_application[t55Row(oat)], a = allowedConc(oat).join(tr(' ou ',' or '));
+    return tr(`À ${fmtC(oat)} (bande « ${r.oat} ») le Tableau 55 n'autorise que : ${a}.`, `At ${fmtC(oat)} (band "${dt(r.oat)}") Table 55 only allows: ${a}.`);
   }
   return null;
 }
 
-/* Table 50 — snow intensity from prevailing visibility (never RVR) */
+/* Table 53 — snow intensity from prevailing visibility (never RVR) */
 function snowIntensity(visM, night, oat){
   const col = (night?2:0) + (oat>-1?1:0);
   const rows = D.table53_snow_intensity.rows;
@@ -573,8 +611,9 @@ function snowIntensity(visM, night, oat){
 function computeHOT({fluid, conc, oat, key}){
   const R = {ok:false, fluid, conc, oat, key, notes:[], tableId:null, bandIdx:null, colIdx:null};
   const none = reason => Object.assign(R, {ok:false, reason});
-  if (key==='OTHER') return none("Neige forte, granules de glace, pluie verglaçante modérée ou forte, grêle ou petite grêle : AUCUN HOT n'existe pour ces conditions.");
-  if (key==='SNOW_HEAVY') { R.tableId='t53'; return none("Neige FORTE (Tableau 53) : AUCUN HOT."); }
+  if (key==='OTHER') return none(tr("Neige forte, granules de glace, pluie verglaçante modérée ou forte, grêle ou petite grêle : AUCUN HOT n'existe pour ces conditions.",
+    "Heavy snow, ice pellets, moderate or heavy freezing rain, small hail or hail: NO HOT exists for these conditions."));
+  if (key==='SNOW_HEAVY') { R.tableId='t53'; return none(tr("Neige FORTE (Tableau 53) : AUCUN HOT.","HEAVY snow (Table 53): NO HOT.")); }
 
   if (key==='FROST'){
     const t = D.table1_active_frost; R.tableId='t1';
@@ -586,9 +625,9 @@ function computeHOT({fluid, conc, oat, key}){
     }
     const bi = pickBand(t.bands, oat), b = t.bands[bi];
     R.bandIdx = bi; R.colIdx = fluid==='II'?0:2;
-    if (b.min_c===null && !Object.keys(b.rows).length) return none(`Givre actif sous -25 °C : ${b.note}.`);
+    if (b.min_c===null && !Object.keys(b.rows).length) return none(tr(`Givre actif sous -25 °C : ${b.note}.`, `Active frost below -25 °C: ${dt(b.note)}.`));
     const row = b.rows[conc];
-    if (!row) return none(`Pas de HOT givre actif pour ${conc} dans la bande « ${b.oat} » (case vide).`);
+    if (!row) return none(tr(`Pas de HOT givre actif pour ${conc} dans la bande « ${b.oat} » (case vide).`, `No active-frost HOT for ${conc} in band "${dt(b.oat)}" (empty cell).`));
     const v = row[R.colIdx];
     return Object.assign(R,{ok:true, hot:v, range:{min:v,max:v}, single:true});
   }
@@ -604,14 +643,16 @@ function computeHOT({fluid, conc, oat, key}){
   if (fluid==='I') cell = b.values[ci];
   else {
     const row = b.rows[conc];
-    if (!row) return none(`Concentration ${conc} non prévue dans la bande « ${b.oat} » (Tableau 55).`);
+    if (!row) return none(tr(`Concentration ${conc} non prévue dans la bande « ${b.oat} » (Tableau 55).`, `Concentration ${conc} not provided in band "${dt(b.oat)}" (Table 55).`));
     cell = row[ci];
   }
   if ((key==='SN_RA_M' || key==='RA_COLDSOAK') && oat<=0)
-    return none(`${key==='SN_RA_M'?'Neige modérée mêlée de pluie':'Pluie sur aile froide'} à 0 °C ou moins : AUCUN HOT.`);
+    return none(key==='SN_RA_M' ? tr('Neige modérée mêlée de pluie à 0 °C ou moins : AUCUN HOT.','Moderate snow mixed with rain at 0 °C or below: NO HOT.')
+                                : tr('Pluie sur aile froide à 0 °C ou moins : AUCUN HOT.','Rain on cold-soaked wing at 0 °C or below: NO HOT.'));
   if ((key==='FZDZ' || key==='FZRA_L') && fluid!=='I' && oat < -10)
-    return none(`${key==='FZDZ'?'Bruine verglaçante':'Pluie verglaçante faible'} en Type ${fluid} sous -10 °C : AUCUN HOT (note de la bande -8 à -14 °C).`);
-  if (!cell) return none('Aucun HOT dans cette condition (case vide du tableau).');
+    return none(tr(`${key==='FZDZ'?'Bruine verglaçante':'Pluie verglaçante faible'} en Type ${fluid} sous -10 °C : AUCUN HOT (note de la bande -8 à -14 °C).`,
+                   `${key==='FZDZ'?'Freezing drizzle':'Light freezing rain'} with Type ${fluid} below -10 °C: NO HOT (note of the -8 to -14 °C band).`));
+  if (!cell) return none(tr('Aucun HOT dans cette condition (case vide du tableau).','No HOT in this condition (empty table cell).'));
   return Object.assign(R,{ok:true, hot:cell.min, range:cell, single:cell.min===cell.max});
 }
 
@@ -722,7 +763,7 @@ function route(){
   curScreen = h;
   document.querySelectorAll('section.screen').forEach(s=>s.classList.toggle('on', s.id==='s-'+h));
   const sec = $('#s-'+h);
-  $('#title').textContent = sec.dataset.title;
+  $('#title').textContent = (LANG==='en' && sec.dataset.titleEn) || sec.dataset.title;
   $('#backBtn').hidden = h==='home'; $('#homeBtn').hidden = true;
   document.querySelectorAll('.tabbar a').forEach(a=>a.classList.toggle('on', a.dataset.tab===h));
   if (h==='home') renderHome();
@@ -741,16 +782,32 @@ $('#homeBtn').onclick = () => location.hash = '#home';
 
 /* ================= LEARN ================= */
 const LEARN = [
-  ['Avion propre', `<p><b>Aucun décollage</b> avec givre, glace, neige ou slush adhérant aux surfaces critiques.</p>
-   <p>Tolérances :</p><ul><li>fine couche de givre sur le dessus du fuselage (les inscriptions restent visibles) ;</li><li>≤ 3 mm à l'intrados, au droit des réservoirs.</li></ul>`, '8.2.4.1 · 8.2.4.6.2'],
-  ['Dégivrer ≠ antigivrer', `<p><b>Dégivrer</b> = enlever (fluide chaud).</p><p><b>Antigivrer</b> = protéger pendant un temps limité : c'est le <b>HOT</b> (Holdover Time).</p>`, '8.2.4.3'],
-  ['Une étape / deux étapes', `<p><b>Une étape</b> : le même mélange dégivre et protège.</p><p><b>Deux étapes</b> : on dégivre, puis on antigivre <b>avant que le 1er fluide gèle</b>, en ≈ 3 min.</p>`, '8.2.4.3 · 8.2.4.6.3'],
-  ['Les 4 fluides', `<ul><li><b>Type I</b> : fluide fin, chaud, HOT court. Plus concentré ≠ plus long.</li><li><b>Type II / IV</b> : épaissis, HOT plus long, dépend de la dilution ; maximum en <span class="mono">100/0</span>.</li><li><b>Type III</b> : intermédiaire.</li></ul>`, '8.2.4.4'],
-  ['Le chrono démarre quand ?', `<p>Au <b>début de l'application</b> (une étape) ou au <b>début de la 2e étape</b> (deux étapes).</p><p>L'heure annoncée par le sol et notée à l'ATL démarre le HOT.</p>`, '8.2.4.5 · 8.2.4.7.3'],
-  ['Règle d\'or Air Algérie', `<p>On n'utilise que <b>le temps le plus court</b> de la case.</p><p>Le HOT n'est qu'un repère : les fortes précipitations, le vent, le souffle réacteur ou une aile plus froide que l'air le <b>raccourcissent</b>.</p>`, '8.2.4.9 NOTE'],
-  ['En Algérie / à l\'étranger', `<p><b>En Algérie</b> : pas de dégivrage. Le mécanicien contrôle les surfaces critiques et le CDB décide de faire ou d'annuler le vol.</p><p><b>À l'étranger</b> : à la demande du CDB, l'escale contacte le sous-traitant. La décision finale d'accepter l'avion et de partir appartient au <b>CDB</b>.</p>`, '8.2.4.2']
+  [{fr:'Avion propre', en:'Clean aircraft'},
+   {fr:`<p><b>Aucun décollage</b> avec givre, glace, neige ou slush adhérant aux surfaces critiques.</p>
+   <p>Tolérances :</p><ul><li>fine couche de givre sur le dessus du fuselage (les inscriptions restent visibles) ;</li><li>≤ 3 mm à l'intrados, au droit des réservoirs.</li></ul>`,
+    en:`<p><b>No takeoff</b> with frost, ice, snow or slush adhering to critical surfaces.</p>
+   <p>Tolerances:</p><ul><li>thin frost on the upper fuselage (markings still visible);</li><li>≤ 3 mm on the lower wing surface, at the fuel tanks.</li></ul>`}, '8.2.4.1 · 8.2.4.6.2'],
+  [{fr:'Dégivrer ≠ antigivrer', en:'De-icing ≠ anti-icing'},
+   {fr:`<p><b>Dégivrer</b> = enlever (fluide chaud).</p><p><b>Antigivrer</b> = protéger pendant un temps limité : c'est le <b>HOT</b> (Holdover Time).</p>`,
+    en:`<p><b>De-icing</b> = removing contamination (hot fluid).</p><p><b>Anti-icing</b> = protecting for a limited time: that is the <b>HOT</b> (Holdover Time).</p>`}, '8.2.4.3'],
+  [{fr:'Une étape / deux étapes', en:'One step / two steps'},
+   {fr:`<p><b>Une étape</b> : le même mélange dégivre et protège.</p><p><b>Deux étapes</b> : on dégivre, puis on antigivre <b>avant que le 1er fluide gèle</b>, en ≈ 3 min.</p>`,
+    en:`<p><b>One step</b>: the same mix de-ices and protects.</p><p><b>Two steps</b>: de-ice, then anti-ice <b>before the first fluid freezes</b>, within ≈ 3 min.</p>`}, '8.2.4.3 · 8.2.4.6.3'],
+  [{fr:'Les 4 fluides', en:'The 4 fluids'},
+   {fr:`<ul><li><b>Type I</b> : fluide fin, chaud, HOT court. Plus concentré ≠ plus long.</li><li><b>Type II / IV</b> : épaissis, HOT plus long, dépend de la dilution ; maximum en <span class="mono">100/0</span>.</li><li><b>Type III</b> : intermédiaire.</li></ul>`,
+    en:`<ul><li><b>Type I</b>: thin, hot fluid, short HOT. More concentrated ≠ longer.</li><li><b>Type II / IV</b>: thickened, longer HOT, depends on dilution; maximum at <span class="mono">100/0</span>.</li><li><b>Type III</b>: in between.</li></ul>`}, '8.2.4.4'],
+  [{fr:'Le chrono démarre quand ?', en:'When does the clock start?'},
+   {fr:`<p>Au <b>début de l'application</b> (une étape) ou au <b>début de la 2e étape</b> (deux étapes).</p><p>L'heure annoncée par le sol et notée à l'ATL démarre le HOT.</p>`,
+    en:`<p>At the <b>start of application</b> (one step) or at the <b>start of the 2nd step</b> (two steps).</p><p>The time announced by the ground crew and entered in the ATL starts the HOT.</p>`}, '8.2.4.5 · 8.2.4.7.3'],
+  [{fr:'Règle d\'or Air Algérie', en:'Air Algérie golden rule'},
+   {fr:`<p>On n'utilise que <b>le temps le plus court</b> de la case.</p><p>Le HOT n'est qu'un repère : les fortes précipitations, le vent, le souffle réacteur ou une aile plus froide que l'air le <b>raccourcissent</b>.</p>`,
+    en:`<p>Only the <b>shortest time</b> in the cell is used.</p><p>The HOT is guidance only: heavy precipitation, wind, jet blast or a wing colder than the air <b>shorten</b> it.</p>`}, '8.2.4.9 NOTE'],
+  [{fr:'En Algérie / à l\'étranger', en:'In Algeria / abroad'},
+   {fr:`<p><b>En Algérie</b> : pas de dégivrage. Le mécanicien contrôle les surfaces critiques et le CDB décide de faire ou d'annuler le vol.</p><p><b>À l'étranger</b> : à la demande du CDB, l'escale contacte le sous-traitant. La décision finale d'accepter l'avion et de partir appartient au <b>CDB</b>.</p>`,
+    en:`<p><b>In Algeria</b>: no de-icing. The engineer checks the critical surfaces and the captain decides to operate or cancel the flight.</p><p><b>Abroad</b>: at the captain's request, the station contacts the contractor. The final decision to accept the aircraft and depart rests with the <b>captain</b>.</p>`}, '8.2.4.2']
 ];
-$('#learnCards').innerHTML = LEARN.map((c,i)=>`<div class="card lcard"><span class="n">${i+1}</span><h3>${c[0]}</h3>${c[1]}<div class="ref">MANEX A ${c[2]}</div></div>`).join('');
+function renderLearn(){ $('#learnCards').innerHTML = LEARN.map((c,i)=>`<div class="card lcard"><span class="n">${i+1}</span><h3>${L(c[0])}</h3>${L(c[1])}<div class="ref">MANEX A ${c[2]}</div></div>`).join(''); }
+renderLearn();
 
 /* ================= CALCULATOR ================= */
 const S = { fluid:null, oatStr:'', coldWing:false, conc:null, cond:null, sub:null, vis:null, night:false, metarInt:null, start:null };
@@ -770,24 +827,25 @@ function saveCalc(){ store.set('hot.calc', {S, step}); }
 function next(){ const l=stepList(); go(l[Math.min(l.indexOf(step)+1,l.length-1)]); }
 function calcBack(){ const l=stepList(), i=l.indexOf(step); if (i>0){ go(l[i-1]); return true; } return false; }
 const RESET_S = () => ({fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:null,metarInt:null,start:null});
-function resetCalc(){ Object.assign(S, RESET_S()); lastSavedSum=null; go('fluid'); }
+function resetCalc(){ Object.assign(S, RESET_S()); lastSavedKey=null; go('fluid'); }
 
 const COND_UI = [
-  {k:'FROST', t:'Givre actif', d:'Givre qui se forme (active frost)'},
-  {k:'FZFG', t:'FZFG', d:D.conditions.FZFG},
-  {k:'SNOW', t:'Neige', d:'Neige / grains de neige / neige en granules — intensité via la visibilité'},
-  {k:'SN_FZFG', t:'Neige + FZFG', d:'Neige mêlée de brouillard givrant — intensité via la visibilité'},
-  {k:'FZDZ', t:'FZDZ', d:'Bruine verglaçante'},
-  {k:'FZRA_L', t:'-FZRA', d:D.conditions.FZRA_L},
-  {k:'SNRA', t:'Neige + pluie', d:'Neige mêlée de pluie ou de bruine — intensité via la visibilité'},
-  {k:'RA_COLDSOAK', t:'Pluie sur aile froide', d:'Cold-soaked wing'},
-  {k:'FZRA_MH', t:'FZRA / +FZRA', d:'Pluie verglaçante modérée ou forte', red:true},
-  {k:'OTHER', t:'Autres', d:'Neige forte, granules de glace (PL), grêle (GR/GS)', red:true}
+  {k:'FROST', t:{fr:'Givre actif',en:'Active frost'}, d:{fr:'Givre qui se forme (active frost)',en:'Frost forming on the aircraft'}},
+  {k:'FZFG', t:'FZFG', d:{fr:D.conditions.FZFG,en:'Freezing fog, freezing mist or ice crystals'}},
+  {k:'SNOW', t:{fr:'Neige',en:'Snow'}, d:{fr:'Neige / grains de neige / neige en granules — intensité via la visibilité',en:'Snow, snow grains or snow pellets — intensity from visibility'}},
+  {k:'SN_FZFG', t:{fr:'Neige + FZFG',en:'Snow + FZFG'}, d:{fr:'Neige mêlée de brouillard givrant — intensité via la visibilité',en:'Snow mixed with freezing fog — intensity from visibility'}},
+  {k:'FZDZ', t:'FZDZ', d:{fr:'Bruine verglaçante',en:'Freezing drizzle'}},
+  {k:'FZRA_L', t:'-FZRA', d:{fr:D.conditions.FZRA_L,en:'Light freezing rain'}},
+  {k:'SNRA', t:{fr:'Neige + pluie',en:'Snow + rain'}, d:{fr:'Neige mêlée de pluie ou de bruine — intensité via la visibilité',en:'Snow mixed with rain or drizzle — intensity from visibility'}},
+  {k:'RA_COLDSOAK', t:{fr:'Pluie sur aile froide',en:'Rain on cold-soaked wing'}, d:{fr:'Cold-soaked wing',en:'Wing colder than outside air (cold fuel)'}},
+  {k:'FZRA_MH', t:'FZRA / +FZRA', d:{fr:'Pluie verglaçante modérée ou forte',en:'Moderate or heavy freezing rain'}, red:true},
+  {k:'OTHER', t:{fr:'Autres',en:'Other'}, d:{fr:'Neige forte, granules de glace (PL), grêle (GR/GS)',en:'Heavy snow, ice pellets (PL), hail (GR/GS)'}, red:true}
 ];
 const SM = [['1/4',400],['1/2',800],['3/4',1200],['1',1600],['1 1/4',2000],['1 1/2',2400],['1 3/4',2800],['2',3200],['2 1/2',4000],['3',4800],['≥3 1/2',6000]];
 const SNOWY = ['SNOW','SN_FZFG','SNRA'];
 const SUBS = {
-  FZDZ:[{v:'sure',t:'Bruine verglaçante identifiée avec certitude',d:'→ colonne FZDZ'},{v:'unsure',t:'Pas certain que ce soit de la bruine',d:'→ utiliser pluie verglaçante faible (-FZRA)'}],
+  FZDZ:[{v:'sure',t:{fr:'Bruine verglaçante identifiée avec certitude',en:'Freezing drizzle positively identified'},d:{fr:'→ colonne FZDZ',en:'→ FZDZ column'}},
+        {v:'unsure',t:{fr:'Pas certain que ce soit de la bruine',en:'Not sure it is drizzle'},d:{fr:'→ utiliser pluie verglaçante faible (-FZRA)',en:'→ use light freezing rain (-FZRA)'}}],
 };
 
 /* final key used in the table */
@@ -810,36 +868,52 @@ function condKey(){
 }
 
 const WHY = {
-  fluid:`<p><b>Type I</b> : fluide fin, chauffé, HOT court. Le B737 a des surfaces critiques en aluminium → <b>Tableau 2</b>.</p>
+  fluid:{fr:`<p><b>Type I</b> : fluide fin, chauffé, HOT court. Le B737 a des surfaces critiques en aluminium → <b>Tableau 2</b>.</p>
     <p><b>Type II / IV</b> : fluides épaissis, HOT plus long (Tableaux 4 et 20 génériques).</p>
     <p><b>Type III</b> : non utilisé sur B737 dans cette app — sa table dépend de la marque (MANEX Tableaux 17-19).</p>
     <p>En deux étapes, c'est le fluide de la <b>2e étape</b> qui compte pour le HOT.</p>`,
-  oat:`<p>Les tableaux sont découpés en <b>bandes de température</b>. Une bande « sous -3 à -8 °C » couvre -8 ≤ OAT &lt; -3. À exactement -3 °C on est dans « -3 °C et au-dessus ».</p>
+    en:`<p><b>Type I</b>: thin, heated fluid, short HOT. B737 critical surfaces are aluminium → <b>Table 2</b>.</p>
+    <p><b>Type II / IV</b>: thickened fluids, longer HOT (generic Tables 4 and 20).</p>
+    <p><b>Type III</b>: not used on B737 in this app — its table depends on the brand (MANEX Tables 17-19).</p>
+    <p>In a two-step procedure, the <b>2nd-step</b> fluid sets the HOT.</p>`},
+  oat:{fr:`<p>Les tableaux sont découpés en <b>bandes de température</b>. Une bande « sous -3 à -8 °C » couvre -8 ≤ OAT &lt; -3. À exactement -3 °C on est dans « -3 °C et au-dessus ».</p>
     <p>L'OAT fixe aussi les concentrations autorisées en Type II/IV (Tableau 55).</p>
     <p><b>Givre actif de longue durée</b> : utiliser l'OAT la plus froide rencontrée depuis l'application.</p>`,
-  conc:`<p><span class="mono">100/0</span> = 100 % fluide pur. <span class="mono">75/25</span> = 75 % fluide / 25 % eau. Plus le fluide est dilué, plus le HOT est court.</p>
+    en:`<p>The tables are split into <b>temperature bands</b>. A band "below -3 to -8 °C" covers -8 ≤ OAT &lt; -3. At exactly -3 °C you are in "-3 °C and above".</p>
+    <p>OAT also sets the allowed Type II/IV concentrations (Table 55).</p>
+    <p><b>Long active-frost events</b>: use the coldest OAT since fluid application.</p>`},
+  conc:{fr:`<p><span class="mono">100/0</span> = 100 % fluide pur. <span class="mono">75/25</span> = 75 % fluide / 25 % eau. Plus le fluide est dilué, plus le HOT est court.</p>
     <p>Tableau 55 : à -3 °C et au-dessus → 100/0, 75/25, 50/50 ; sous -3 à -14 °C → 100/0 ou 75/25 ; sous -14 °C → 100/0 seulement.</p>
     <p>Givre ou glace à l'intrados zone réservoirs (aile froide) → pas de 50/50.</p>`,
-  cond:`<p>Choisissez la précipitation <b>réellement en cours</b>. Chaque condition = une colonne du tableau.</p>
+    en:`<p><span class="mono">100/0</span> = 100 % neat fluid. <span class="mono">75/25</span> = 75 % fluid / 25 % water. The more diluted, the shorter the HOT.</p>
+    <p>Table 55: -3 °C and above → 100/0, 75/25, 50/50; below -3 to -14 °C → 100/0 or 75/25; below -14 °C → 100/0 only.</p>
+    <p>Frost or ice on the lower wing surface at the fuel tanks (cold-soaked wing) → no 50/50.</p>`},
+  cond:{fr:`<p>Choisissez la précipitation <b>réellement en cours</b>. Chaque condition = une colonne du tableau.</p>
     <p>Neige forte, granules de glace, FZRA modérée/forte, grêle → <b>aucun HOT</b> (en rouge).</p>
     <p>Pour la neige, l'intensité ne se lit pas dans le METAR mais dans le <b>Tableau 53</b>, avec la visibilité.</p>`,
-  snow:`<p>Le Tableau 53 donne l'intensité à partir de la <b>visibilité dominante</b> (METAR/SPECI ou observée par l'équipage), du jour/nuit et de l'OAT.</p>
+    en:`<p>Pick the precipitation <b>actually falling</b>. Each condition = one table column.</p>
+    <p>Heavy snow, ice pellets, moderate/heavy FZRA, hail → <b>no HOT</b> (in red).</p>
+    <p>For snow, intensity is not read from the METAR but from <b>Table 53</b>, using visibility.</p>`},
+  snow:{fr:`<p>Le Tableau 53 donne l'intensité à partir de la <b>visibilité dominante</b> (METAR/SPECI ou observée par l'équipage), du jour/nuit et de l'OAT.</p>
     <p><b>Jamais la RVR</b> : elle surestime la visibilité dans la neige.</p>
-    <p>L'intensité du tableau <b>prime</b> sur celle du METAR.</p>`
+    <p>L'intensité du tableau <b>prime</b> sur celle du METAR.</p>`,
+    en:`<p>Table 53 gives the intensity from the <b>prevailing visibility</b> (METAR/SPECI or crew-observed), day/night and OAT.</p>
+    <p><b>Never RVR</b>: it overestimates visibility in snow.</p>
+    <p>The table intensity <b>overrides</b> the METAR intensity.</p>`}
 };
 
 function qhead(k, label, title){
-  return `<div class="qhead"><div><span class="k">${label}</span><h2>${title}</h2></div><button class="why" data-why="${k}">Pourquoi ?</button></div><div class="whybox" id="why-${k}">${WHY[k]}</div>`;
+  return `<div class="qhead"><div><span class="k">${label}</span><h2>${title}</h2></div><button class="why" data-why="${k}">${tr('Pourquoi ?','Why?')}</button></div><div class="whybox" id="why-${k}">${L(WHY[k])}</div>`;
 }
 function stepsBar(){
   const l = stepList().filter(s=>s!=='result'), i=l.indexOf(step);
   return `<div class="steps">${l.map((_,j)=>`<i class="${j<=i||step==='result'?'done':''}"></i>`).join('')}</div>`;
 }
-function label(){ const l=stepList().filter(s=>s!=='result'); return `ÉTAPE ${l.indexOf(step)+1} / ${l.length}`; }
+function label(){ const l=stepList().filter(s=>s!=='result'); return `${tr('ÉTAPE','STEP')} ${l.indexOf(step)+1} / ${l.length}`; }
 
 function crumbs(){
   const l=stepList(), i=l.indexOf(step), c=[];
-  const lab={fluid:()=>S.fluid&&'Type '+S.fluid, oat:()=>oatVal()!==null&&fmtC(oatVal()), conc:()=>S.conc, cond:()=>{const u=COND_UI.find(x=>x.k===S.cond); return u&&u.t;}};
+  const lab={fluid:()=>S.fluid&&'Type '+S.fluid, oat:()=>oatVal()!==null&&fmtC(oatVal()), conc:()=>S.conc, cond:()=>{const u=COND_UI.find(x=>x.k===S.cond); return u&&L(u.t);}};
   l.slice(0,i).forEach(k=>{ const v=lab[k]&&lab[k](); if (v) c.push(`<button class="crumb" data-goto="${k}">${esc(v)} <i>✎</i></button>`); });
   return c.length ? `<div class="crumbs">${c.join('')}</div>` : '';
 }
@@ -849,37 +923,38 @@ function renderCalc(){
   const oat = oatVal();
 
   if (step==='fluid'){
-    h += qhead('fluid', label(), 'Quel fluide le sol applique-t-il ?');
+    h += qhead('fluid', label(), tr('Quel fluide le sol applique-t-il ?','Which fluid is the ground crew applying?'));
     h += '<div class="choices">';
-    [['I','Type I','Fluide fin, chauffé, HOT court · Tableau 2 (aluminium)'],
-     ['II','Type II','Épaissi · Tableau 4 générique'],
-     ['IV','Type IV','Épaissi, HOT le plus long · Tableau 20 générique'],
-     ['III','Type III','Non utilisé B737 — marque spécifique']].forEach(([v,t,d])=>{
+    [['I','Type I',tr('Fluide fin, chauffé, HOT court · Tableau 2 (aluminium)','Thin, heated fluid, short HOT · Table 2 (aluminium)')],
+     ['II','Type II',tr('Épaissi · Tableau 4 générique','Thickened · generic Table 4')],
+     ['IV','Type IV',tr('Épaissi, HOT le plus long · Tableau 20 générique','Thickened, longest HOT · generic Table 20')],
+     ['III','Type III',tr('Non utilisé B737 — marque spécifique','Not used on B737 — brand-specific')]].forEach(([v,t,d])=>{
       h += `<button class="choice ${S.fluid===v?'sel':''} ${v==='III'?'dis':''}" data-fluid="${v}"><span><b>${t}</b><small>${d}</small></span></button>`;
     });
     h += '</div><div id="t3msg"></div>';
   }
 
   else if (step==='oat'){
-    h += qhead('oat', label(), 'Température extérieure (OAT) ?');
-    h += `<div class="oatrow"><div class="oatdisp">${S.oatStr===''?'<span style="color:var(--dim)">--</span>':esc(S.oatStr)}<span class="u"> °C</span></div><button class="btn primary" id="oatOk" ${oat===null||oat<-60||oat>40?'disabled':''}>Valider</button></div>`;
+    h += qhead('oat', label(), tr('Température extérieure (OAT) ?','Outside air temperature (OAT)?'));
+    h += `<div class="oatrow"><div class="oatdisp">${S.oatStr===''?'<span style="color:var(--dim)">--</span>':esc(S.oatStr)}<span class="u"> °C</span></div><button class="btn primary" id="oatOk" ${oat===null||oat<-60||oat>40?'disabled':''}>${tr('Valider','Confirm')}</button></div>`;
     let band='';
     if (oat!==null){
       const t = S.fluid==='I'?D.table2_typeI_aluminum:S.fluid==='II'?D.table4_typeII_generic:D.table20_typeIV_generic;
-      band = 'Bande : « '+t.bands[pickBand(t.bands,oat)].oat+' »';
-      if (oat<-60||oat>40) band='<span style="color:var(--bad)">Valeur hors plage</span>';
+      const bo = t.bands[pickBand(t.bands,oat)].oat;
+      band = tr('Bande : « '+bo+' »', 'Band: "'+dt(bo)+'"');
+      if (oat<-60||oat>40) band='<span style="color:var(--bad)">'+tr('Valeur hors plage','Out of range')+'</span>';
     }
     h += `<div class="band">${band}</div>`;
-    h += '<div class="keypad">' + ['7','8','9','±','4','5','6','⌫','1','2','3','0'].map(k=>`<button data-key="${k}" class="${k==='±'?'pm':''}" aria-label="${k==='±'?'Changer le signe':k==='⌫'?'Effacer':k}">${k}</button>`).join('') + '</div>';
-    h += `<div class="infobox" style="margin-top:12px">Givre actif de longue durée : entrez l'<b>OAT la plus froide</b> rencontrée depuis l'application.</div>`;
+    h += '<div class="keypad">' + ['7','8','9','±','4','5','6','⌫','1','2','3','0'].map(k=>`<button data-key="${k}" class="${k==='±'?'pm':''}" aria-label="${k==='±'?tr('Changer le signe','Change sign'):k==='⌫'?tr('Effacer','Delete'):k}">${k}</button>`).join('') + '</div>';
+    h += `<div class="infobox" style="margin-top:12px">${tr("Givre actif de longue durée : entrez l'<b>OAT la plus froide</b> rencontrée depuis l'application.","Long active-frost event: enter the <b>coldest OAT</b> since fluid application.")}</div>`;
   }
 
   else if (step==='conc'){
-    h += qhead('conc', label(), 'Quelle concentration ?');
-    h += `<p class="lead" style="margin-top:-4px">Type ${S.fluid} à ${fmtC(oat)} — Tableau 55</p>`;
-    h += `<label class="toggle"><input type="checkbox" id="coldWing" ${S.coldWing?'checked':''}><span>Givre ou glace à l'<b>intrados</b> dans la zone des réservoirs (aile froide)</span></label>`;
+    h += qhead('conc', label(), tr('Quelle concentration ?','Which concentration?'));
+    h += `<p class="lead" style="margin-top:-4px">Type ${S.fluid} ${tr('à','at')} ${fmtC(oat)} — ${tr('Tableau','Table')} 55</p>`;
+    h += `<label class="toggle"><input type="checkbox" id="coldWing" ${S.coldWing?'checked':''}><span>${tr("Givre ou glace à l'<b>intrados</b> dans la zone des réservoirs (aile froide)","Frost or ice on the <b>lower wing surface</b> at the fuel tanks (cold-soaked wing)")}</span></label>`;
     h += '<div class="choices">';
-    [['100/0','100 % fluide · HOT maximum'],['75/25','75 % fluide / 25 % eau'],['50/50','50 % fluide / 50 % eau · HOT court']].forEach(([v,d])=>{
+    [['100/0',tr('100 % fluide · HOT maximum','100 % fluid · maximum HOT')],['75/25',tr('75 % fluide / 25 % eau','75 % fluid / 25 % water')],['50/50',tr('50 % fluide / 50 % eau · HOT court','50 % fluid / 50 % water · short HOT')]].forEach(([v,d])=>{
       const why = concRefusal(v, oat, S.coldWing);
       h += `<button class="choice ${S.conc===v?'sel':''} ${why?'dis':''}" data-conc="${v}" ${why?'aria-disabled="true"':''}><span><b class="mono" style="font-size:22px">${v}</b><small>${d}</small>${why?`<span class="reason">✕ ${esc(why)}</span>`:''}</span></button>`;
     });
@@ -887,31 +962,31 @@ function renderCalc(){
   }
 
   else if (step==='cond'){
-    h += qhead('cond', label(), 'Quelle condition météo ?');
+    h += qhead('cond', label(), tr('Quelle condition météo ?','Which weather condition?'));
     h += '<div class="choices two">';
     COND_UI.forEach(c=>{
-      h += `<button class="choice ${S.cond===c.k?'sel':''} ${c.red?'red':''}" data-cond="${c.k}">${icon(c.k)}<span><b>${c.t}</b><small>${esc(c.d)}</small></span></button>`;
+      h += `<button class="choice ${S.cond===c.k?'sel':''} ${c.red?'red':''}" data-cond="${c.k}">${icon(c.k)}<span><b>${L(c.t)}</b><small>${esc(L(c.d))}</small></span></button>`;
       if (S.cond===c.k && SUBS[c.k]){
-        h += '<div class="subchoices">' + SUBS[c.k].map(s=>`<button class="choice ${S.sub===s.v?'sel':''} ${s.red?'red':''}" data-sub="${s.v}"><span><b style="font-size:14px">${s.t}</b><small>${s.d}</small></span></button>`).join('') + '</div>';
+        h += '<div class="subchoices">' + SUBS[c.k].map(s=>`<button class="choice ${S.sub===s.v?'sel':''} ${s.red?'red':''}" data-sub="${s.v}"><span><b style="font-size:14px">${L(s.t)}</b><small>${L(s.d)}</small></span></button>`).join('') + '</div>';
       }
     });
     h += '</div>';
     if (S.fluid==='II' || S.fluid==='IV'){
-      if (oat < -10) h += `<div class="infobox">À ${fmtC(oat)} : FZDZ et -FZRA en Type ${S.fluid} → aucun HOT sous -10 °C.</div>`;
+      if (oat < -10) h += `<div class="infobox">${tr(`À ${fmtC(oat)} : FZDZ et -FZRA en Type ${S.fluid} → aucun HOT sous -10 °C.`,`At ${fmtC(oat)}: FZDZ and -FZRA with Type ${S.fluid} → no HOT below -10 °C.`)}</div>`;
     }
-    if (oat<=0) h += `<div class="infobox">À ${fmtC(oat)} : « Neige modérée + pluie » et « Pluie sur aile froide » → aucun HOT à 0 °C et en dessous.</div>`;
+    if (oat<=0) h += `<div class="infobox">${tr(`À ${fmtC(oat)} : « Neige modérée + pluie » et « Pluie sur aile froide » → aucun HOT à 0 °C et en dessous.`,`At ${fmtC(oat)}: "moderate snow + rain" and "rain on cold-soaked wing" → no HOT at 0 °C and below.`)}</div>`;
   }
 
   else if (step==='snow'){
-    h += qhead('snow', label(), S.cond==='SNOW'?'Neige : visibilité et luminosité':S.cond==='SNRA'?'Neige + pluie : visibilité':'Neige + FZFG : visibilité');
-    h += `<div class="badbox"><b>RVR interdite.</b> Utilisez la visibilité METAR/SPECI (en mètres) ou celle observée par l'équipage — jamais la RVR.</div>`;
-    h += `<label class="lbl" for="visIn">VISIBILITÉ METAR (m)</label><input class="num" id="visIn" inputmode="numeric" pattern="[0-9]*" placeholder="ex. 1600" value="${S.vis??''}">`;
+    h += qhead('snow', label(), S.cond==='SNOW'?tr('Neige : visibilité et luminosité','Snow: visibility and daylight'):S.cond==='SNRA'?tr('Neige + pluie : visibilité','Snow + rain: visibility'):tr('Neige + FZFG : visibilité','Snow + FZFG: visibility'));
+    h += `<div class="badbox">${tr("<b>RVR interdite.</b> Utilisez la visibilité METAR/SPECI (en mètres) ou celle observée par l'équipage — jamais la RVR.","<b>RVR not permitted.</b> Use the METAR/SPECI visibility (in metres) or the crew-observed visibility — never RVR.")}</div>`;
+    h += `<label class="lbl" for="visIn">${tr('VISIBILITÉ METAR (m)','METAR VISIBILITY (m)')}</label><input class="num" id="visIn" inputmode="numeric" pattern="[0-9]*" placeholder="${tr('ex. 1600','e.g. 1600')}" value="${S.vis??''}">`;
     h += '<div class="chips">' + [400,800,1200,1600,2000,2400,2800,3200,4000,4800,6000,9999].map(v=>`<button data-vis="${v}" class="${S.vis===v?'sel':''}">${v}</button>`).join('') + '</div>';
-    h += `<label class="lbl">OU EN MILES TERRESTRES (METAR Canada / US)</label><div class="chips">` + SM.map(([l,v])=>`<button data-vis="${v}" data-sm="${l}">${l} SM</button>`).join('') + '</div>';
-    h += `<label class="lbl">JOUR / NUIT</label><div class="seg"><button data-night="0" class="${S.night===false?'sel':''}">☀ JOUR</button><button data-night="1" class="${S.night===true?'sel':''}">☾ NUIT</button></div>`;
-    h += `<label class="lbl">INTENSITÉ ANNONCÉE PAR LE METAR (facultatif)</label><div class="chips">${[['-SN','-SN'],['SN','SN'],['+SN','+SN'],['','non précisé']].map(([v,t])=>`<button data-metar="${v}" class="${S.metarInt===v?'sel':''}">${t}</button>`).join('')}</div>`;
+    h += `<label class="lbl">${tr('OU EN MILES TERRESTRES (METAR Canada / US)','OR IN STATUTE MILES (Canada / US METAR)')}</label><div class="chips">` + SM.map(([l,v])=>`<button data-vis="${v}" data-sm="${l}">${l} SM</button>`).join('') + '</div>';
+    h += `<label class="lbl">${tr('JOUR / NUIT','DAY / NIGHT')}</label><div class="seg"><button data-night="0" class="${S.night===false?'sel':''}">${tr('☀ JOUR','☀ DAY')}</button><button data-night="1" class="${S.night===true?'sel':''}">${tr('☾ NUIT','☾ NIGHT')}</button></div>`;
+    h += `<label class="lbl">${tr('INTENSITÉ ANNONCÉE PAR LE METAR (facultatif)','INTENSITY REPORTED IN THE METAR (optional)')}</label><div class="chips">${[['-SN','-SN'],['SN','SN'],['+SN','+SN'],['',tr('non précisé','not reported')]].map(([v,t])=>`<button data-metar="${v}" class="${S.metarInt===v?'sel':''}">${t}</button>`).join('')}</div>`;
     h += '<div id="snowOut"></div>';
-    h += `<div class="navrow"><button class="btn primary" id="snowOk" ${S.vis&&S.night!==null?'':'disabled'}>Voir le HOT</button></div>`;
+    h += `<div class="navrow"><button class="btn primary" id="snowOk" ${S.vis&&S.night!==null?'':'disabled'}>${tr('Voir le HOT','Show HOT')}</button></div>`;
   }
 
   else if (step==='result'){
@@ -924,20 +999,26 @@ function renderCalc(){
   if (step==='result'){ const hx=B.querySelector('td.hx'); if (hx){ const w=hx.closest('.tblwrap'); w.scrollLeft = hx.offsetLeft - 110 - (w.clientWidth-110)/2 + hx.clientWidth/2; } }
 }
 
+function metarSentence(si){
+  if (!S.metarInt) return '';
+  const fr = intTxt(si.intensity);
+  if (METAR_INT[S.metarInt]!==si.intensity) return tr(`METAR dit <b class="mono">${S.metarInt}</b>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.`,
+                                                      `METAR says <b class="mono">${S.metarInt}</b>, but the table says <b>${fr}</b>: use <b>${fr}</b>.`);
+  return null;
+}
 function updateSnow(){
   const out = $('#snowOut'); if (!out) return;
-  if (!S.vis || S.night===null){ out.innerHTML = S.vis ? '<div class="warnbox">Choisissez <b>JOUR</b> ou <b>NUIT</b> : l\'intensité de la neige en dépend.</div>' : ''; $('#snowOk').disabled=true; return; }
+  if (!S.vis || S.night===null){ out.innerHTML = S.vis ? `<div class="warnbox">${tr("Choisissez <b>JOUR</b> ou <b>NUIT</b> : l'intensité de la neige en dépend.","Choose <b>DAY</b> or <b>NIGHT</b>: snow intensity depends on it.")}</div>` : ''; $('#snowOk').disabled=true; return; }
   $('#snowOk').disabled=false;
   const si = snowIntensity(S.vis, S.night, oatVal());
-  const fr = INT_FR[si.intensity];
-  const tiny = S.vis < 100 ? `<div class="warnbox">${S.vis} m ? La visibilité se saisit en <b>mètres</b>. Pour des miles, utilisez les boutons SM.</div>` : '';
-  let h = tiny + `<div class="intens ${si.intensity==='Heavy'?'h':''}">Intensité Tableau 53 : ${fr}</div>`;
-  if (S.metarInt!==null && S.metarInt!==''){
-    const mfr = {'-SN':'FAIBLE','SN':'MODÉRÉE','+SN':'FORTE'}[S.metarInt];
-    if (mfr!==fr) h += `<div class="warnbox">METAR dit <b class="mono">${S.metarInt}</b>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.</div>`;
-    else h += `<div class="infobox">METAR <span class="mono">${S.metarInt}</span> et Tableau 53 concordent : <b>${fr}</b>.</div>`;
+  const fr = intTxt(si.intensity);
+  const tiny = S.vis < 100 ? `<div class="warnbox">${tr(`${S.vis} m ? La visibilité se saisit en <b>mètres</b>. Pour des miles, utilisez les boutons SM.`,`${S.vis} m? Enter visibility in <b>metres</b>. For miles, use the SM buttons.`)}</div>` : '';
+  let h = tiny + `<div class="intens ${si.intensity==='Heavy'?'h':''}">${tr('Intensité Tableau 53 :','Table 53 intensity:')} ${fr}</div>`;
+  if (S.metarInt){
+    const m = metarSentence(si);
+    h += m ? `<div class="warnbox">${m}</div>` : `<div class="infobox">${tr(`METAR <span class="mono">${S.metarInt}</span> et Tableau 53 concordent : <b>${fr}</b>.`,`METAR <span class="mono">${S.metarInt}</span> and Table 53 agree: <b>${fr}</b>.`)}</div>`;
   }
-  if (si.intensity==='Heavy') h += `<div class="badbox">Neige forte → <b>AUCUN HOT</b>.</div>`;
+  if (si.intensity==='Heavy') h += `<div class="badbox">${tr('Neige forte → <b>AUCUN HOT</b>.','Heavy snow → <b>NO HOT</b>.')}</div>`;
   h += t53Table(si);
   out.innerHTML = h;
   const hx=out.querySelector('td.hx'); if (hx){ const w=hx.closest('.tblwrap'); w.scrollLeft = hx.offsetLeft - 110 - (w.clientWidth-110)/2 + hx.clientWidth/2; }
@@ -945,9 +1026,9 @@ function updateSnow(){
 
 function t53Table(si){
   const t = D.table53_snow_intensity;
-  let h = `<div class="mxref">${refText('t53')}</div><div class="tblwrap"><table class="mx"><thead><tr><th class="rh">Visibilité</th>${t.columns.map((c,j)=>`<th class="${j===si.col?'hc':''}">${c}</th>`).join('')}</tr></thead><tbody>`;
+  let h = `<div class="mxref">${refText('t53')}</div><div class="tblwrap"><table class="mx"><thead><tr><th class="rh">${tr('Visibilité','Visibility')}</th>${t.columns.map((c,j)=>`<th class="${j===si.col?'hc':''}">${dt(c)}</th>`).join('')}</tr></thead><tbody>`;
   t.rows.forEach((r,i)=>{
-    h += `<tr><th class="rh ${i===si.row?'hr':''}">${r.label}</th>${r.v.map((v,j)=>`<td class="${i===si.row&&j===si.col?'hx':''}">${INT_FR[v]}</td>`).join('')}</tr>`;
+    h += `<tr><th class="rh ${i===si.row?'hr':''}">${dt(r.label)}</th>${r.v.map((v,j)=>`<td class="${i===si.row&&j===si.col?'hx':''}">${intTxt(v)}</td>`).join('')}</tr>`;
   });
   return h + '</tbody></table></div>';
 }
@@ -958,39 +1039,43 @@ function hotTable(R){
   if (R.tableId==='t1'){
     const t=D.table1_active_frost;
     if (R.frostTypeI){
-      return `<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">Type I — givre actif</th><th class="hc">Aluminium</th><th>Composite</th></tr></thead><tbody><tr><th class="rh hr">${t.typeI.note}</th><td class="hx">${t.typeI.aluminum}</td><td>${t.typeI.composite}</td></tr></tbody></table></div>`;
+      return `<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">${tr('Type I — givre actif','Type I — active frost')}</th><th class="hc">${tr('Aluminium','Aluminium')}</th><th>Composite</th></tr></thead><tbody><tr><th class="rh hr">${dt(t.typeI.note)}</th><td class="hx">${t.typeI.aluminum}</td><td>${t.typeI.composite}</td></tr></tbody></table></div>`;
     }
     let h=`<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">OAT · conc.</th>${t.columns.map((c,j)=>`<th class="${j===R.colIdx?'hc':''}">${c}</th>`).join('')}</tr></thead><tbody>`;
     t.bands.forEach((b,bi)=>{
       const concs = Object.keys(b.rows);
-      if (!concs.length){ h+=`<tr><th class="rh ${bi===R.bandIdx?'hr':''}">${b.oat}</th><td colspan="3" class="na ${bi===R.bandIdx?'hx':''}">${b.note||'—'}</td></tr>`; return; }
+      if (!concs.length){ h+=`<tr><th class="rh ${bi===R.bandIdx?'hr':''}">${dt(b.oat)}</th><td colspan="3" class="na ${bi===R.bandIdx?'hx':''}">${dt(b.note)||'—'}</td></tr>`; return; }
       concs.forEach((c,k)=>{
         const hr = bi===R.bandIdx && c===R.conc;
-        h+=`<tr><th class="rh ${hr?'hr':''}">${b.oat}<br><b>${c}</b></th>${b.rows[c].map((v,j)=>`<td class="${hr&&j===R.colIdx?'hx':''}">${v}</td>`).join('')}</tr>`;
+        h+=`<tr><th class="rh ${hr?'hr':''}">${dt(b.oat)}<br><b>${c}</b></th>${b.rows[c].map((v,j)=>`<td class="${hr&&j===R.colIdx?'hx':''}">${v}</td>`).join('')}</tr>`;
       });
     });
     return h+'</tbody></table></div>';
   }
   const tbl = R.tableId==='t2'?D.table2_typeI_aluminum:R.tableId==='t4'?D.table4_typeII_generic:D.table20_typeIV_generic;
-  let h=`<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">OAT${R.tableId!=='t2'?' · conc.':''}</th>${tbl.columns.map((c,j)=>`<th class="${j===R.colIdx?'hc':''}">${COL_SHORT[c]}</th>`).join('')}</tr></thead><tbody>`;
+  let h=`<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">OAT${R.tableId!=='t2'?' · conc.':''}</th>${tbl.columns.map((c,j)=>`<th class="${j===R.colIdx?'hc':''}">${colTxt(c)}</th>`).join('')}</tr></thead><tbody>`;
   tbl.bands.forEach((b,bi)=>{
     if (R.tableId==='t2'){
       const hr = bi===R.bandIdx;
-      h+=`<tr><th class="rh ${hr?'hr':''}">${b.oat}</th>${b.values.map((v,j)=>`<td class="${v?'':'na'} ${hr&&j===R.colIdx?'hx':''}">${cellTxt(v)}</td>`).join('')}</tr>`;
+      h+=`<tr><th class="rh ${hr?'hr':''}">${dt(b.oat)}</th>${b.values.map((v,j)=>`<td class="${v?'':'na'} ${hr&&j===R.colIdx?'hx':''}">${cellTxt(v)}</td>`).join('')}</tr>`;
       return;
     }
     const concs = Object.keys(b.rows);
     concs.forEach((c,k)=>{
       const hr = bi===R.bandIdx && c===R.conc;
-      h+=`<tr${k===0&&bi?' style="border-top:2px solid var(--line2)"':''}><th class="rh ${hr?'hr':''}">${b.oat}<br><b>${c}</b>${b.note&&k===0?`<br><small style="color:var(--warn)">${b.note}</small>`:''}</th>${b.rows[c].map((v,j)=>`<td class="${v?'':'na'} ${hr&&j===R.colIdx?'hx':''}">${cellTxt(v)}</td>`).join('')}</tr>`;
+      h+=`<tr${k===0&&bi?' style="border-top:2px solid var(--line2)"':''}><th class="rh ${hr?'hr':''}">${dt(b.oat)}<br><b>${c}</b>${b.note&&k===0?`<br><small style="color:var(--warn)">${dt(b.note)}</small>`:''}</th>${b.rows[c].map((v,j)=>`<td class="${v?'':'na'} ${hr&&j===R.colIdx?'hx':''}">${cellTxt(v)}</td>`).join('')}</tr>`;
     });
   });
   return h+'</tbody></table></div>';
 }
 
 function summaryTxt(){
-  const oat=oatVal(), key=condKey();
-  const cname = S.cond==='FROST'?'Givre actif':key==='SNOW_HEAVY'?(S.cond==='SNOW'?'Neige forte':'Neige forte + '+(S.cond==='SNRA'?'pluie':'FZFG')):key==='OTHER'?COND_UI.find(c=>c.k===S.cond).t:(S.cond==='SNRA'&&key==='FZRA_L')?'Neige faible + pluie → -FZRA':COL_SHORT[key]||key;
+  const oat=oatVal(), key=condKey(), u=COND_UI.find(c=>c.k===S.cond);
+  const cname = S.cond==='FROST' ? tr('Givre actif','Active frost')
+    : key==='SNOW_HEAVY' ? (S.cond==='SNOW' ? tr('Neige forte','Heavy snow') : tr('Neige forte + ','Heavy snow + ')+(S.cond==='SNRA'?tr('pluie','rain'):'FZFG'))
+    : key==='OTHER' ? L(u.t)
+    : (S.cond==='SNRA'&&key==='FZRA_L') ? tr('Neige faible + pluie → -FZRA','Light snow + rain → -FZRA')
+    : colTxt(key);
   return `Type ${S.fluid}${S.fluid!=='I'?' '+S.conc:''} · ${fmtC(oat)} · ${cname}`;
 }
 
@@ -998,36 +1083,35 @@ function renderResult(){
   const oat=oatVal(), key=condKey();
   const R = computeHOT({fluid:S.fluid, conc:S.conc, oat, key});
   window.__lastResult = R;
-  if (summaryTxt()!==lastSavedSum){ saveHist(R); lastSavedSum=summaryTxt(); }
+  const hk = histKey(); if (hk!==lastSavedKey){ saveHist(R); lastSavedKey=hk; }
   let h='';
   if (R.ok){
     const zero = toMin(R.hot)===0;
-    h += `<div class="res"><div class="lab">HOT RETENU · VALEUR BASSE DE LA CASE</div><div class="big">${R.hot}</div>
-      <div class="range">${R.single?'Valeur unique de la case':'Fourchette MANEX : '+R.range.min+' – '+R.range.max}</div>
+    h += `<div class="res"><div class="lab">${tr('HOT RETENU · VALEUR BASSE DE LA CASE','HOT TO USE · LOWEST VALUE IN THE CELL')}</div><div class="big">${R.hot}</div>
+      <div class="range">${R.single?tr('Valeur unique de la case','Single value in the cell'):tr('Fourchette MANEX : ','MANEX range: ')+R.range.min+' – '+R.range.max}</div>
       <div class="summary">${esc(summaryTxt())}</div></div>`;
-    if (zero) h += `<div class="badbox">HOT de 0:00 : pratiquement aucune protection.</div>`;
+    if (zero) h += `<div class="badbox">${tr('HOT de 0:00 : pratiquement aucune protection.','HOT of 0:00: practically no protection.')}</div>`;
   } else {
-    h += `<div class="res none"><div class="lab">RÉSULTAT</div><div class="big">AUCUN HOT</div><div class="range" style="color:#ffc2c9">${esc(R.reason)}</div><div class="summary" style="color:#ffc2c9">${esc(summaryTxt())}</div></div>`;
+    h += `<div class="res none"><div class="lab">${tr('RÉSULTAT','RESULT')}</div><div class="big">${tr('AUCUN HOT','NO HOT')}</div><div class="range" style="color:#ffc2c9">${esc(R.reason)}</div><div class="summary" style="color:#ffc2c9">${esc(summaryTxt())}</div></div>`;
   }
   if (SNOWY.includes(S.cond)){
-    const si = snowIntensity(S.vis, S.night, oat), fr=INT_FR[si.intensity];
-    const mfr = S.metarInt ? {'-SN':'FAIBLE','SN':'MODÉRÉE','+SN':'FORTE'}[S.metarInt] : null;
-    h += `<div class="infobox">Neige : visibilité ${S.vis} m, ${S.night?'nuit':'jour'}, ${fmtC(oat)} → intensité <b>${fr}</b> (Tableau 53).${mfr && mfr!==fr?` METAR dit <span class="mono">${S.metarInt}</span>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.`:''}</div>`;
+    const si = snowIntensity(S.vis, S.night, oat), fr=intTxt(si.intensity), m=metarSentence(si);
+    h += `<div class="infobox">${tr(`Neige : visibilité ${S.vis} m, ${S.night?'nuit':'jour'}, ${fmtC(oat)} → intensité <b>${fr}</b> (Tableau 53).`,`Snow: visibility ${S.vis} m, ${S.night?'night':'day'}, ${fmtC(oat)} → intensity <b>${fr}</b> (Table 53).`)}${m?' '+m:''}</div>`;
   }
-  if (S.cond==='SNRA' && key==='FZRA_L') h += `<div class="infobox">Neige très faible ou faible mêlée de pluie/bruine → on utilise la colonne <b>pluie verglaçante faible</b> (note du tableau).</div>`;
+  if (S.cond==='SNRA' && key==='FZRA_L') h += `<div class="infobox">${tr('Neige très faible ou faible mêlée de pluie/bruine → on utilise la colonne <b>pluie verglaçante faible</b> (note du tableau).','Very light or light snow mixed with rain/drizzle → use the <b>light freezing rain</b> column (table note).')}</div>`;
   if (R.ok && toMin(R.hot)>0){
-    h += `<div class="card"><h3>Démarrer le minuteur</h3><p style="color:var(--mut);font-size:14px;margin-top:0">Heure de début annoncée par le sol (UTC) — début de l'application, ou début de la 2e étape.</p>
+    h += `<div class="card"><h3>${tr('Démarrer le minuteur','Start the timer')}</h3><p style="color:var(--mut);font-size:14px;margin-top:0">${tr("Heure de début annoncée par le sol (UTC) — début de l'application, ou début de la 2e étape.","Start time announced by the ground crew (UTC) — start of application, or start of the 2nd step.")}</p>
       <input class="num" id="startIn" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${esc(S.start||utcNowHM())}">
-      <div id="startErr"></div><div class="row"><button class="btn primary" id="startBtn">▶ Démarrer le HOT</button></div></div>`;
+      <div id="startErr"></div><div class="row"><button class="btn primary" id="startBtn">${tr('▶ Démarrer le HOT','▶ Start HOT')}</button></div></div>`;
   }
-  h += `<div class="card"><h3>Voici la case du MANEX</h3>`;
-  if (R.tableId){ h += `<div class="mxref">${refText(R.tableId)}${R.tableId==='t1'?' — '+(S.fluid==='I'?'Type I':'Type '+S.fluid):''}</div>`; }
+  h += `<div class="card"><h3>${tr('Voici la case du MANEX','Here is the MANEX cell')}</h3>`;
+  if (R.tableId){ h += `<div class="mxref">${refText(R.tableId)}${R.tableId==='t1'?' — Type '+S.fluid:''}</div>`; }
   if (R.tableId==='t53'){ h += t53Table(snowIntensity(S.vis,S.night,oat)); }
-  else if (R.tableId){ h += hotTable(R); h += `<p style="font-size:13px;color:var(--mut)">Case surlignée = ligne (OAT${S.fluid!=='I'?' + concentration':''}) × colonne (condition). Faites défiler le tableau horizontalement.</p>`; }
-  else { h += `<div class="infobox">${esc(D.conditions.OTHER)}</div>`; }
+  else if (R.tableId){ h += hotTable(R); h += `<p style="font-size:13px;color:var(--mut)">${tr(`Case surlignée = ligne (OAT${S.fluid!=='I'?' + concentration':''}) × colonne (condition). Faites défiler le tableau horizontalement.`,`Highlighted cell = row (OAT${S.fluid!=='I'?' + concentration':''}) × column (condition). Scroll the table sideways.`)}</p>`; }
+  else { h += `<div class="infobox">${esc(dt(D.conditions.OTHER))}</div>`; }
   h += '</div>';
-  h += `<div class="card"><h3>À retenir</h3><ul class="notes"><li><b>${HOT_REMINDER}</b></li><li>${GENERIC_NOTE}</li>${R.notes.map(n=>`<li>${esc(n)}</li>`).join('')}<li>Seul le temps le plus court de la case est utilisé (MANEX 8.2.4.9 NOTE).</li></ul></div>`;
-  h += `<div class="navrow"><button class="btn ghost" id="modBtn">◀ Modifier</button><button class="btn" id="newBtn">Nouveau calcul</button></div>`;
+  h += `<div class="card"><h3>${tr('À retenir','Remember')}</h3><ul class="notes"><li><b>${hotReminder()}</b></li><li>${genericNote()}</li>${R.notes.map(n=>`<li>${esc(dt(n))}</li>`).join('')}<li>${tr('Seul le temps le plus court de la case est utilisé (MANEX 8.2.4.9 NOTE).','Only the shortest time in the cell is used (MANEX 8.2.4.9 NOTE).')}</li></ul></div>`;
+  h += `<div class="navrow"><button class="btn ghost" id="modBtn">${tr('◀ Modifier','◀ Edit')}</button><button class="btn" id="newBtn">${tr('Nouveau calcul','New calculation')}</button></div>`;
   return h;
 }
 
@@ -1037,7 +1121,7 @@ $('#calcBody').addEventListener('click', e=>{
   if (t.dataset.goto){ go(t.dataset.goto); return; }
   if (t.dataset.why){ $('#why-'+t.dataset.why).classList.toggle('on'); return; }
   if (t.dataset.fluid){
-    if (t.dataset.fluid==='III'){ $('#t3msg').innerHTML = `<div class="warnbox"><b>Type III : non utilisé B737</b> — marque spécifique, voir MANEX Tableaux 17-19.</div>`; return; }
+    if (t.dataset.fluid==='III'){ $('#t3msg').innerHTML = `<div class="warnbox">${tr('<b>Type III : non utilisé B737</b> — marque spécifique, voir MANEX Tableaux 17-19.','<b>Type III: not used on B737</b> — brand-specific, see MANEX Tables 17-19.')}</div>`; return; }
     if (S.fluid!==t.dataset.fluid){ S.conc=null; }
     S.fluid=t.dataset.fluid; if (S.fluid==='I') S.conc=null; next(); return;
   }
@@ -1072,7 +1156,7 @@ $('#calcBody').addEventListener('click', e=>{
   if (t.id==='snowOk'){ next(); return; }
   if (t.id==='startBtn'){
     const R=window.__lastResult, v=normHM($('#startIn').value);
-    if (!v){ $('#startIn').focus(); $('#startIn').style.borderColor='var(--bad)'; $('#startErr').innerHTML='<div class="badbox">Heure invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).</div>'; return; }
+    if (!v){ $('#startIn').focus(); $('#startIn').style.borderColor='var(--bad)'; $('#startErr').innerHTML='<div class="badbox">'+tr('Heure invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).','Invalid time. Examples: <b>1432</b> or <b>14:32</b> (UTC).')+'</div>'; return; }
     if (startTimer(v, toMin(R.range.min), toMin(R.range.max), summaryTxt(), refText(R.tableId))) location.hash='#timer';
     return;
   }
@@ -1100,7 +1184,7 @@ function startDate(hm){
 function startTimer(hm, minM, maxM, label, ref){
   unlockAudio();
   const st = startDate(hm);
-  if (st===null){ alert(`Heure de début ${hm} UTC dans le futur.\nVérifiez l'heure annoncée par le sol (UTC, pas l'heure locale).`); return false; }
+  if (st===null){ alert(tr(`Heure de début ${hm} UTC dans le futur.\nVérifiez l'heure annoncée par le sol (UTC, pas l'heure locale).`,`Start time ${hm} UTC is in the future.\nCheck the time announced by the ground crew (UTC, not local time).`)); return false; }
   T = {start:st, hm, minM, maxM, label, ref, warned:false, alerted:false};
   store.set('hot.timer', T); keepAwake(); ensureTick(); return true;
 }
@@ -1130,14 +1214,14 @@ function tick(){
   const state = rem<=0 ? 'bad' : rem<=5*60000 ? 'warn' : '';
   const b=$('#tbBtn'); b.className=state; b.hidden = curScreen==='timer' || curScreen==='home';
   const bd=$('#tabBadge'); bd.className='badge on '+state;
-  $('#tbLabel').textContent = rem<=0 ? 'HOT DÉPASSÉ' : (now<T.start ? 'DÉBUT '+T.hm : 'HOT');
+  $('#tbLabel').textContent = rem<=0 ? tr('HOT DÉPASSÉ','HOT EXCEEDED') : (now<T.start ? tr('DÉBUT ','START ')+T.hm : 'HOT');
   $('#tbTime').textContent = now<T.start ? '' : (rem<=0?'+':'') + fmtDur(rem);
   if (!T.warned && rem<=5*60000 && rem>0 && T.minM>5){ T.warned=true; store.set('hot.timer',T); beep(1,660); try{navigator.vibrate&&navigator.vibrate(300);}catch(e){} }
   if (!T.alerted && rem<=0){ T.alerted=true; store.set('hot.timer',T); beep(4,880); try{navigator.vibrate&&navigator.vibrate([500,200,500,200,500]);}catch(e){} $('#alarm').classList.add('on'); setTimeout(()=>$('#alarmOk').focus(),50); }
   if (curScreen==='timer') updateTimerView(now, rem, state);
   const hs=$('#hsT');
   if (hs){ const st=$('#hStatusCard'); st.className='status live '+state;
-    $('#hsLab').textContent = now<T.start ? 'DÉMARRE À '+T.hm+' UTC' : rem<=0 ? 'HOT DÉPASSÉ DEPUIS' : 'HOT RESTANT';
+    $('#hsLab').textContent = now<T.start ? tr('DÉMARRE À ','STARTS AT ')+T.hm+' UTC' : rem<=0 ? tr('HOT DÉPASSÉ DEPUIS','HOT EXCEEDED BY') : tr('HOT RESTANT','HOT REMAINING');
     hs.textContent = (rem<=0?'+':'')+fmtClock(now<T.start ? T.minM*60000 : rem);
     $('#hsRing').style.strokeDashoffset = 100 - (now<T.start?100:hotPct(now)); }
 }
@@ -1149,33 +1233,33 @@ $('#alarmOk').onclick = ()=> $('#alarm').classList.remove('on');
 function renderTimer(){
   const B=$('#timerBody');
   if (!T){
-    B.innerHTML = `<div class="card"><h3>Aucun minuteur en cours</h3><p>Calculez d'abord le HOT : le minuteur se lance depuis le résultat, sur l'heure de début annoncée par le sol.</p><a class="btn primary block" href="#calc">Calculateur HOT</a></div>
-      <div class="card"><h3>Démarrage manuel</h3><label class="lbl">HEURE DE DÉBUT (UTC)</label><input class="num" id="mStart" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${utcNowHM()}"><label class="lbl">HOT RETENU (minutes, ou h:mm)</label><input class="num" id="mHot" placeholder="25" inputmode="decimal"><div id="mErr"></div><button class="btn block" id="mGo">▶ Démarrer</button></div>`;
+    B.innerHTML = `<div class="card"><h3>${tr('Aucun minuteur en cours','No timer running')}</h3><p>${tr("Calculez d'abord le HOT : le minuteur se lance depuis le résultat, sur l'heure de début annoncée par le sol.","Calculate the HOT first: the timer starts from the result, on the start time announced by the ground crew.")}</p><a class="btn primary block" href="#calc">${tr('Calculateur HOT','HOT calculator')}</a></div>
+      <div class="card"><h3>${tr('Démarrage manuel','Manual start')}</h3><label class="lbl">${tr('HEURE DE DÉBUT (UTC)','START TIME (UTC)')}</label><input class="num" id="mStart" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${utcNowHM()}"><label class="lbl">${tr('HOT RETENU (minutes, ou h:mm)','HOT TO USE (minutes, or h:mm)')}</label><input class="num" id="mHot" placeholder="25" inputmode="decimal"><div id="mErr"></div><button class="btn block" id="mGo">${tr('▶ Démarrer','▶ Start')}</button></div>`;
     $('#mGo').onclick = ()=>{
       const err = t => { $('#mErr').innerHTML = `<div class="badbox">${t}</div>`; };
       const mm = parseHotMin($('#mHot').value);
-      if (!mm){ err('HOT invalide. Exemples : <b>25</b> (minutes), <b>0:25</b>, <b>1:05</b>.'); $('#mHot').focus(); return; }
+      if (!mm){ err(tr('HOT invalide. Exemples : <b>25</b> (minutes), <b>0:25</b>, <b>1:05</b>.','Invalid HOT. Examples: <b>25</b> (minutes), <b>0:25</b>, <b>1:05</b>.')); $('#mHot').focus(); return; }
       const st = normHM($('#mStart').value);
-      if (!st){ err('Heure de début invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).'); $('#mStart').focus(); return; }
-      if (startTimer(st, mm, mm, 'HOT saisi manuellement', '')) renderTimer(); };
+      if (!st){ err(tr('Heure de début invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).','Invalid start time. Examples: <b>1432</b> or <b>14:32</b> (UTC).')); $('#mStart').focus(); return; }
+      if (startTimer(st, mm, mm, tr('HOT saisi manuellement','HOT entered manually'), '')) renderTimer(); };
     return;
   }
   B.innerHTML = `<div class="timer" id="tbox"><div class="ringwrap"><svg viewBox="0 0 120 120"><circle class="rbg" cx="60" cy="60" r="54"/><circle class="rglow" id="tglow" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/><circle class="rfg" id="tring" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
-    <div class="ringin"><div class="lab mono" id="tlab" style="color:var(--ice2);letter-spacing:.12em;font-size:13px">HOT RESTANT</div><div class="t" id="tt">--:--</div><div class="mono" id="tunit" style="color:var(--mut);font-size:12px;letter-spacing:.14em">MIN : S</div></div></div>
-    <div class="s">Début ${T.hm} UTC · Fin HOT (valeur basse) <b id="tend"></b> UTC</div>
-    ${T.maxM!==T.minM?`<div class="s" style="font-size:13px">Haut de fourchette : ${hmUTC(T.start+T.maxM*60000)} UTC (non utilisé — règle Air Algérie)</div>`:''}</div>
+    <div class="ringin"><div class="lab mono" id="tlab" style="color:var(--ice2);letter-spacing:.12em;font-size:13px">${tr('HOT RESTANT','HOT REMAINING')}</div><div class="t" id="tt">--:--</div><div class="mono" id="tunit" style="color:var(--mut);font-size:12px;letter-spacing:.14em">MIN : S</div></div></div>
+    <div class="s">${tr(`Début ${T.hm} UTC · Fin HOT (valeur basse)`,`Start ${T.hm} UTC · HOT end (lowest value)`)} <b id="tend"></b> UTC</div>
+    ${T.maxM!==T.minM?`<div class="s" style="font-size:13px">${tr(`Haut de fourchette : ${hmUTC(T.start+T.maxM*60000)} UTC (non utilisé — règle Air Algérie)`,`Top of range: ${hmUTC(T.start+T.maxM*60000)} UTC (not used — Air Algérie rule)`)}</div>`:''}</div>
     <div class="infobox mono" style="font-size:14px">${esc(T.label)}${T.ref?'<br>'+esc(T.ref):''}</div>
-    <div class="warnbox">${HOT_REMINDER} Les fortes précipitations, le vent, le souffle réacteur ou une aile froide raccourcissent le HOT. Gardez l'écran allumé : l'alerte sonne dans l'app.</div>
-    <button class="btn bad block" id="tStop">■ Arrêter le minuteur</button>`;
-  $('#tStop').onclick = ()=>{ if (confirm('Arrêter le minuteur HOT ?')) stopTimer(); };
+    <div class="warnbox">${hotReminder()} ${tr("Les fortes précipitations, le vent, le souffle réacteur ou une aile froide raccourcissent le HOT. Gardez l'écran allumé : l'alerte sonne dans l'app.","Heavy precipitation, wind, jet blast or a cold-soaked wing shorten the HOT. Keep the screen on: the alert sounds in the app.")}</div>
+    <button class="btn bad block" id="tStop">${tr('■ Arrêter le minuteur','■ Stop timer')}</button>`;
+  $('#tStop').onclick = ()=>{ if (confirm(tr('Arrêter le minuteur HOT ?','Stop the HOT timer?'))) stopTimer(); };
   ensureTick();
 }
 function updateTimerView(now, rem, state){
   const box=$('#tbox'); if (!box) return;
   box.className='timer '+state;
   $('#tend').textContent = hmUTC(T.start+T.minM*60000);
-  if (now<T.start){ $('#tlab').textContent='DÉMARRE À '+T.hm+' UTC'; $('#tt').textContent=fmtClock(T.minM*60000); $('#tring').style.strokeDashoffset=0; $('#tglow').style.strokeDashoffset=0; return; }
-  $('#tlab').textContent = rem<=0 ? 'HOT DÉPASSÉ DEPUIS' : 'HOT RESTANT';
+  if (now<T.start){ $('#tlab').textContent=tr('DÉMARRE À ','STARTS AT ')+T.hm+' UTC'; $('#tt').textContent=fmtClock(T.minM*60000); $('#tring').style.strokeDashoffset=0; $('#tglow').style.strokeDashoffset=0; return; }
+  $('#tlab').textContent = rem<=0 ? tr('HOT DÉPASSÉ DEPUIS','HOT EXCEEDED BY') : tr('HOT RESTANT','HOT REMAINING');
   $('#tt').textContent = (rem<=0?'+':'')+fmtClock(rem); $('#tunit').textContent = Math.abs(rem)>=3600e3 ? 'H : MIN : S' : 'MIN : S';
   $('#tring').style.strokeDashoffset = $('#tglow').style.strokeDashoffset = 100 - hotPct(now);
 }
@@ -1194,81 +1278,83 @@ const DIALOG = [  /* MANEX A 8.2.4.8 */
   ['crew','CREW','Standing by for visual signal.']
 ];
 /* Sources : MANEX A §8.2.4 · OPS INFO B737 « Cold Weather Operations » (CL-AH-DOA-DOC-B737-002 Éd.06 NOV22, p.7-9)
-   · FCOM 737-8D6 ALG SP.16 « Cold Weather Operations ». Item : texte simple, ou [élément, action, qui, note]. */
+   · FCOM 737-8D6 ALG SP.16 « Cold Weather Operations ». Item : {fr,en}, ou [élément, action, qui, note]. */
 const OI = 'OPS INFO p.', FC = 'FCOM SP.16';
 const PROC = [
-  {t:'Prévol', r:'MANEX 8.2.4.10.1 · '+OI+'7', items:[
-    'Visite prévol effectuée (surfaces critiques regardées)',
-    'Gel ou neige empêchant les vérifications → escale informée',
-    'Carburant supplémentaire prévu',
-    ['PROBE HEAT switches','ON','F/O','Vérifier que tous les voyants probe heat sont éteints.']]},
-  {t:'Avant mise en route', r:OI+'7 · MANEX 8.2.4.10.1', items:[
-    ['Takeoff data','COMPUTE','','Runway Analysis Performances Limitations ou OPT. ATM interdit sur piste contaminée.'],
-    ['Max crosswind','REVIEW','','Limitations vent traversier : tableau GRF RCAM.'],
-    ['Holdover time','OBTAIN','','Depuis l\'OM A (MANEX 8.2.4.9) — calculateur de l\'app.'],
-    ['De-icing','PERFORM','','Au parking si possible.'],
-    'Check-lists FCOM « Cold Weather Operation » / « Ice and Rain Protection » (SP) revues']},
-  {t:'Avant roulage', r:OI+'8 · '+FC, items:[
-    ['GENERATOR 1 and 2 switches','ON','F/O','Huile froide : jusqu\'à 5 min pour une puissance stable.'],
-    ['Flight controls','CHECK','C','Neige ou glace sur l\'aile : envisager de retarder ce contrôle après le dégivrage. Efforts plus élevés à basse température.'],
-    ['Flaps','CHECK','F/O','UP → 40 → UP (course complète). Surveiller l\'indicateur de volets et le panneau des becs.'],
-    ['Flaps','UP pour rouler','','Si roulage contaminé, précipitations sous 0 °C ou dégivrage prévu : rouler volets rentrés.']]},
-  {t:'Avant dégivrage', r:OI+'8 · '+FC+' · MANEX 8.2.4.6.4', items:[
+  {t:{fr:'Prévol',en:'Preflight'}, r:'MANEX 8.2.4.10.1 · '+OI+'7', items:[
+    {fr:'Visite prévol effectuée (surfaces critiques regardées)', en:'Exterior inspection done (critical surfaces checked)'},
+    {fr:'Gel ou neige empêchant les vérifications → escale informée', en:'Frost or snow preventing the checks → station informed'},
+    {fr:'Carburant supplémentaire prévu', en:'Extra fuel planned'},
+    ['PROBE HEAT switches','ON','F/O',{fr:'Vérifier que tous les voyants probe heat sont éteints.',en:'Verify that all probe heat lights are extinguished.'}]]},
+  {t:{fr:'Avant mise en route',en:'Before start'}, r:OI+'7 · MANEX 8.2.4.10.1', items:[
+    ['Takeoff data','COMPUTE','',{fr:'Runway Analysis Performances Limitations ou OPT. ATM interdit sur piste contaminée.',en:'Runway Analysis Performance Limitations or OPT. ATM not allowed on a contaminated runway.'}],
+    ['Max crosswind','REVIEW','',{fr:'Limitations vent traversier : tableau GRF RCAM.',en:'Crosswind limitations: GRF RCAM table.'}],
+    ['Holdover time','OBTAIN','',{fr:"Depuis l'OM A (MANEX 8.2.4.9) — calculateur de l'app.",en:'From OM A (MANEX 8.2.4.9) — app calculator.'}],
+    ['De-icing','PERFORM','',{fr:'Au parking si possible.',en:'At the gate if possible.'}],
+    {fr:'Check-lists FCOM « Cold Weather Operation » / « Ice and Rain Protection » (SP) revues', en:'FCOM "Cold Weather Operation" / "Ice and Rain Protection" (SP) checklists reviewed'}]},
+  {t:{fr:'Avant roulage',en:'Before taxi'}, r:OI+'8 · '+FC, items:[
+    ['GENERATOR 1 and 2 switches','ON','F/O',{fr:"Huile froide : jusqu'à 5 min pour une puissance stable.",en:'Cold oil: up to 5 min for steady power.'}],
+    ['Flight controls','CHECK','C',{fr:"Neige ou glace sur l'aile : envisager de retarder ce contrôle après le dégivrage. Efforts plus élevés à basse température.",en:'Snow or ice on the wing: consider delaying this check until after de-icing. Higher control forces at low temperature.'}],
+    ['Flaps','CHECK','F/O',{fr:"UP → 40 → UP (course complète). Surveiller l'indicateur de volets et le panneau des becs.",en:'UP → 40 → UP (full travel). Watch the flap indicator and the leading-edge devices panel.'}],
+    ['Flaps',{fr:'UP pour rouler',en:'UP for taxi'},'',{fr:'Si roulage contaminé, précipitations sous 0 °C ou dégivrage prévu : rouler volets rentrés.',en:'Contaminated taxi route, precipitation below 0 °C or de-icing planned: taxi with flaps up.'}]]},
+  {t:{fr:'Avant dégivrage',en:'Before de-icing'}, r:OI+'8 · '+FC+' · MANEX 8.2.4.6.4', items:[
     ['Cabin crew and passengers','ADVISE','C','MANEX 8.2.4.8.'],
-    ['APU','AS NEEDED','F/O','À arrêter sauf si nécessaire : l\'ingestion de fluide donne fumées et odeurs en cabine et peut endommager l\'APU.'],
-    ['« FLAPS UP » → Flaps','UP','F/O','Évite l\'accumulation de glace et de slush dans les logements de volets.'],
-    ['Thrust levers','IDLE','C','Sécurité du personnel aux entrées d\'air et à l\'échappement.'],
-    ['Stabilizer trim','__ UNITS','C','Trim de décollage, dans la bande verte. Poignées de la roue de trim rangées avant le trim électrique.'],
-    ['Engine BLEED air switches','OFF','F/O','Évite l\'entrée de fumées dans le conditionnement d\'air (MANEX : conditionnement d\'air OFF).'],
-    ['APU BLEED air switch','OFF','F/O','Même raison.']]},
-  {t:'Phraséologie sol', r:'MANEX 8.2.4.8', dialog:true, items:['Contact établi avec l\'équipe de dégivrage, demande transmise']},
-  {t:'Pendant le dégivrage', r:OI+'8 · MANEX 8.2.4.10.2', calc:true, items:[
-    ['Start time, fluid type, mixture','NOTE','F/O','Heure de début (2e étape si deux étapes), type, mélange.'],
-    ['Holdover time','CHECK','BOTH','Valeur basse de la case du MANEX.'],
-    'Écoute ATC et technicien maintenue',
-    'En urgence : contacter la tour et le responsable du dégivrage']},
-  {t:'Après dégivrage', r:OI+'8 · '+FC+' · MANEX 8.2.4.7', after:true, items:[
-    'Code relu : Type / concentration / heure UTC',
-    'Minuteur HOT démarré',
+    ['APU','AS NEEDED','F/O',{fr:"À arrêter sauf si nécessaire : l'ingestion de fluide donne fumées et odeurs en cabine et peut endommager l'APU.",en:'Shut down unless needed: fluid ingestion causes fumes and odours in the cabin and can damage the APU.'}],
+    [{fr:'« FLAPS UP » → Flaps',en:'"FLAPS UP" → Flaps'},'UP','F/O',{fr:"Évite l'accumulation de glace et de slush dans les logements de volets.",en:'Prevents ice and slush building up in the flap cavities.'}],
+    ['Thrust levers','IDLE','C',{fr:"Sécurité du personnel aux entrées d'air et à l'échappement.",en:'Safety of personnel near engine inlets and exhausts.'}],
+    ['Stabilizer trim','__ UNITS','C',{fr:'Trim de décollage, dans la bande verte. Poignées de la roue de trim rangées avant le trim électrique.',en:'Takeoff trim, in the green band. Stow the trim wheel handles before using electric trim.'}],
+    ['Engine BLEED air switches','OFF','F/O',{fr:"Évite l'entrée de fumées dans le conditionnement d'air (MANEX : conditionnement d'air OFF).",en:'Keeps fumes out of the air conditioning (MANEX: air conditioning OFF).'}],
+    ['APU BLEED air switch','OFF','F/O',{fr:'Même raison.',en:'Same reason.'}]]},
+  {t:{fr:'Phraséologie sol',en:'Ground phraseology'}, r:'MANEX 8.2.4.8', dialog:true, items:[{fr:"Contact établi avec l'équipe de dégivrage, demande transmise", en:'Contact made with the de-icing crew, request passed'}]},
+  {t:{fr:'Pendant le dégivrage',en:'During de-icing'}, r:OI+'8 · MANEX 8.2.4.10.2', calc:true, items:[
+    ['Start time, fluid type, mixture','NOTE','F/O',{fr:'Heure de début (2e étape si deux étapes), type, mélange.',en:'Start time (2nd step if two-step), type, mixture.'}],
+    ['Holdover time','CHECK','BOTH',{fr:'Valeur basse de la case du MANEX.',en:'Lowest value in the MANEX cell.'}],
+    {fr:'Écoute ATC et technicien maintenue', en:'Listening watch kept on ATC and the ground technician'},
+    {fr:'En urgence : contacter la tour et le responsable du dégivrage', en:'Emergency: call the tower and the de-icing supervisor'}]},
+  {t:{fr:'Après dégivrage',en:'After de-icing'}, r:OI+'8 · '+FC+' · MANEX 8.2.4.7', after:true, items:[
+    {fr:'Code relu : Type / concentration / heure UTC', en:'Code read back: Type / concentration / UTC time'},
+    {fr:'Minuteur HOT démarré', en:'HOT timer started'},
     ['APU','AS NEEDED','F/O',''],
-    ['APU BLEED air switch','AS NEEDED','F/O','Après dégivrage, l\'APU bleed au décollage peut provoquer de la fumée dans l\'avion.'],
-    ['Engine BLEED air switches','ON','F/O','Attendre ≈ 1 min après la fin du dégivrage : le fluide doit être évacué des moteurs.'],
-    ['Flight controls','CHECK, as needed','C','Efforts plus élevés à basse température.'],
-    'Check-list après dégivrage',
-    'ATL : heure de début, type de fluide (celui de la 2e étape si deux étapes), mélange']},
-  {t:'Avant le décollage', r:OI+'9 · '+FC+' · MANEX 8.2.4.6.1', crit:true, items:[
+    ['APU BLEED air switch','AS NEEDED','F/O',{fr:"Après dégivrage, l'APU bleed au décollage peut provoquer de la fumée dans l'avion.",en:'After de-icing, APU bleed during takeoff can cause smoke in the aircraft.'}],
+    ['Engine BLEED air switches','ON','F/O',{fr:'Attendre ≈ 1 min après la fin du dégivrage : le fluide doit être évacué des moteurs.',en:'Wait ≈ 1 min after de-icing ends so the fluid is cleared from the engines.'}],
+    ['Flight controls','CHECK, as needed','C',{fr:'Efforts plus élevés à basse température.',en:'Higher control forces at low temperature.'}],
+    {fr:'Check-list après dégivrage', en:'After de-icing checklist'},
+    {fr:'ATL : heure de début, type de fluide (celui de la 2e étape si deux étapes), mélange', en:'ATL: start time, fluid type (2nd-step fluid if two-step), mixture'}]},
+  {t:{fr:'Avant le décollage',en:'Before takeoff'}, r:OI+'9 · '+FC+' · MANEX 8.2.4.6.1', crit:true, items:[
     ['Holdover time','CHECK within limits','',''],
-    ['« FLAPS __ » → Flap lever','SET takeoff flaps','PF / PM','Vérifier le voyant vert LE FLAPS EXT.'],
+    [{fr:'« FLAPS __ » → Flap lever',en:'"FLAPS __" → Flap lever'},'SET takeoff flaps','PF / PM',{fr:'Vérifier le voyant vert LE FLAPS EXT.',en:'Check the green LE FLAPS EXT light.'}],
     ['Before takeoff checklist','COMPLETE','',''],
-    'HOT dépassé ou moindre doute → contrôle des surfaces critiques par une personne qualifiée (OPL) juste avant d\'entrer sur la piste',
-    'Doute sur un dépôt pouvant affecter les performances → PAS DE DÉCOLLAGE']}
+    {fr:"HOT dépassé ou moindre doute → contrôle des surfaces critiques par une personne qualifiée (OPL) juste avant d'entrer sur la piste", en:'HOT exceeded or any doubt → critical surfaces checked by a qualified person (F/O) just before entering the runway'},
+    {fr:'Doute sur un dépôt pouvant affecter les performances → PAS DE DÉCOLLAGE', en:'Doubt about a deposit that may affect performance → NO TAKEOFF'}]}
+];
+const PITFALLS = [
+  {fr:"Ne jamais remettre un antigivrant froid sur une couche existante : nettoyer d'abord au mélange chaud.", en:'Never apply cold anti-icing fluid over an existing layer: clean first with a hot mix.'},
+  {fr:'Pare-brise : enlever toute trace de Type II/IV — ne pas utiliser les essuie-glaces pour cela.', en:'Windshield: remove all traces of Type II/IV — do not use the wipers for this.'},
+  {fr:"<b>Verglas d'aile froide</b> (glace transparente) quand beaucoup de carburant froid reste dans les réservoirs, même jusqu'à +15 °C OAT.", en:'<b>Cold-soak clear ice</b> (transparent ice) when a lot of cold fuel remains in the tanks, even up to +15 °C OAT.'},
+  {fr:'Aile froide → pas de 50/50 Type II/IV.', en:'Cold-soaked wing → no 50/50 Type II/IV.'},
+  {fr:"Sur une flaque de fluide de dégivrage, limiter la poussée au minimum : l'ingestion peut provoquer pompage et décrochage compresseur.", en:'Over a puddle of de-icing fluid, keep thrust to the minimum: ingestion can cause compressor surge and stall.'},
+  {fr:"Du fluide reste sur l'aile à la rotation (portance réduite, traînée accrue, effet temporaire) : garder le taux de rotation normal.", en:'Some fluid stays on the wing at rotation (less lift, more drag, temporary): keep the normal rotation rate.'}
 ];
 let checks = store.get('hot.proc2', {});
 function itemHTML(it){
-  if (typeof it==='string') return `<span>${esc(it)}</span>`;
-  const [el,act,who,note]=it;
+  if (!Array.isArray(it)) return `<span>${esc(L(it))}</span>`;
+  const [el,act,who,note]=it.map(L);
   return `<span style="flex:1"><span class="ci"><span class="el">${esc(el)}</span><span class="dots"></span><span class="act">${esc(act)}</span></span>${who?`<span class="who">${esc(who)}</span>`:''}${note?`<small class="cn">${esc(note)}</small>`:''}</span>`;
 }
 function renderProc(){
   let h='';
   PROC.forEach((p,i)=>{
     const all = p.items.every((_,j)=>checks[i+'.'+j]);
-    h += `<div class="pstep ${all?'done':''}" data-n="${i+1}"><h3>${p.t} <span class="ref">${p.r}</span></h3>`;
+    h += `<div class="pstep ${all?'done':''}" data-n="${i+1}"><h3>${L(p.t)} <span class="ref">${p.r}</span></h3>`;
     if (p.dialog){
-      h += `<p style="font-size:14px;color:var(--mut);margin:0 0 8px">Dialogue CREW / GROUND du MANEX A 8.2.4.8. * Coordonner avec le personnel au sol l'état des moteurs (tournants ou non).</p><button class="btn block" id="listenBtn">🎧 Mode écoute</button><div class="dlg" id="dlg"></div>`;
+      h += `<p style="font-size:14px;color:var(--mut);margin:0 0 8px">${tr("Dialogue CREW / GROUND du MANEX A 8.2.4.8. * Coordonner avec le personnel au sol l'état des moteurs (tournants ou non).","CREW / GROUND dialogue from MANEX A 8.2.4.8. * Coordinate the engine status (running or not) with ground personnel.")}</p><button class="btn block" id="listenBtn">${tr('🎧 Mode écoute','🎧 Listen mode')}</button><div class="dlg" id="dlg"></div>`;
     }
     h += p.items.map((it,j)=>{ const k=i+'.'+j; return `<label class="chk ${checks[k]?'on':''} ${p.crit?'crit':''}"><input type="checkbox" data-chk="${k}" ${checks[k]?'checked':''}>${itemHTML(it)}</label>`; }).join('');
-    if (p.calc) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#calc">Calculateur HOT</a></div>`;
-    if (p.after) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#decode">Décoder le code</a><a class="btn" href="#timer">Minuteur</a></div>`;
+    if (p.calc) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#calc">${tr('Calculateur HOT','HOT calculator')}</a></div>`;
+    if (p.after) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#decode">${tr('Décoder le code','Decode the code')}</a><a class="btn" href="#timer">${tr('Minuteur','Timer')}</a></div>`;
     h += '</div>';
   });
-  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">Pièges <span class="ref">MANEX 8.2.4.6.5 · Tableau 55 · ${FC}</span></h3>
-    <div class="warnbox">Ne jamais remettre un antigivrant froid sur une couche existante : nettoyer d'abord au mélange chaud.</div>
-    <div class="warnbox">Pare-brise : enlever toute trace de Type II/IV — ne pas utiliser les essuie-glaces pour cela.</div>
-    <div class="warnbox"><b>Verglas d'aile froide</b> (glace transparente) quand beaucoup de carburant froid reste dans les réservoirs, même jusqu'à +15 °C OAT.</div>
-    <div class="warnbox">Aile froide → pas de 50/50 Type II/IV.</div>
-    <div class="warnbox">Sur une flaque de fluide de dégivrage, limiter la poussée au minimum : l'ingestion peut provoquer pompage et décrochage compresseur.</div>
-    <div class="warnbox">Du fluide reste sur l'aile à la rotation (portance réduite, traînée accrue, effet temporaire) : garder le taux de rotation normal.</div></div>`;
+  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">${tr('Pièges','Pitfalls')} <span class="ref">MANEX 8.2.4.6.5 · ${tr('Tableau','Table')} 55 · ${FC}</span></h3>${PITFALLS.map(x=>`<div class="warnbox">${L(x)}</div>`).join('')}</div>`;
   $('#procBody').innerHTML = h;
 }
 $('#procBody').addEventListener('change', e=>{
@@ -1285,7 +1371,7 @@ $('#procBody').addEventListener('click', e=>{
     add();
   }
 });
-$('#procReset').onclick = ()=>{ if (!confirm('Décocher toute la procédure ?')) return; checks={}; store.set('hot.proc2',checks); renderProc(); };
+$('#procReset').onclick = ()=>{ if (!confirm(tr('Décocher toute la procédure ?','Untick the whole procedure?'))) return; checks={}; store.set('hot.proc2',checks); renderProc(); };
 renderProc();
 
 /* ================= DECODER ================= */
@@ -1294,22 +1380,22 @@ function renderDecode(){
   const v=$('#decIn').value, out=$('#decOut');
   if (!v.trim()){ out.innerHTML=''; return; }
   const d=decodeCode(v); lastDec=d;
-  if (!d.fluid){ out.innerHTML=`<div class="warnbox">Type de fluide non reconnu. Format attendu : <span class="mono">Type IV/75 1432</span>.</div>`; return; }
-  let h = d.multi ? `<div class="warnbox">Deux fluides annoncés (procédure en deux étapes) : le HOT dépend du fluide de la <b>2e étape</b> — ici Type ${d.fluid}. Vérifiez avec le sol.</div>` : '';
+  if (!d.fluid){ out.innerHTML=`<div class="warnbox">${tr('Type de fluide non reconnu. Format attendu :','Fluid type not recognised. Expected format:')} <span class="mono">Type IV/75 1432</span>.</div>`; return; }
+  if (d.fluid==='III'){ out.innerHTML=`<div class="warnbox">${tr('<b>Type III</b> : non utilisé B737 — marque spécifique, voir MANEX Tableaux 17-19.','<b>Type III</b>: not used on B737 — brand-specific, see MANEX Tables 17-19.')}</div>`; return; }
+  let h = d.multi ? `<div class="warnbox">${tr(`Deux fluides annoncés (procédure en deux étapes) : le HOT dépend du fluide de la <b>2e étape</b> — ici Type ${d.fluid}. Vérifiez avec le sol.`,`Two fluids announced (two-step procedure): the HOT depends on the <b>2nd-step</b> fluid — here Type ${d.fluid}. Confirm with the ground crew.`)}</div>` : '';
   h += '<div class="card dec">';
-  if (d.fluid==='III'){ out.innerHTML=`<div class="warnbox"><b>Type III</b> : non utilisé B737 — marque spécifique, voir MANEX Tableaux 17-19.</div>`; return; }
   h += `<div><span class="hl">Type ${d.fluid}</span>`;
-  if (d.fluid==='I') h += ` — mélange eau/glycol chauffé (une concentration plus forte n'allonge pas le HOT)`;
-  else if (d.conc){ const [a,b]=d.conc.split('/'); h += `, <span class="hl">${a} % fluide / ${b} % eau</span>`; }
-  else h += ` — <span style="color:var(--warn)">concentration non annoncée : la faire préciser</span>`;
+  if (d.fluid==='I') h += tr(` — mélange eau/glycol chauffé (une concentration plus forte n'allonge pas le HOT)`,` — heated water/glycol mix (a stronger concentration does not lengthen the HOT)`);
+  else if (d.conc){ const [a,b]=d.conc.split('/'); h += `, <span class="hl">${tr(`${a} % fluide / ${b} % eau`,`${a} % fluid / ${b} % water`)}</span>`; }
+  else h += ` — <span style="color:var(--warn)">${tr('concentration non annoncée : la faire préciser','concentration not announced: ask for it')}</span>`;
   h += '</div>';
-  if (d.time) h += `<div>Début <span class="hl">${d.time} UTC</span> → HOT démarré à <span class="hl">${d.time}</span></div>`;
-  else h += `<div style="color:var(--warn)">Heure de début non annoncée : la faire préciser.</div>`;
-  h += `<div style="font-size:13px;color:var(--mut);margin-top:6px">En deux étapes, ce code concerne la 2e étape. À inscrire à l'ATL.</div></div>`;
-  h += `<button class="btn primary block" id="decGo">Calculer le HOT</button>`;
+  if (d.time) h += tr(`<div>Début <span class="hl">${d.time} UTC</span> → HOT démarré à <span class="hl">${d.time}</span></div>`,`<div>Start <span class="hl">${d.time} UTC</span> → HOT started at <span class="hl">${d.time}</span></div>`);
+  else h += `<div style="color:var(--warn)">${tr('Heure de début non annoncée : la faire préciser.','Start time not announced: ask for it.')}</div>`;
+  h += `<div style="font-size:13px;color:var(--mut);margin-top:6px">${tr("En deux étapes, ce code concerne la 2e étape. À inscrire à l'ATL.","In a two-step procedure, this code refers to the 2nd step. Enter it in the ATL.")}</div></div>`;
+  h += `<button class="btn primary block" id="decGo">${tr('Calculer le HOT','Calculate HOT')}</button>`;
   out.innerHTML=h;
   $('#decGo').onclick = ()=>{
-    Object.assign(S, RESET_S(), {fluid:d.fluid, conc:d.fluid==='I'?null:d.conc, start:d.time}); lastSavedSum=null;
+    Object.assign(S, RESET_S(), {fluid:d.fluid, conc:d.fluid==='I'?null:d.conc, start:d.time}); lastSavedKey=null;
     step='oat'; location.hash='#calc'; renderCalc();
   };
 }
@@ -1319,89 +1405,119 @@ $('#decQuick').addEventListener('click', e=>{ if(e.target.tagName==='BUTTON'){ $
 
 /* ================= QUIZ ================= */
 const QUIZ = [
-  {q:'METAR « 1600 -SN M06 », de nuit. Quelle intensité de neige retenir ?', o:['Faible (comme le METAR)','Modérée','Forte','Très faible'], a:1, e:'Tableau 53 : 1600 m, nuit, OAT ≤ -1 °C → MODÉRÉE. Le tableau prime sur le METAR.', r:'Tableau 53'},
-  {q:'Même cas (1600 m, nuit, -6 °C, neige), Type IV 100/0. Quel HOT retenir ?', o:['0:25','0:45','0:25–0:45, au choix','0:15'], a:0, e:'Tableau 20, bande sous -3 à -8 °C, 100/0, neige modérée : 0:25–0:45. Règle Air Algérie : on retient la valeur basse, 0:25.', r:'Tableau 20 · 8.2.4.9 NOTE'},
-  {q:'Procédure en deux étapes : quand démarre le HOT ?', o:['Au début de la 1re étape','À la fin de la 2e étape','Au début de la 2e étape','À la mise en route'], a:2, e:'Le HOT démarre au début de la 2e étape (antigivrage).', r:'8.2.4.5'},
-  {q:'Pluie verglaçante modérée (FZRA). Quel HOT ?', o:['Celui de la colonne -FZRA','Aucun HOT','La moitié du HOT -FZRA','0:05'], a:1, e:'Pluie verglaçante modérée et forte : aucun HOT.', r:'8.2.4.9 — conditions « Other »'},
-  {q:'Deux étapes : Type I puis Type IV/75. Quel fluide noter à l\'ATL ?', o:['Type I','Type IV/75 (2e étape)','Les deux, sans mélange','Aucun'], a:1, e:'On note le fluide de la 2e étape, son mélange et l\'heure de début.', r:'8.2.4.7.3'},
-  {q:'Le HOT est dépassé avant l\'alignement. Peut-on décoller ?', o:['Non, jamais','Oui, si moins de 5 min de dépassement','Oui, seulement après contrôle des surfaces critiques et en l\'absence de doute','Oui, le HOT n\'est qu\'un repère'], a:2, e:'HOT dépassé ou doute → contrôle des surfaces critiques par une personne qualifiée juste avant la piste. Doute sur un dépôt → pas de décollage.', r:'8.2.4.6.1'},
-  {q:'Type IV 50/50 à -5 °C ?', o:['Autorisé','Refusé : sous -3 à -14 °C seulement 100/0 ou 75/25','Autorisé si deux étapes','Autorisé de jour'], a:1, e:'Tableau 55 : sous -3 à -14 °C, Type II/IV en 100/0 ou 75/25 uniquement.', r:'Tableau 55'},
-  {q:'Type I, -2 °C, neige faible. Quel HOT ?', o:['0:18','0:11','0:06','0:45'], a:1, e:'Tableau 2, -3 °C et au-dessus, neige faible : 0:11–0:18 → 0:11.', r:'Tableau 2'},
-  {q:'Type II 75/25, -12 °C, pluie verglaçante faible. Quel HOT ?', o:['0:09','0:20','Aucun HOT','0:15'], a:2, e:'FZDZ et -FZRA : aucun HOT sous -10 °C en Type II/IV. (À -10 °C exactement : 0:09.)', r:'Tableau 4'},
-  {q:'Givre actif, Type IV 100/0, -12 °C. Quel HOT ?', o:['8:00','2:00','6:00','0:45'], a:2, e:'Tableau 1, bande sous -10 à -14 °C, Type IV 100/0 : 6:00.', r:'Tableau 1'}
+  {q:{fr:'METAR « 1600 -SN M06 », de nuit. Quelle intensité de neige retenir ?',en:'METAR "1600 -SN M06", at night. Which snow intensity do you use?'},
+   o:{fr:['Faible (comme le METAR)','Modérée','Forte','Très faible'],en:['Light (as in the METAR)','Moderate','Heavy','Very light']}, a:1,
+   e:{fr:'Tableau 53 : 1600 m, nuit, OAT ≤ -1 °C → MODÉRÉE. Le tableau prime sur le METAR.',en:'Table 53: 1600 m, night, OAT ≤ -1 °C → MODERATE. The table overrides the METAR.'}, r:{fr:'Tableau 53',en:'Table 53'}},
+  {q:{fr:'Même cas (1600 m, nuit, -6 °C, neige), Type IV 100/0. Quel HOT retenir ?',en:'Same case (1600 m, night, -6 °C, snow), Type IV 100/0. Which HOT do you use?'},
+   o:{fr:['0:25','0:45','0:25–0:45, au choix','0:15'],en:['0:25','0:45','0:25–0:45, your choice','0:15']}, a:0,
+   e:{fr:'Tableau 20, bande sous -3 à -8 °C, 100/0, neige modérée : 0:25–0:45. Règle Air Algérie : on retient la valeur basse, 0:25.',en:'Table 20, band below -3 to -8 °C, 100/0, moderate snow: 0:25–0:45. Air Algérie rule: use the lowest value, 0:25.'}, r:{fr:'Tableau 20 · 8.2.4.9 NOTE',en:'Table 20 · 8.2.4.9 NOTE'}},
+  {q:{fr:'Procédure en deux étapes : quand démarre le HOT ?',en:'Two-step procedure: when does the HOT start?'},
+   o:{fr:['Au début de la 1re étape','À la fin de la 2e étape','Au début de la 2e étape','À la mise en route'],en:['At the start of the 1st step','At the end of the 2nd step','At the start of the 2nd step','At engine start']}, a:2,
+   e:{fr:'Le HOT démarre au début de la 2e étape (antigivrage).',en:'The HOT starts at the beginning of the 2nd step (anti-icing).'}, r:'8.2.4.5'},
+  {q:{fr:'Pluie verglaçante modérée (FZRA). Quel HOT ?',en:'Moderate freezing rain (FZRA). Which HOT?'},
+   o:{fr:['Celui de la colonne -FZRA','Aucun HOT','La moitié du HOT -FZRA','0:05'],en:['The -FZRA column value','No HOT','Half the -FZRA HOT','0:05']}, a:1,
+   e:{fr:'Pluie verglaçante modérée et forte : aucun HOT.',en:'Moderate and heavy freezing rain: no HOT.'}, r:{fr:'8.2.4.9 — conditions « Other »',en:'8.2.4.9 — "Other" conditions'}},
+  {q:{fr:'Deux étapes : Type I puis Type IV/75. Quel fluide noter à l\'ATL ?',en:'Two steps: Type I then Type IV/75. Which fluid goes in the ATL?'},
+   o:{fr:['Type I','Type IV/75 (2e étape)','Les deux, sans mélange','Aucun'],en:['Type I','Type IV/75 (2nd step)','Both, without the mix','None']}, a:1,
+   e:{fr:'On note le fluide de la 2e étape, son mélange et l\'heure de début.',en:'Record the 2nd-step fluid, its mix and the start time.'}, r:'8.2.4.7.3'},
+  {q:{fr:'Le HOT est dépassé avant l\'alignement. Peut-on décoller ?',en:'The HOT has expired before line-up. Can you take off?'},
+   o:{fr:['Non, jamais','Oui, si moins de 5 min de dépassement','Oui, seulement après contrôle des surfaces critiques et en l\'absence de doute','Oui, le HOT n\'est qu\'un repère'],en:['No, never','Yes, if less than 5 min over','Yes, only after a critical-surface check and with no doubt','Yes, the HOT is only guidance']}, a:2,
+   e:{fr:'HOT dépassé ou doute → contrôle des surfaces critiques par une personne qualifiée juste avant la piste. Doute sur un dépôt → pas de décollage.',en:'HOT exceeded or any doubt → critical surfaces checked by a qualified person just before the runway. Doubt about a deposit → no takeoff.'}, r:'8.2.4.6.1'},
+  {q:{fr:'Type IV 50/50 à -5 °C ?',en:'Type IV 50/50 at -5 °C?'},
+   o:{fr:['Autorisé','Refusé : sous -3 à -14 °C seulement 100/0 ou 75/25','Autorisé si deux étapes','Autorisé de jour'],en:['Allowed','Refused: below -3 to -14 °C only 100/0 or 75/25','Allowed if two-step','Allowed by day']}, a:1,
+   e:{fr:'Tableau 55 : sous -3 à -14 °C, Type II/IV en 100/0 ou 75/25 uniquement.',en:'Table 55: below -3 to -14 °C, Type II/IV 100/0 or 75/25 only.'}, r:{fr:'Tableau 55',en:'Table 55'}},
+  {q:{fr:'Type I, -2 °C, neige faible. Quel HOT ?',en:'Type I, -2 °C, light snow. Which HOT?'}, o:['0:18','0:11','0:06','0:45'], a:1,
+   e:{fr:'Tableau 2, -3 °C et au-dessus, neige faible : 0:11–0:18 → 0:11.',en:'Table 2, -3 °C and above, light snow: 0:11–0:18 → 0:11.'}, r:{fr:'Tableau 2',en:'Table 2'}},
+  {q:{fr:'Type II 75/25, -12 °C, pluie verglaçante faible. Quel HOT ?',en:'Type II 75/25, -12 °C, light freezing rain. Which HOT?'},
+   o:{fr:['0:09','0:20','Aucun HOT','0:15'],en:['0:09','0:20','No HOT','0:15']}, a:2,
+   e:{fr:'FZDZ et -FZRA : aucun HOT sous -10 °C en Type II/IV. (À -10 °C exactement : 0:09.)',en:'FZDZ and -FZRA: no HOT below -10 °C with Type II/IV. (At exactly -10 °C: 0:09.)'}, r:{fr:'Tableau 4',en:'Table 4'}},
+  {q:{fr:'Givre actif, Type IV 100/0, -12 °C. Quel HOT ?',en:'Active frost, Type IV 100/0, -12 °C. Which HOT?'}, o:['8:00','2:00','6:00','0:45'], a:2,
+   e:{fr:'Tableau 1, bande sous -10 à -14 °C, Type IV 100/0 : 6:00.',en:'Table 1, band below -10 to -14 °C, Type IV 100/0: 6:00.'}, r:{fr:'Tableau 1',en:'Table 1'}}
 ];
-const Q = {i:0, score:0, answered:false, started:false};
+const Q = {i:0, score:0, answered:false, choice:null, started:false};
 function renderQuiz(){
   const B=$('#quizBody'); Q.started=true;
   if (Q.i>=QUIZ.length){
     if (Q.score > store.get('hot.quizBest',-1)) store.set('hot.quizBest', Q.score);
-    B.innerHTML = `<div class="card" style="text-align:center"><h3>Résultat</h3><div class="score">${Q.score}/${QUIZ.length}</div><p>${Q.score>=8?'Très bien.':'Relisez « Comprendre en 2 minutes » et réessayez.'}</p><button class="btn primary block" id="qRe">Recommencer</button></div>`;
-    $('#qRe').onclick=()=>{ Q.i=0; Q.score=0; Q.answered=false; renderQuiz(); }; return;
+    B.innerHTML = `<div class="card" style="text-align:center"><h3>${tr('Résultat','Result')}</h3><div class="score">${Q.score}/${QUIZ.length}</div><p>${Q.score>=8?tr('Très bien.','Well done.'):tr('Relisez « Comprendre en 2 minutes » et réessayez.','Re-read "Understand in 2 minutes" and try again.')}</p><button class="btn primary block" id="qRe">${tr('Recommencer','Restart')}</button></div>`;
+    $('#qRe').onclick=()=>{ Q.i=0; Q.score=0; Q.answered=false; Q.choice=null; renderQuiz(); }; return;
   }
   const it=QUIZ[Q.i];
-  B.innerHTML = `<div class="qmeta">QUESTION ${Q.i+1} / ${QUIZ.length} · SCORE ${Q.score}</div><div class="card"><h3 style="font-family:var(--body);font-size:18px;color:var(--txt);letter-spacing:0">${esc(it.q)}</h3></div>
-    ${it.o.map((o,j)=>`<button class="qopt" data-o="${j}">${esc(o)}</button>`).join('')}<div id="qfb"></div>`;
-  Q.answered=false;
+  B.innerHTML = `<div class="qmeta">QUESTION ${Q.i+1} / ${QUIZ.length} · SCORE ${Q.score}</div><div class="card"><h3 style="font-family:var(--body);font-size:18px;color:var(--txt);letter-spacing:0">${esc(L(it.q))}</h3></div>
+    ${L(it.o).map((o,j)=>`<button class="qopt" data-o="${j}">${esc(o)}</button>`).join('')}<div id="qfb"></div>`;
+  if (Q.answered) showFb(false);
+}
+function showFb(scroll){
+  const it=QUIZ[Q.i], j=Q.choice;
+  document.querySelectorAll('.qopt').forEach((x,k)=>{ if(k===it.a) x.classList.add('right'); else if(k===j) x.classList.add('wrong'); });
+  $('#qfb').innerHTML = `<div class="${j===it.a?'infobox':'warnbox'}"><b>${j===it.a?'Correct.':tr('Non.','Wrong.')}</b> ${esc(L(it.e))}<div class="mono" style="font-size:12px;margin-top:6px;opacity:.8">MANEX A — ${esc(L(it.r))}</div></div><button class="btn primary block" id="qNext">${Q.i+1<QUIZ.length?tr('Question suivante','Next question'):tr('Voir le score','See score')}</button>`;
+  if (scroll) $('#qNext').scrollIntoView({behavior:'smooth', block:'end'});
 }
 $('#quizBody').addEventListener('click', e=>{
   const b=e.target.closest('[data-o]');
   if (b && !Q.answered){
-    Q.answered=true; const it=QUIZ[Q.i], j=Number(b.dataset.o);
-    if (j===it.a) Q.score++;
-    document.querySelectorAll('.qopt').forEach((x,k)=>{ if(k===it.a) x.classList.add('right'); else if(k===j) x.classList.add('wrong'); });
-    $('#qfb').innerHTML = `<div class="${j===it.a?'infobox':'warnbox'}"><b>${j===it.a?'Correct.':'Non.'}</b> ${esc(it.e)}<div class="mono" style="font-size:12px;margin-top:6px;opacity:.8">MANEX A — ${esc(it.r)}</div></div><button class="btn primary block" id="qNext">${Q.i+1<QUIZ.length?'Question suivante':'Voir le score'}</button>`;
-    $('#qNext').scrollIntoView({behavior:'smooth', block:'end'});
-    return;
+    Q.answered=true; Q.choice=Number(b.dataset.o);
+    if (Q.choice===QUIZ[Q.i].a) Q.score++;
+    showFb(true); return;
   }
-  if (e.target.id==='qNext'){ Q.i++; renderQuiz(); scrollTo(0,0); }
+  if (e.target.id==='qNext'){ Q.i++; Q.answered=false; Q.choice=null; renderQuiz(); scrollTo(0,0); }
 });
 
 /* ================= HOME (tableau de bord) ================= */
-let lastSavedSum=null;
+let lastSavedKey=null;
+const histKey = (s=S) => JSON.stringify([s.fluid,s.conc,s.oatStr,s.cond,s.sub,s.vis,s.night,s.coldWing]);
+/* Calcule un texte (ex. résumé) pour un calcul mémorisé, dans la langue courante */
+function withS(snap, fn){
+  const keep = JSON.parse(JSON.stringify(S));
+  try { Object.assign(S, RESET_S(), snap); return fn(); } catch(e){ return ''; } finally { Object.assign(S, keep); }
+}
 function saveHist(R){
-  const sum = summaryTxt();
-  let h = store.get('hot.hist', []).filter(e => e.sum !== sum);
+  const k = histKey();
+  let h = store.get('hot.hist', []).filter(e => e && typeof e==='object' && e.k !== k);
   const snap = JSON.parse(JSON.stringify(S)); delete snap.start;
-  h.unshift({ s: snap, sum, hot: R.ok ? R.hot : null, ref: R.tableId ? 'Tableau '+REF[R.tableId].n : '', ts: Date.now() });
+  h.unshift({ s: snap, k, hot: R.ok ? R.hot : null, tid: R.tableId || '', ts: Date.now() });
   store.set('hot.hist', h.slice(0, 5));
 }
 function whenTxt(ts){
   const d=new Date(ts), today=new Date();
   const same = d.toDateString()===today.toDateString();
-  return (same ? "aujourd'hui" : d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})) + ' · ' + hmUTC(ts) + ' UTC';
+  return (same ? tr("aujourd'hui","today") : d.toLocaleDateString(tr('fr-FR','en-GB'),{day:'numeric',month:'short'})) + ' · ' + hmUTC(ts) + ' UTC';
 }
 const SNOWFLAKE = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></svg>';
 function renderHome(){
   const hr = new Date().getHours();
-  $('#hGreet').textContent = (hr<5?'Bonne nuit':hr<12?'Bonjour':hr<18?'Bon après-midi':'Bonsoir') + ', équipage';
-  $('#hDate').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  $('#hGreet').textContent = LANG==='en'
+    ? (hr<5?'Good night':hr<12?'Good morning':hr<18?'Good afternoon':'Good evening') + ', crew'
+    : (hr<5?'Bonne nuit':hr<12?'Bonjour':hr<18?'Bon après-midi':'Bonsoir') + ', équipage';
+  $('#hDate').textContent = new Date().toLocaleDateString(tr('fr-FR','en-GB'),{weekday:'long',day:'numeric',month:'long'});
   let st;
   if (T){
     st = `<a class="status live" id="hStatusCard" href="#timer">
       <svg class="mini-ring" viewBox="0 0 70 70"><circle class="rbg" cx="35" cy="35" r="29"/><circle class="rfg" id="hsRing" cx="35" cy="35" r="29" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
-      <span><small id="hsLab" class="mono" style="letter-spacing:.12em">HOT RESTANT</small><span class="hsT" id="hsT">--:--</span><small>${esc(T.label)}</small></span><span class="chev">›</span></a>
-      <div class="row cta"><button class="btn primary" id="hNew">${SNOWFLAKE} Nouveau calcul</button></div>`;
+      <span><small id="hsLab" class="mono" style="letter-spacing:.12em">${tr('HOT RESTANT','HOT REMAINING')}</small><span class="hsT" id="hsT">--:--</span><small>${esc(T.label)}</small></span><span class="chev">›</span></a>
+      <div class="row cta"><button class="btn primary" id="hNew">${SNOWFLAKE} ${tr('Nouveau calcul','New calculation')}</button></div>`;
   } else {
-    st = `<div class="status"><span class="sic">${SNOWFLAKE}</span><span><b>Aucun HOT en cours</b><small>Calculez le HOT en 4 questions, ou décodez l'annonce du sol.</small></span></div>
-      <div class="row cta"><button class="btn primary" id="hNew">${SNOWFLAKE} Nouveau calcul HOT</button><a class="btn" href="#decode">Décoder une annonce</a></div>`;
+    st = `<div class="status"><span class="sic">${SNOWFLAKE}</span><span><b>${tr('Aucun HOT en cours','No HOT running')}</b><small>${tr("Calculez le HOT en 4 questions, ou décodez l'annonce du sol.","Get the HOT in 4 questions, or decode the ground crew's call.")}</small></span></div>
+      <div class="row cta"><button class="btn primary" id="hNew">${SNOWFLAKE} ${tr('Nouveau calcul HOT','New HOT calculation')}</button><a class="btn" href="#decode">${tr('Décoder une annonce','Decode a call')}</a></div>`;
   }
   $('#hStatus').innerHTML = st;
   $('#hNew').onclick = () => { resetCalc(); location.hash = '#calc'; };
-  const hist = store.get('hot.hist', []);
-  $('#hHist').innerHTML = hist.length ? `<h2 class="sect">Derniers calculs <button id="hClr">Effacer</button></h2><div class="hist">${hist.map((e,i)=>
-    `<button class="hitem" data-h="${i}"><span class="hv ${e.hot?'':'no'}">${e.hot?esc(e.hot):'AUCUN<br>HOT'}</span><span><b>${esc(e.sum)}</b><small>${whenTxt(e.ts)}${e.ref?' · '+esc(e.ref):''}</small></span><span class="chev">›</span></button>`).join('')}</div>` : '';
+  const hist = store.get('hot.hist', []).filter(e => e && typeof e==='object' && e.s && typeof e.s==='object');
+  $('#hHist').innerHTML = hist.length ? `<h2 class="sect">${tr('Derniers calculs','Recent calculations')} <button id="hClr">${tr('Effacer','Clear')}</button></h2><div class="hist">${hist.map((e,i)=>{
+    const sum = withS(e.s, summaryTxt) || e.sum || '';
+    const ref = e.tid && REF[e.tid] ? tr('Tableau','Table')+' '+REF[e.tid].n : (e.ref ? (LANG==='en' ? String(e.ref).replace('Tableau','Table') : e.ref) : '');
+    return `<button class="hitem" data-h="${i}"><span class="hv ${e.hot?'':'no'}">${e.hot?esc(e.hot):tr('AUCUN<br>HOT','NO<br>HOT')}</span><span><b>${esc(sum)}</b><small>${whenTxt(e.ts)}${ref?' · '+esc(ref):''}</small></span><span class="chev">›</span></button>`; }).join('')}</div>` : '';
   const total = PROC.reduce((n,p)=>n+p.items.length,0), done = Object.values(checks).filter(Boolean).length;
-  $('#tProc').textContent = done ? `${done} / ${total} étapes cochées` : 'Du parking au décollage, à cocher';
+  $('#tProc').textContent = done ? tr(`${done} / ${total} étapes cochées`,`${done} / ${total} items ticked`) : tr('Du parking au décollage, à cocher','From gate to takeoff, tick as you go');
   const best = store.get('hot.quizBest', -1);
-  $('#tQuiz').textContent = best>=0 ? `10 cas pratiques · meilleur score ${best}/10` : '10 cas pratiques tirés du MANEX';
+  $('#tQuiz').textContent = best>=0 ? tr(`10 cas pratiques · meilleur score ${best}/10`,`10 practical cases · best score ${best}/10`) : tr('10 cas pratiques tirés du MANEX','10 practical cases from the MANEX');
   clock(); tick();
 }
 $('#hHist').addEventListener('click', e=>{
-  if (e.target.closest('#hClr')){ if (confirm('Effacer les derniers calculs ?')){ store.set('hot.hist', []); renderHome(); } return; }
+  if (e.target.closest('#hClr')){ if (confirm(tr('Effacer les derniers calculs ?','Clear recent calculations?'))){ store.set('hot.hist', []); renderHome(); } return; }
   const b = e.target.closest('[data-h]'); if (!b) return;
-  const en = store.get('hot.hist', [])[Number(b.dataset.h)]; if (!en) return;
-  Object.assign(S, RESET_S(), en.s, {start:null}); lastSavedSum = null; step = 'result';
-  lastSavedSum = (()=>{ try{ return summaryTxt(); }catch(e){ return null; } })();
+  const en = store.get('hot.hist', []).filter(e => e && typeof e==='object' && e.s && typeof e.s==='object')[Number(b.dataset.h)]; if (!en) return;
+  Object.assign(S, RESET_S(), en.s, {start:null}); step = 'result'; lastSavedKey = histKey();
   location.hash = '#calc';
 });
 function clock(){
@@ -1413,6 +1529,86 @@ document.addEventListener('touchstart', ()=>{}, {passive:true});  /* active le :
 document.addEventListener('pointerdown', ()=>{ unlockAudio(); if (T && !wakeLock) keepAwake(); }, {passive:true});
 setInterval(()=>{ clock(); tick(); }, 1000);
 
+/* ================= TEXTES FIXES FR / EN ================= */
+const I18N = {
+  skip:'tap to skip',
+  disc:'<b>⚠ Disclaimer.</b> Training tool based on MANEX A §8.2.4 (TR 39-4 OCT.26, FAA Winter 2026-2027 tables). In case of any difference, the MANEX A in force prevails. The HOT is guidance only and never replaces the inspection of critical surfaces. The final decision rests with the captain.',
+  tools:'Tools',
+  t_calc_b:'HOT calculator', t_calc_s:'4 questions → the HOT and the exact MANEX cell',
+  t_learn_b:'Understand in 2 minutes', t_learn_s:'The 7 key ideas',
+  t_proc_b:'Step-by-step procedure',
+  t_dec_b:"Decode the ground crew's call", t_dec_s:'"Type IV/75 1432" → plain language',
+  t_yul_b:'Montreal YUL', t_yul_s:'AeroMag pad: frequencies and fluids',
+  t_timer_b:'HOT timer', t_timer_s:'Countdown from the announced time',
+  t_about_b:'About', t_about_s:'Source, version, author',
+  learn_lead:'One idea per card. Read them in order.', learn_btn:'Go to the HOT calculator',
+  proc_lead:'Tick as you go. Ticks are saved on this device.', proc_reset:'Untick all',
+  dec_lead:'Type the code announced by the ground crew (e.g. <span class="mono">Type IV/75 1432</span>).',
+  tab_home:'Home', tab_timer:'Timer', tab_proc:'Procedure', tab_dec:'Decode',
+  al_t:'HOT EXCEEDED',
+  al_p:'Critical surfaces must be checked by a qualified person just before entering the runway. Any doubt about a deposit that may affect performance: <b>no takeoff</b>.',
+  al_ok:'GOT IT',
+  yul:`<div class="card">
+    <h3>Frequencies — AeroMag pad (YUL)</h3>
+    <div class="freq"><span class="f">123.425</span><span><b>Montreal Deice</b><br><small style="color:var(--mut)">30 min before departure: aircraft type, fluid(s), surfaces to treat</small></span></div>
+    <div class="freq"><span class="f">122.525</span><span><b>Aeromag Pad Control</b><br><small style="color:var(--mut)">Pad access, entry and exit</small></span></div>
+    <div class="freq"><span class="f">123.125</span><span><b>ICEMAN</b><br><small style="color:var(--mut)">De-icing information</small></span></div>
+    <div class="freq"><span class="f" style="font-size:20px">122.075<br>122.275</span><span><b>Apron</b> (push-back)<br><small style="color:var(--mut)">Ground 121.900 (or 121.000 as instructed by Apron)</small></span></div>
+    <div class="ref">MANEX A 8.2.4.8</div>
+  </div>
+  <div class="card">
+    <h3>Step by step</h3>
+    <ol class="notes" style="padding-left:20px">
+      <li>At the gate: Apron 122.075 / 122.275 for push-back, then taxi with Ground 121.900 (or 121.000).</li>
+      <li>TWY J or K: hold short of the pad. TWY E: hold short of TWY H or I. Contact <b>Aeromag Pad Control 122.525</b>.</li>
+      <li>Follow the instructions and guidance lines to the bay; report "brakes set" when in position.</li>
+      <li>When instructed: <b>ICEMAN 123.125</b>, confirm aircraft configured for de-icing, engines at idle.</li>
+      <li>De-icing with engines running, unless advised otherwise by ICEMAN.</li>
+      <li>After inspection, ICEMAN confirms the aircraft is clean, gives the <b>HOT start time</b>, the fluids applied, and that vehicles are in the safety zones.</li>
+      <li>When advised by ICEMAN: Aeromag Pad Control 122.525. <b>Never move before Pad Control clears you to taxi out of the bay.</b></li>
+      <li>Exit: verbal instructions confirmed by message boards. At the exit point (J short of U, K short of C, H or I short of E), Ground 121.900 / 121.000 only when advised.</li>
+    </ol>
+    <div class="ref">MANEX A 8.2.4.8</div>
+  </div>
+  <div class="card">
+    <h3>Fluids used at YUL</h3>
+    <p><b>Type I</b> — <span class="mono">CHEMCO CHEMR REG1</span></p>
+    <p><b>Type IV</b> — <span class="mono">DOW UCAR ENDURANCE EG106</span></p>
+    <div class="infobox">As the Type IV brand is known, its brand table (MANEX A, Table 37) may give a different HOT from the generic Table 20 used by the calculator.</div>
+  </div>`,
+  about:`<div class="brand"><div class="logo" style="font-size:34px">737 HOLDOVER</div><div class="sub">version ${VERSION}</div></div>
+  <div class="disclaimer"><b>⚠ Disclaimer.</b> Training tool based on MANEX A §8.2.4 (TR 39-4 OCT.26, FAA Winter 2026-2027 tables). In case of any difference, the MANEX A in force prevails. The HOT is guidance only and never replaces the inspection of critical surfaces. The final decision rests with the captain.</div>
+  <div class="card">
+    <h3>Source</h3>
+    <p>Air Algérie MANEX A, §8.2.4 "Ground de-icing and anti-icing" — Ed. 02, TR 39-4, OCT.26. FAA Holdover Time Guidelines Winter 2026-2027 tables.</p>
+    <p>Step-by-step procedure completed with the B737 OPS INFO "Cold Weather Operations" (CL-AH-DOA-DOC-B737-002 Ed. 06, NOV 22) and the FCOM 737-8D6 SP.16 "Cold Weather Operations".</p>
+    <p>Tables included: 1 (active frost), 2 (Type I aluminium), 4 (generic Type II), 20 (generic Type IV), 53 (snowfall intensity), 54 and 55 (fluid application).</p>
+    <p>No value is interpolated: the app reads the table cell and uses the lowest value (Air Algérie rule, 8.2.4.9 NOTE).</p>
+  </div>
+  <div class="card">
+    <h3>Offline</h3>
+    <p>All data and fonts are inside the app. On iPhone / iPad: Safari → Share → "Add to Home Screen".</p>
+  </div>
+  <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>`
+};
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    if (el.dataset.fr===undefined) el.dataset.fr = el.innerHTML;
+    const en = I18N[el.dataset.t];
+    el.innerHTML = (LANG==='en' && en!==undefined) ? en : el.dataset.fr;
+  });
+  document.querySelectorAll('#langBtn [data-l]').forEach(x=>x.classList.toggle('on', x.dataset.l===LANG));
+  $('#backBtn').setAttribute('aria-label', tr('Retour','Back'));
+  $('#utcClock').setAttribute('aria-label', tr('Heure UTC','UTC time'));
+}
+$('#langBtn').onclick = ()=>{
+  LANG = LANG==='en' ? 'fr' : 'en'; store.set('hot.lang', LANG);
+  applyLang(); renderLearn(); renderProc(); renderDecode();
+  if (Q.started) renderQuiz();
+  const y = scrollY; route(); scrollTo(0, y);
+};
+
 /* ================= BOOT ================= */
 (function restoreCalc(){
   const c = store.get('hot.calc', null);
@@ -1420,9 +1616,10 @@ setInterval(()=>{ clock(); tick(); }, 1000);
   try {
     Object.assign(S, RESET_S(), c.S);
     step = stepList().includes(c.step) ? c.step : 'fluid';
-    if (step==='result') lastSavedSum = summaryTxt();
+    if (step==='result') lastSavedKey = histKey();
   } catch(e){ Object.assign(S, RESET_S()); step='fluid'; }
 })();
+applyLang();
 if (T){ ensureTick(); keepAwake(); }
 route();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
