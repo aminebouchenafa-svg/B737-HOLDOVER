@@ -214,6 +214,12 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
 .chk input{width:26px;height:26px;flex:none;accent-color:var(--ice);margin:0}
 .chk.on{border-color:#1d5a70;color:var(--mut)}
 .chk.crit{border-color:#5a1d27}
+.chk .ci{display:flex;align-items:baseline;gap:6px;font-family:var(--mono);font-size:15px}
+.chk .ci .el{color:var(--txt)}
+.chk .ci .dots{flex:1;border-bottom:1px dotted var(--dim);min-width:12px;transform:translateY(-4px)}
+.chk .ci .act{color:var(--ice2);text-align:right}
+.chk .who{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--ice);border:1px solid #1d5a70;border-radius:6px;padding:1px 6px;margin-top:4px}
+.chk .cn{display:block;color:var(--mut);font-size:13.5px;margin-top:4px}
 .dlg{display:flex;flex-direction:column;gap:10px;margin:10px 0}
 .bub{max-width:88%;padding:10px 14px;border-radius:16px;font-family:var(--mono);font-size:15px}
 .bub small{display:block;font-size:11px;letter-spacing:.1em;opacity:.7;margin-bottom:2px}
@@ -341,6 +347,7 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
   <div class="card">
     <h3>Source</h3>
     <p>MANEX A Air Algérie, §8.2.4 « Dégivrage et antigivrage au sol » — Éd. 02, Rév. 36, NOV.25. Tableaux FAA Holdover Time Guidelines Winter 2025-2026.</p>
+    <p>Procédure pas à pas complétée par l'OPS INFO B737 « Cold Weather Operations » (CL-AH-DOA-DOC-B737-002 Éd. 06, NOV 22) et le FCOM 737-8D6 SP.16 « Cold Weather Operations ».</p>
     <p>Tableaux intégrés : 1 (givre actif), 2 (Type I aluminium), 4 (Type II générique), 19 (Type IV générique), 50 (intensité de la neige), 51 et 52 (application des fluides).</p>
     <p>Aucune valeur n'est interpolée : l'app lit la case du tableau, et retient la valeur basse (règle Air Algérie, 8.2.4.9 NOTE).</p>
   </div>
@@ -977,15 +984,62 @@ const DIALOG = [
   ['gnd','GROUND','De-icing complete Type II/75 at 1650. Personnel and equipment clear.'],
   ['crew','CREW','Type II/75 at 1650, copied.']
 ];
+/* Sources : MANEX A §8.2.4 · OPS INFO B737 « Cold Weather Operations » (CL-AH-DOA-DOC-B737-002 Éd.06 NOV22, p.7-9)
+   · FCOM 737-8D6 ALG SP.16 « Cold Weather Operations ». Item : texte simple, ou [élément, action, qui, note]. */
+const OI = 'OPS INFO p.', FC = 'FCOM SP.16';
 const PROC = [
-  {t:'Prévol', r:'8.2.4.10.1', items:['Visite prévol effectuée','Gel ou neige empêchant les vérifications → escale informée','Carburant supplémentaire prévu']},
-  {t:'Avant dégivrage', r:'8.2.4.6.4 · 8.2.4.8', items:['Check-lists FCOM « Cold Weather Operation » / « Ice and Rain Protection » (SP)','Avion configuré pour le dégivrage','APU / moteurs au ralenti possibles — conditionnement d\'air OFF','PNC et passagers informés']},
-  {t:'Phraséologie sol', r:'8.2.4.8', dialog:true, items:['Contact établi avec l\'équipe de dégivrage, demande transmise']},
-  {t:'Pendant', r:'8.2.4.10.2', items:['Écoute ATC et technicien maintenue','En urgence : contacter la tour et le responsable du dégivrage']},
-  {t:'Après', r:'8.2.4.7.2 · 8.2.4.7.3', after:true, items:['Code relu : Type / concentration / heure UTC','Minuteur HOT démarré','Check-list après dégivrage','ATL : heure de début, type de fluide (celui de la 2e étape si deux étapes), mélange']},
-  {t:'Avant le décollage', r:'8.2.4.6.1', crit:true, items:['HOT dépassé ou moindre doute → contrôle des surfaces critiques par une personne qualifiée (OPL) juste avant d\'entrer sur la piste','Doute sur un dépôt pouvant affecter les performances → PAS DE DÉCOLLAGE']}
+  {t:'Prévol', r:'MANEX 8.2.4.10.1 · '+OI+'7', items:[
+    'Visite prévol effectuée (surfaces critiques regardées)',
+    'Gel ou neige empêchant les vérifications → escale informée',
+    'Carburant supplémentaire prévu',
+    ['PROBE HEAT switches','ON','F/O','Vérifier que tous les voyants probe heat sont éteints.']]},
+  {t:'Avant mise en route', r:OI+'7 · MANEX 8.2.4.10.1', items:[
+    ['Takeoff data','COMPUTE','','Runway Analysis Performances Limitations ou OPT. ATM interdit sur piste contaminée.'],
+    ['Max crosswind','REVIEW','','Limitations vent traversier : tableau GRF RCAM.'],
+    ['Holdover time','OBTAIN','','Depuis l\'OM A (MANEX 8.2.4.9) — calculateur de l\'app.'],
+    ['De-icing','PERFORM','','Au parking si possible.'],
+    'Check-lists FCOM « Cold Weather Operation » / « Ice and Rain Protection » (SP) revues']},
+  {t:'Avant roulage', r:OI+'8 · '+FC, items:[
+    ['GENERATOR 1 and 2 switches','ON','F/O','Huile froide : jusqu\'à 5 min pour une puissance stable.'],
+    ['Flight controls','CHECK','C','Neige ou glace sur l\'aile : envisager de retarder ce contrôle après le dégivrage. Efforts plus élevés à basse température.'],
+    ['Flaps','CHECK','F/O','UP → 40 → UP (course complète). Surveiller l\'indicateur de volets et le panneau des becs.'],
+    ['Flaps','UP pour rouler','','Si roulage contaminé, précipitations sous 0 °C ou dégivrage prévu : rouler volets rentrés.']]},
+  {t:'Avant dégivrage', r:OI+'8 · '+FC+' · MANEX 8.2.4.6.4', items:[
+    ['Cabin crew and passengers','ADVISE','C','MANEX 8.2.4.8.'],
+    ['APU','AS NEEDED','F/O','À arrêter sauf si nécessaire : l\'ingestion de fluide donne fumées et odeurs en cabine et peut endommager l\'APU.'],
+    ['« FLAPS UP » → Flaps','UP','F/O','Évite l\'accumulation de glace et de slush dans les logements de volets.'],
+    ['Thrust levers','IDLE','C','Sécurité du personnel aux entrées d\'air et à l\'échappement.'],
+    ['Stabilizer trim','__ UNITS','C','Trim de décollage, dans la bande verte. Poignées de la roue de trim rangées avant le trim électrique.'],
+    ['Engine BLEED air switches','OFF','F/O','Évite l\'entrée de fumées dans le conditionnement d\'air (MANEX : conditionnement d\'air OFF).'],
+    ['APU BLEED air switch','OFF','F/O','Même raison.']]},
+  {t:'Phraséologie sol', r:'MANEX 8.2.4.8', dialog:true, items:['Contact établi avec l\'équipe de dégivrage, demande transmise']},
+  {t:'Pendant le dégivrage', r:OI+'8 · MANEX 8.2.4.10.2', calc:true, items:[
+    ['Start time, fluid type, mixture','NOTE','F/O','Heure de début (2e étape si deux étapes), type, mélange.'],
+    ['Holdover time','CHECK','BOTH','Valeur basse de la case du MANEX.'],
+    'Écoute ATC et technicien maintenue',
+    'En urgence : contacter la tour et le responsable du dégivrage']},
+  {t:'Après dégivrage', r:OI+'8 · '+FC+' · MANEX 8.2.4.7', after:true, items:[
+    'Code relu : Type / concentration / heure UTC',
+    'Minuteur HOT démarré',
+    ['APU','AS NEEDED','F/O',''],
+    ['APU BLEED air switch','AS NEEDED','F/O','Après dégivrage, l\'APU bleed au décollage peut provoquer de la fumée dans l\'avion.'],
+    ['Engine BLEED air switches','ON','F/O','Attendre ≈ 1 min après la fin du dégivrage : le fluide doit être évacué des moteurs.'],
+    ['Flight controls','CHECK, as needed','C','Efforts plus élevés à basse température.'],
+    'Check-list après dégivrage',
+    'ATL : heure de début, type de fluide (celui de la 2e étape si deux étapes), mélange']},
+  {t:'Avant le décollage', r:OI+'9 · '+FC+' · MANEX 8.2.4.6.1', crit:true, items:[
+    ['Holdover time','CHECK within limits','',''],
+    ['« FLAPS __ » → Flap lever','SET takeoff flaps','PF / PM','Vérifier le voyant vert LE FLAPS EXT.'],
+    ['Before takeoff checklist','COMPLETE','',''],
+    'HOT dépassé ou moindre doute → contrôle des surfaces critiques par une personne qualifiée (OPL) juste avant d\'entrer sur la piste',
+    'Doute sur un dépôt pouvant affecter les performances → PAS DE DÉCOLLAGE']}
 ];
-let checks = store.get('hot.proc', {});
+let checks = store.get('hot.proc2', {});
+function itemHTML(it){
+  if (typeof it==='string') return `<span>${esc(it)}</span>`;
+  const [el,act,who,note]=it;
+  return `<span style="flex:1"><span class="ci"><span class="el">${esc(el)}</span><span class="dots"></span><span class="act">${esc(act)}</span></span>${who?`<span class="who">${esc(who)}</span>`:''}${note?`<small class="cn">${esc(note)}</small>`:''}</span>`;
+}
 function renderProc(){
   let h='';
   PROC.forEach((p,i)=>{
@@ -994,18 +1048,21 @@ function renderProc(){
     if (p.dialog){
       h += `<p style="font-size:14px;color:var(--mut);margin:0 0 8px">Dialogue type CREW / GROUND — le texte de référence est au MANEX A 8.2.4.8.</p><button class="btn block" id="listenBtn">🎧 Mode écoute</button><div class="dlg" id="dlg"></div>`;
     }
-    h += p.items.map((it,j)=>{ const k=i+'.'+j; return `<label class="chk ${checks[k]?'on':''} ${p.crit?'crit':''}"><input type="checkbox" data-chk="${k}" ${checks[k]?'checked':''}><span>${esc(it)}</span></label>`; }).join('');
+    h += p.items.map((it,j)=>{ const k=i+'.'+j; return `<label class="chk ${checks[k]?'on':''} ${p.crit?'crit':''}"><input type="checkbox" data-chk="${k}" ${checks[k]?'checked':''}>${itemHTML(it)}</label>`; }).join('');
+    if (p.calc) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#calc">Calculateur HOT</a></div>`;
     if (p.after) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#decode">Décoder le code</a><a class="btn" href="#timer">Minuteur</a></div>`;
     h += '</div>';
   });
-  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">Pièges <span class="ref">8.2.4.6.5 · Tableau 52</span></h3>
+  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">Pièges <span class="ref">MANEX 8.2.4.6.5 · Tableau 52 · ${FC}</span></h3>
     <div class="warnbox">Ne jamais remettre un antigivrant froid sur une couche existante : nettoyer d'abord au mélange chaud.</div>
     <div class="warnbox">Pare-brise : enlever toute trace de Type II/IV — ne pas utiliser les essuie-glaces pour cela.</div>
     <div class="warnbox"><b>Verglas d'aile froide</b> (glace transparente) quand beaucoup de carburant froid reste dans les réservoirs, même jusqu'à +15 °C OAT.</div>
-    <div class="warnbox">Aile froide → pas de 50/50 Type II/IV.</div></div>`;
+    <div class="warnbox">Aile froide → pas de 50/50 Type II/IV.</div>
+    <div class="warnbox">Sur une flaque de fluide de dégivrage, limiter la poussée au minimum : l'ingestion peut provoquer pompage et décrochage compresseur.</div>
+    <div class="warnbox">Du fluide reste sur l'aile à la rotation (portance réduite, traînée accrue, effet temporaire) : garder le taux de rotation normal.</div></div>`;
   $('#procBody').innerHTML = h;
 }
-$('#procBody').addEventListener('change', e=>{ const k=e.target.dataset.chk; if(!k) return; checks[k]=e.target.checked; store.set('hot.proc',checks); renderProc(); });
+$('#procBody').addEventListener('change', e=>{ const k=e.target.dataset.chk; if(!k) return; checks[k]=e.target.checked; store.set('hot.proc2',checks); renderProc(); });
 $('#procBody').addEventListener('click', e=>{
   if (e.target.closest('#listenBtn')){
     const box=$('#dlg'); box.innerHTML=''; let i=0;
@@ -1013,7 +1070,7 @@ $('#procBody').addEventListener('click', e=>{
     add();
   }
 });
-$('#procReset').onclick = ()=>{ checks={}; store.set('hot.proc',checks); renderProc(); };
+$('#procReset').onclick = ()=>{ checks={}; store.set('hot.proc2',checks); renderProc(); };
 renderProc();
 
 /* ================= DECODER ================= */
