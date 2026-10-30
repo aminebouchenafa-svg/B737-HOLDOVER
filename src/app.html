@@ -38,10 +38,10 @@ h1,h2,h3{font-family:var(--head);font-weight:700;letter-spacing:.04em;margin:0}
 .mono{font-family:var(--mono)}
 
 /* ---------- Splash ---------- */
-#splash{position:fixed;inset:0;z-index:100;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity .6s ease}
+#splash{position:fixed;inset:0;z-index:100;background:#000;display:flex;flex-direction:column;align-items:center;padding:calc(96px + var(--sat)) 16px calc(14px + var(--sab));overflow-y:auto;transition:opacity .6s ease}
 #splash.hide{opacity:0;pointer-events:none}
 #snow{position:absolute;inset:0;width:100%;height:100%}
-.sp-inner{position:relative;text-align:center;padding:0 16px}
+.sp-inner{position:relative;text-align:center;padding:0 16px;flex:1;display:flex;flex-direction:column;justify-content:center;min-height:200px}
 .wic{font-family:'Cinzel',Georgia,serif;font-weight:600;text-transform:uppercase;letter-spacing:.2em;line-height:1.15;
   font-size:clamp(28px,10vw,104px);margin:0;padding-left:.2em;
   background:linear-gradient(178deg,#ffffff 0%,#d9e4ea 28%,#8193a0 47%,#e9f2f6 58%,#a9bac6 78%,#eef7fb 100%);
@@ -50,7 +50,7 @@ h1,h2,h3{font-family:var(--head);font-weight:700;letter-spacing:.04em;margin:0}
   opacity:0;transform:scale(.92);animation:wicIn 2s ease-out .15s forwards}
 .wic span{display:block}
 .sp-sub{font-family:var(--mono);color:var(--ice2);font-size:clamp(12px,3.4vw,18px);letter-spacing:.06em;margin-top:22px;opacity:0;animation:fadeIn 1s ease-out 1.4s forwards}
-.sp-sign{position:absolute;bottom:calc(22px + var(--sab));left:0;right:0;text-align:center;font-family:var(--mono);font-size:13px;color:var(--mut);line-height:1.5;opacity:0;animation:fadeIn 1s ease-out 1.6s forwards}
+.sp-sign{position:relative;margin-top:14px;text-align:center;font-family:var(--mono);font-size:13px;color:var(--mut);line-height:1.5;opacity:0;animation:fadeIn 1s ease-out 1.6s forwards}
 :root{--logo:url(data:image/png;base64,__LOGO__)}
 .sp-brand{position:absolute;top:calc(20px + var(--sat));left:20px;opacity:0;animation:fadeIn 1.2s ease-out .4s forwards}
 .sp-logo{width:clamp(190px,34vw,320px);aspect-ratio:1054/198;
@@ -59,7 +59,16 @@ h1,h2,h3{font-family:var(--head);font-weight:700;letter-spacing:.04em;margin:0}
   filter:drop-shadow(0 0 10px rgba(95,216,255,.55))}
 .sp-fleet{font-family:var(--mono);font-size:10.5px;letter-spacing:.32em;color:var(--ice);margin-top:8px;border-top:1px solid rgba(95,216,255,.35);padding-top:5px;width:fit-content}
 @media (prefers-reduced-motion:reduce){.sp-brand{animation:none;opacity:1}}
-.sp-skip{position:absolute;bottom:calc(78px + var(--sab));left:0;right:0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.sp-lang{position:absolute;top:calc(20px + var(--sat));right:16px;z-index:2;opacity:0;animation:fadeIn 1s ease-out .6s forwards}
+.sp-bottom{position:relative;width:100%;max-width:560px;margin-top:18px;opacity:0;animation:fadeIn 1s ease-out 1.5s forwards}
+.sp-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.sp-fields{grid-template-columns:1fr}}
+.sp-fields input.txt{margin:0;min-height:54px;font-size:18px;background:rgba(3,10,18,.75);border-color:rgba(160,210,255,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.sp-fields input.txt::placeholder{color:#6f8494}
+#gateForm.authed .sp-fields{display:none}
+.sp-go{margin-top:12px;min-height:58px;font-size:16px;letter-spacing:.12em;border-radius:16px}
+#gErr .badbox{margin:10px 0 0}
+@media (prefers-reduced-motion:reduce){.sp-lang,.sp-bottom{animation:none;opacity:1}}
 @keyframes wicIn{to{opacity:1;transform:scale(1)}}
 @keyframes fadeIn{to{opacity:1}}
 @media (prefers-reduced-motion:reduce){
@@ -415,16 +424,26 @@ body.calm #sky i{animation-play-state:paused}
 <body>
 <div id="sky" aria-hidden="true"><i class="stars"></i><i class="c1"></i><i class="c2"></i><i class="c5"></i><i class="c3"></i><i class="c4"></i></div>
 
-<div id="splash" role="button" aria-label="Passer l'introduction">
+<div id="splash">
   <canvas id="snow" aria-hidden="true"></canvas>
   <div class="sp-brand">
     <div class="sp-logo" role="img" aria-label="Air Algérie"></div>
     <div class="sp-fleet">B737 NG / MAX · FLEET</div>
   </div>
-  <div class="sp-skip" data-t="skip">toucher pour passer</div>
+  <button class="lang sp-lang" type="button" aria-label="Langue / Language"><span data-l="fr">FR</span><span data-l="en">EN</span></button>
   <div class="sp-inner">
     <h1 class="wic"><span>Winter is</span><span>Coming</span></h1>
     <div class="sp-sub">B737 NG/MAX · De-icing &amp; Holdover Time · MANEX A §8.2.4</div>
+  </div>
+  <div class="sp-bottom">
+    <form id="gateForm" autocomplete="on">
+      <div class="sp-fields">
+        <input class="txt" id="gUser" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Utilisateur" aria-label="Utilisateur">
+        <input class="txt" id="gPass" name="password" type="password" autocomplete="current-password" placeholder="Mot de passe" aria-label="Mot de passe">
+      </div>
+      <div id="gErr"></div>
+      <button class="btn primary block sp-go" type="submit" id="spGo"><span data-t="g_go">CONTINUER</span> →</button>
+    </form>
   </div>
   <div class="sp-sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
 </div>
@@ -571,24 +590,6 @@ body.calm #sky i{animation-play-state:paused}
   <a href="#proc" data-tab="proc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg><span data-t="tab_proc">Procédure</span></a>
   <a href="#decode" data-tab="decode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.3" fill="currentColor"/></svg><span data-t="tab_dec">Décoder</span></a>
 </nav>
-
-<div id="gate" hidden>
-  <div class="gate-box">
-    <div class="gate-top"><div class="sp-logo gate-logo" role="img" aria-label="Air Algérie"></div>
-      <button class="lang" type="button" aria-label="Langue / Language"><span data-l="fr">FR</span><span data-l="en">EN</span></button></div>
-    <h2 class="gate-title">737 HOLDOVER</h2>
-    <p class="gate-sub" data-t="g_sub">Accès réservé aux pilotes B737 NG/MAX</p>
-    <form id="gateForm" autocomplete="on">
-      <label class="lbl" for="gUser" data-t="g_user">UTILISATEUR</label>
-      <input class="txt" id="gUser" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
-      <label class="lbl" for="gPass" data-t="g_pass">MOT DE PASSE</label>
-      <input class="txt" id="gPass" name="password" type="password" autocomplete="current-password">
-      <div id="gErr"></div>
-      <button class="btn primary block" type="submit" data-t="g_btn">Se connecter</button>
-    </form>
-    <p class="gate-foot">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</p>
-  </div>
-</div>
 
 <div id="alarm" role="alertdialog" aria-live="assertive" aria-labelledby="alarmT">
   <h2 id="alarmT" data-t="al_t">HOT DÉPASSÉ</h2>
@@ -830,8 +831,7 @@ function icon(kind){
   }
   let done=false;
   const close = () => { if(done) return; done=true; el.classList.add('hide'); setTimeout(()=>{ run=false; cancelAnimationFrame(raf); el.remove(); }, 650); };
-  el.addEventListener('click', close);
-  setTimeout(close, 3200);
+  window.closeSplash = close;   /* fermé uniquement par « Continuer » */
 })();
 
 /* ================= ROUTER ================= */
@@ -1643,7 +1643,7 @@ const I18N = {
   tab_home:'Home', tab_timer:'Timer', tab_proc:'Procedure', tab_dec:'Decode',
   al_t:'HOT EXCEEDED',
   al_p:'Critical surfaces must be checked by a qualified person just before entering the runway. Any doubt about a deposit that may affect performance: <b>no takeoff</b>.',
-  al_ok:'GOT IT',
+  al_ok:'GOT IT', g_go:'CONTINUE',
   g_sub:'Access restricted to B737 NG/MAX pilots', g_user:'USERNAME', g_pass:'PASSWORD', g_btn:'Log in', logout:'Log out on this device',
   yul:`<div class="card">
     <h3>Frequencies — AeroMag pad (YUL)</h3>
@@ -1697,6 +1697,8 @@ function applyLang(){
   });
   document.querySelectorAll('.lang [data-l]').forEach(x=>x.classList.toggle('on', x.dataset.l===LANG));
   $('#backBtn').setAttribute('aria-label', tr('Retour','Back'));
+  const gu=$('#gUser'), gp=$('#gPass');
+  if (gu){ gu.placeholder = tr('Utilisateur','Username'); gu.setAttribute('aria-label', gu.placeholder); gp.placeholder = tr('Mot de passe','Password'); gp.setAttribute('aria-label', gp.placeholder); }
   $('#utcClock').setAttribute('aria-label', tr('Heure UTC','UTC time'));
 }
 document.querySelectorAll('.lang').forEach(b=>b.onclick = switchLang);
@@ -1826,14 +1828,15 @@ function sha256(msg){
 }
 const AUTH_HASH = '604e54877e251d2419898fd57ebdb11fdfcfca209e63703af794de72723e0688';
 const authOf = (u, p) => sha256('hot737|' + String(u).trim().toLowerCase() + '|' + p);
-function gateCheck(){ const ok = store.get('hot.auth', '') === AUTH_HASH; $('#gate').hidden = ok; return ok; }
+function gateCheck(){ const ok = store.get('hot.auth', '') === AUTH_HASH; const f=$('#gateForm'); if (f) f.classList.toggle('authed', ok); return ok; }
 $('#gateForm').addEventListener('submit', e=>{
   e.preventDefault();
+  if (gateCheck()){ closeSplash(); return; }
   const h = authOf($('#gUser').value, $('#gPass').value);
-  if (h === AUTH_HASH){ store.set('hot.auth', h); $('#gPass').value=''; $('#gErr').innerHTML=''; $('#gate').hidden = true; route(); }
+  if (h === AUTH_HASH){ store.set('hot.auth', h); $('#gPass').value=''; $('#gErr').innerHTML=''; document.activeElement && document.activeElement.blur(); closeSplash(); }
   else { $('#gPass').value=''; $('#gErr').innerHTML = `<div class="badbox">${tr('Utilisateur ou mot de passe incorrect.','Wrong username or password.')}</div>`; $('#gPass').focus(); }
 });
-$('#logoutBtn').onclick = ()=>{ if (confirm(tr('Se déconnecter de cet appareil ?','Log out on this device?'))){ store.set('hot.auth',''); location.hash='#home'; gateCheck(); } };
+$('#logoutBtn').onclick = ()=>{ if (confirm(tr('Se déconnecter de cet appareil ?','Log out on this device?'))){ store.set('hot.auth',''); location.hash='#home'; location.reload(); } };
 
 /* ================= BOOT ================= */
 (function restoreCalc(){

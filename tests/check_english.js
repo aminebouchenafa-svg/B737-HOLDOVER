@@ -9,8 +9,8 @@ const ALLOW = /Air Algérie|Algérie|MANEX A|CL-AH-DOA|Éd\./g;
   const b = await chromium.launch();
   const p = await (await b.newContext({ ...devices['iPhone 13'] })).newPage();
   const errs = []; p.on('pageerror', e => errs.push(e.message));
-  await p.goto(url); await p.click('#splash'); await p.waitForTimeout(700);
-  await p.evaluate(() => { store.set('hot.auth', AUTH_HASH); gateCheck(); });
+  await p.goto(url);
+  await p.evaluate(() => { store.set('hot.auth', AUTH_HASH); gateCheck(); }); await p.waitForTimeout(1600); await p.click('#spGo'); await p.waitForTimeout(700);
   await p.click('#langBtn'); await p.waitForTimeout(200);
   const found = new Map();
   const scan = async (where) => {
