@@ -33,6 +33,9 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
       q2: c('IV', '100/0', -6, INT_COL[snowIntensity(1600, true, -6).intensity]),
       n1: c('IV', '100/0', -10, 'FZRA_L'), n2: c('IV', '100/0', -16, 'FZFG'),
       n3: snowIntensity(4000, true, -5).intensity, n4: snowIntensity(4800, true, 0).intensity, n5: snowIntensity(4800, true, -5).intensity,
+      f1: (()=>{ const n=new Date(); const fut=new Date(n.getTime()+40*60e3); const hm=String(fut.getUTCHours()).padStart(2,'0')+':'+String(fut.getUTCMinutes()).padStart(2,'0'); return startDate(hm); })(),
+      f2: (()=>{ const n=new Date(); const p=new Date(n.getTime()-20*60e3); const hm=String(p.getUTCHours()).padStart(2,'0')+':'+String(p.getUTCMinutes()).padStart(2,'0'); return Math.round((Date.now()-startDate(hm))/60e3); })(),
+      st1: (()=>{ localStorage.setItem('x.t','"oops"'); const a=store.get('x.t',[]); localStorage.setItem('x.t','null'); const b=store.get('x.t',{}); localStorage.setItem('x.t','{bad'); const c=store.get('x.t',5); return Array.isArray(a)&&typeof b==='object'&&b!==null&&c===5; })(),
       d1: decodeCode('Type IV/75 1432'), d2: decodeCode('de-icing complete Type II/75 at 1650'), d3: decodeCode('TYPE I 06:40Z'),
     };
   });
@@ -55,6 +58,9 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   ok(E.n1.hot === '0:15' && E.n1.range.max === '0:25', 'Winter 2026-27 : Type IV 100/0 -10 °C -FZRA → 0:15 (Tableau 20)');
   ok(E.n2.hot === '0:15' && E.n2.range.max === '0:25', 'Winter 2026-27 : Type IV 100/0 -16 °C FZFG → 0:15–0:25');
   ok(E.n3 === 'Light' && E.n4 === 'Light' && E.n5 === 'Very Light', 'Winter 2026-27 : Tableau 53 nuit 4000 m → faible ; 4800 m > -1 °C → faible');
+  ok(E.f1 === null, 'Minuteur : heure de début > 5 min dans le futur refusée');
+  ok(E.f2 >= 19 && E.f2 <= 21, 'Minuteur : heure de début passée acceptée (y compris autour de minuit)');
+  ok(E.st1, 'Mémoire : valeurs corrompues ignorées sans planter');
   ok(E.d1.fluid === 'IV' && E.d1.conc === '75/25' && E.d1.time === '14:32', 'Décodeur « Type IV/75 1432 »');
   ok(E.d2.fluid === 'II' && E.d2.conc === '75/25' && E.d2.time === '16:50', 'Décodeur « Type II/75 at 1650 »');
   ok(E.d3.fluid === 'I' && E.d3.time === '06:40', 'Décodeur « TYPE I 06:40Z »');
@@ -94,6 +100,23 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   await p.click('[data-conc="100/0"]'); await p.click('[data-cond="FZRA_MH"]');
   ok((await p.textContent('.res.none .big')).includes('AUCUN HOT'), 'UI : FZRA modérée → écran rouge AUCUN HOT');
   if (shots) await p.screenshot({ path: shots + '/08-none.png', fullPage: true });
+
+  // ---- Neige + pluie via Tableau 53 ----
+  await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
+  await p.click('[data-fluid="IV"]'); await p.click('[data-key="2"]'); await p.click('#oatOk');
+  await p.click('[data-conc="100/0"]'); await p.click('[data-cond="SNRA"]');
+  await p.fill('#visIn', '2800');
+  await p.click('#snowOk');
+  ok((await p.textContent('.res .big')).trim() === '0:15', 'UI : neige faible + pluie à +2 °C → colonne -FZRA (0:15)');
+  await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
+  await p.click('[data-fluid="IV"]'); await p.click('[data-key="2"]'); await p.click('#oatOk');
+  await p.click('[data-conc="100/0"]'); await p.click('[data-cond="SNRA"]');
+  await p.click('[data-vis="1200"]'); await p.click('#snowOk');
+  ok((await p.textContent('.res .big')).trim() === '0:06', 'UI : neige modérée + pluie à +2 °C → 0:06');
+  // ---- Historique : rouvrir un calcul ----
+  await p.evaluate(() => location.hash = '#home'); await p.waitForTimeout(200);
+  await p.click('[data-h="0"]'); await p.waitForTimeout(200);
+  ok((await p.textContent('.res .big')).trim() === '0:06', 'UI : historique → rouvre le dernier résultat');
 
   // ---- Autres écrans ----
   for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {

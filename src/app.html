@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="737 HOLDOVER">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="data:image/png;base64,__ICON_180__">
-<link rel="apple-touch-icon" href="data:image/png;base64,__ICON_180__">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
 <style>
 @font-face{font-family:'Orbitron';font-weight:400 900;font-display:swap;src:url(data:font/woff2;base64,__FONT_ORB__) format('woff2')}
 @font-face{font-family:'Share Tech Mono';font-weight:400;font-display:swap;src:url(data:font/woff2;base64,__FONT_STM__) format('woff2')}
@@ -114,7 +114,7 @@ section.screen.on{display:block;animation:fadeIn .25s ease-out}
 .qhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
 .qhead h2{font-size:20px;line-height:1.3}
 .qhead .k{font-family:var(--mono);color:var(--mut);font-size:13px;display:block;margin-bottom:4px;letter-spacing:.08em}
-.why{flex:none;border:1px solid var(--warn);color:var(--warn);background:transparent;border-radius:999px;padding:8px 14px;font-family:var(--mono);font-size:14px;cursor:pointer}
+.why{flex:none;min-height:44px;border:1px solid var(--warn);color:var(--warn);background:transparent;border-radius:999px;padding:8px 14px;font-family:var(--mono);font-size:14px;cursor:pointer}
 .whybox{display:none;border-left:3px solid var(--warn);background:#151008;padding:12px 14px;border-radius:0 10px 10px 0;margin:0 0 14px;font-size:15px;color:#f2dfc0}
 .whybox.on{display:block}
 .whybox p{margin:6px 0}
@@ -274,6 +274,8 @@ main{padding-bottom:calc(104px + var(--sab))}
 .tile .ic{border-radius:14px;background:radial-gradient(circle at 50% 30%,rgba(95,216,255,.16),rgba(95,216,255,.02))}
 .tile.hero{background:linear-gradient(140deg,rgba(14,48,70,.75),rgba(11,19,31,.62))}
 
+body.calm #sky i{animation-play-state:paused}
+.card,.hitem{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(11,19,31,.86)}
 /* --- touch halo (bleu glacier) --- */
 .tile,.choice,.btn,.chk,.qopt,.hitem,.status,.keypad button,.chips button,.seg button,.why,.back,#tbBtn,.utc{transition:box-shadow .18s ease,border-color .18s ease,transform .12s ease,background-color .18s ease}
 .tile:active,.choice:not(.dis):active,.btn:not(:disabled):active,.chk:active,.qopt:active,.hitem:active,a.status:active,.keypad button:active,.chips button:active,.seg button:active,.why:active,.back:active,.crumb:active{
@@ -302,7 +304,7 @@ main{padding-bottom:calc(104px + var(--sab))}
 .cta{margin-bottom:16px}
 .cta .btn{min-height:58px;border-radius:16px}
 .sect{display:flex;align-items:center;justify-content:space-between;font-size:13px;letter-spacing:.16em;color:var(--mut);text-transform:uppercase;margin:22px 4px 10px;font-weight:600}
-.sect button{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:none;color:var(--mut);background:none;border:1px solid rgba(160,210,255,.15);border-radius:8px;padding:6px 10px;cursor:pointer}
+.sect button{min-height:40px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:none;color:var(--mut);background:none;border:1px solid rgba(160,210,255,.15);border-radius:8px;padding:6px 10px;cursor:pointer}
 .hist{display:grid;gap:8px}
 .hitem{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 14px;border-radius:14px;border:1px solid rgba(160,210,255,.12);cursor:pointer}
 .hitem .hv{font-family:var(--mono);font-size:24px;color:var(--ice2);min-width:64px;text-shadow:0 0 10px var(--iceglow)}
@@ -324,7 +326,7 @@ main{padding-bottom:calc(104px + var(--sab))}
 
 /* --- calc breadcrumb --- */
 .crumbs{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}
-.crumb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border-radius:999px;border:1px solid rgba(95,216,255,.35);background:rgba(6,32,48,.6);color:var(--ice2);font-family:var(--mono);font-size:14px;cursor:pointer}
+.crumb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:4px 12px;border-radius:999px;border:1px solid rgba(95,216,255,.35);background:rgba(6,32,48,.6);color:var(--ice2);font-family:var(--mono);font-size:14px;cursor:pointer}
 .crumb i{font-style:normal;color:var(--mut);font-size:12px}
 
 /* --- timer ring --- */
@@ -347,7 +349,7 @@ main{padding-bottom:calc(104px + var(--sab))}
   .tile.hero{grid-column:1/-1;flex-direction:row;align-items:center;min-height:84px}
   .tile.hero b{font-size:15px}
 }
-.timer{background:rgba(4,18,25,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.timer{background:rgba(4,18,25,.8)}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
@@ -494,8 +496,8 @@ main{padding-bottom:calc(104px + var(--sab))}
   <a href="#decode" data-tab="decode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.3" fill="currentColor"/></svg><span>Décoder</span></a>
 </nav>
 
-<div id="alarm" role="alertdialog" aria-live="assertive">
-  <h2>HOT DÉPASSÉ</h2>
+<div id="alarm" role="alertdialog" aria-live="assertive" aria-labelledby="alarmT">
+  <h2 id="alarmT">HOT DÉPASSÉ</h2>
   <p>Contrôle des surfaces critiques par une personne qualifiée juste avant d'entrer sur la piste. Au moindre doute sur un dépôt pouvant affecter les performances : <b>pas de décollage</b>.</p>
   <p class="mono" style="font-size:13px;color:#ff9aa5">MANEX A 8.2.4.6.1</p>
   <button class="btn primary" id="alarmOk" style="margin-top:14px;min-width:200px">COMPRIS</button>
@@ -538,7 +540,7 @@ function pickBand(bands, oat){
 }
 
 /* Table 52 — concentrations allowed for Type II/IV by OAT */
-function t52Row(oat){ return oat>=0 ? 0 : oat>=-3 ? 1 : oat>=-14 ? 2 : 3; }
+function t55Row(oat){ return oat>=0 ? 0 : oat>=-3 ? 1 : oat>=-14 ? 2 : 3; }
 function allowedConc(oat){
   if (oat>=-3) return ['100/0','75/25','50/50'];
   if (oat>=-14) return ['100/0','75/25'];
@@ -547,7 +549,7 @@ function allowedConc(oat){
 function concRefusal(conc, oat, coldWing){
   if (conc==='50/50' && coldWing) return "Aile froide (givre/glace à l'intrados zone réservoirs) : pas de 50/50 Type II/IV pour l'antigivrage (Tableau 55).";
   if (!allowedConc(oat).includes(conc)){
-    const r = D.table55_typeII_IV_application[t52Row(oat)];
+    const r = D.table55_typeII_IV_application[t55Row(oat)];
     return `À ${fmtC(oat)} (bande « ${r.oat} ») le Tableau 55 n'autorise que : ${r.one_step.replace('Type II/IV chauffé ','')}.`;
   }
   return null;
@@ -630,7 +632,10 @@ function decodeCode(s){
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store = {
-  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  get(k,d){ try{ const v=JSON.parse(localStorage.getItem(k));
+    if (v===null || v===undefined) return d;
+    if (d!==null && (typeof v!==typeof d || Array.isArray(v)!==Array.isArray(d))) return d;
+    return v; }catch(e){ return d; } },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
 };
 /* "1432", "14:32", "14h32" → "14:32" (24 h UTC) ; null si invalide */
@@ -703,6 +708,7 @@ function route(){
   $('#backBtn').hidden = h==='home'; $('#homeBtn').hidden = true;
   document.querySelectorAll('.tabbar a').forEach(a=>a.classList.toggle('on', a.dataset.tab===h));
   if (h==='home') renderHome();
+  document.body.classList.toggle('calm', h!=='home');
   if (h==='calc') renderCalc();
   if (h==='timer') renderTimer();
   if (h==='quiz' && !Q.started) renderQuiz();
@@ -737,37 +743,44 @@ function stepList(){
   const l = ['fluid','oat'];
   if (S.fluid && S.fluid!=='I') l.push('conc');
   l.push('cond');
-  if (S.cond==='SNOW') l.push('snow');
+  if (SNOWY.includes(S.cond)) l.push('snow');
   l.push('result');
   return l;
 }
 function go(s){ step=s; renderCalc(); scrollTo(0,0); }
 function next(){ const l=stepList(); go(l[Math.min(l.indexOf(step)+1,l.length-1)]); }
 function calcBack(){ const l=stepList(), i=l.indexOf(step); if (i>0){ go(l[i-1]); return true; } return false; }
-function resetCalc(){ Object.assign(S,{fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:false,metarInt:null,start:null}); go('fluid'); }
+const RESET_S = () => ({fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:false,metarInt:null,start:null});
+function resetCalc(){ Object.assign(S, RESET_S()); lastSavedSum=null; go('fluid'); }
 
 const COND_UI = [
   {k:'FROST', t:'Givre actif', d:'Givre qui se forme (active frost)'},
   {k:'FZFG', t:'FZFG', d:D.conditions.FZFG},
   {k:'SNOW', t:'Neige', d:'Neige / grains de neige / neige en granules — intensité via la visibilité'},
-  {k:'SN_FZFG', t:'Neige + FZFG', d:D.conditions.SN_FZFG},
+  {k:'SN_FZFG', t:'Neige + FZFG', d:'Neige mêlée de brouillard givrant — intensité via la visibilité'},
   {k:'FZDZ', t:'FZDZ', d:'Bruine verglaçante'},
   {k:'FZRA_L', t:'-FZRA', d:D.conditions.FZRA_L},
-  {k:'SNRA', t:'Neige + pluie', d:'Neige mêlée de pluie ou de bruine'},
+  {k:'SNRA', t:'Neige + pluie', d:'Neige mêlée de pluie ou de bruine — intensité via la visibilité'},
   {k:'RA_COLDSOAK', t:'Pluie sur aile froide', d:'Cold-soaked wing'},
   {k:'FZRA_MH', t:'FZRA / +FZRA', d:'Pluie verglaçante modérée ou forte', red:true},
   {k:'OTHER', t:'Autres', d:'Neige forte, granules de glace (PL), grêle (GR/GS)', red:true}
 ];
+const SM = [['1/4',400],['1/2',800],['3/4',1200],['1',1600],['1 1/4',2000],['1 1/2',2400],['1 3/4',2800],['2',3200],['2 1/2',4000],['3',4800],['≥3 1/2',6000]];
+const SNOWY = ['SNOW','SN_FZFG','SNRA'];
 const SUBS = {
   FZDZ:[{v:'sure',t:'Bruine verglaçante identifiée avec certitude',d:'→ colonne FZDZ'},{v:'unsure',t:'Pas certain que ce soit de la bruine',d:'→ utiliser pluie verglaçante faible (-FZRA)'}],
-  SNRA:[{v:'M',t:'Neige MODÉRÉE + pluie',d:'→ colonne « SN mod. + RA »'},{v:'L',t:'Neige très faible / faible + pluie ou bruine',d:'→ utiliser pluie verglaçante faible (-FZRA)'},{v:'H',t:'Neige FORTE + pluie',d:'→ aucun HOT',red:true}]
 };
 
 /* final key used in the table */
 function condKey(){
   const c=S.cond;
   if (c==='FZDZ') return S.sub==='unsure' ? 'FZRA_L' : 'FZDZ';
-  if (c==='SNRA') return S.sub==='M' ? 'SN_RA_M' : S.sub==='L' ? 'FZRA_L' : 'OTHER';
+  if (c==='SNRA' || c==='SN_FZFG'){
+    if (!S.vis) return 'OTHER';
+    const si = snowIntensity(S.vis, S.night, oatVal()).intensity;
+    if (c==='SN_FZFG') return si==='Heavy' ? 'SNOW_HEAVY' : 'SN_FZFG';
+    return si==='Heavy' ? 'SNOW_HEAVY' : si==='Moderate' ? 'SN_RA_M' : 'FZRA_L';
+  }
   if (c==='FZRA_MH' || c==='OTHER') return 'OTHER';
   if (c==='SNOW'){
     const si = snowIntensity(S.vis, S.night, oatVal());
@@ -838,7 +851,7 @@ function renderCalc(){
       if (oat<-60||oat>40) band='<span style="color:var(--bad)">Valeur hors plage</span>';
     }
     h += `<div class="band">${band}</div>`;
-    h += '<div class="keypad">' + ['7','8','9','4','5','6','1','2','3','±','0','⌫'].map(k=>`<button data-key="${k}" class="${k==='±'?'pm':''}">${k}</button>`).join('') + '</div>';
+    h += '<div class="keypad">' + ['7','8','9','4','5','6','1','2','3','±','0','⌫'].map(k=>`<button data-key="${k}" class="${k==='±'?'pm':''}" aria-label="${k==='±'?'Changer le signe':k==='⌫'?'Effacer':k}">${k}</button>`).join('') + '</div>';
     h += `<div class="infobox">Givre actif de longue durée : entrez l'<b>OAT la plus froide</b> rencontrée depuis l'application.</div>`;
     h += `<div class="navrow"><button class="btn primary" id="oatOk" ${oat===null||oat<-60||oat>40?'disabled':''}>Valider</button></div>`;
   }
@@ -872,10 +885,11 @@ function renderCalc(){
   }
 
   else if (step==='snow'){
-    h += qhead('snow', label(), 'Neige : visibilité et luminosité');
+    h += qhead('snow', label(), S.cond==='SNOW'?'Neige : visibilité et luminosité':S.cond==='SNRA'?'Neige + pluie : visibilité':'Neige + FZFG : visibilité');
     h += `<div class="badbox"><b>RVR interdite.</b> Utilisez la visibilité METAR/SPECI (en mètres) ou celle observée par l'équipage — jamais la RVR.</div>`;
     h += `<label class="lbl" for="visIn">VISIBILITÉ METAR (m)</label><input class="num" id="visIn" inputmode="numeric" pattern="[0-9]*" placeholder="ex. 1600" value="${S.vis??''}">`;
     h += '<div class="chips">' + [400,800,1200,1600,2000,2400,2800,3200,4000,4800,6000,9999].map(v=>`<button data-vis="${v}" class="${S.vis===v?'sel':''}">${v}</button>`).join('') + '</div>';
+    h += `<label class="lbl">OU EN MILES TERRESTRES (METAR Canada / US)</label><div class="chips">` + SM.map(([l,v])=>`<button data-vis="${v}" data-sm="${l}">${l} SM</button>`).join('') + '</div>';
     h += `<label class="lbl">JOUR / NUIT</label><div class="seg"><button data-night="0" class="${!S.night?'sel':''}">☀ JOUR</button><button data-night="1" class="${S.night?'sel':''}">☾ NUIT</button></div>`;
     h += `<label class="lbl">INTENSITÉ ANNONCÉE PAR LE METAR (facultatif)</label><div class="chips">${[['-SN','-SN'],['SN','SN'],['+SN','+SN'],['','non précisé']].map(([v,t])=>`<button data-metar="${v}" class="${S.metarInt===v?'sel':''}">${t}</button>`).join('')}</div>`;
     h += '<div id="snowOut"></div>';
@@ -904,12 +918,12 @@ function updateSnow(){
     else h += `<div class="infobox">METAR <span class="mono">${S.metarInt}</span> et Tableau 53 concordent : <b>${fr}</b>.</div>`;
   }
   if (si.intensity==='Heavy') h += `<div class="badbox">Neige forte → <b>AUCUN HOT</b>.</div>`;
-  h += t50Table(si);
+  h += t53Table(si);
   out.innerHTML = h;
   const hx=out.querySelector('td.hx'); if (hx){ const w=hx.closest('.tblwrap'); w.scrollLeft = hx.offsetLeft - 110 - (w.clientWidth-110)/2 + hx.clientWidth/2; }
 }
 
-function t50Table(si){
+function t53Table(si){
   const t = D.table53_snow_intensity;
   let h = `<div class="mxref">${refText('t53')}</div><div class="tblwrap"><table class="mx"><thead><tr><th class="rh">Visibilité</th>${t.columns.map((c,j)=>`<th class="${j===si.col?'hc':''}">${c}</th>`).join('')}</tr></thead><tbody>`;
   t.rows.forEach((r,i)=>{
@@ -956,7 +970,7 @@ function hotTable(R){
 
 function summaryTxt(){
   const oat=oatVal(), key=condKey();
-  const cname = S.cond==='FROST'?'Givre actif':key==='SNOW_HEAVY'?'Neige forte':key==='OTHER'?(S.cond==='SNRA'?'Neige forte + pluie':COND_UI.find(c=>c.k===S.cond).t):COL_SHORT[key]||key;
+  const cname = S.cond==='FROST'?'Givre actif':key==='SNOW_HEAVY'?(S.cond==='SNOW'?'Neige forte':'Neige forte + '+(S.cond==='SNRA'?'pluie':'FZFG')):key==='OTHER'?COND_UI.find(c=>c.k===S.cond).t:(S.cond==='SNRA'&&key==='FZRA_L')?'Neige faible + pluie → -FZRA':COL_SHORT[key]||key;
   return `Type ${S.fluid}${S.fluid!=='I'?' '+S.conc:''} · ${fmtC(oat)} · ${cname}`;
 }
 
@@ -964,7 +978,7 @@ function renderResult(){
   const oat=oatVal(), key=condKey();
   const R = computeHOT({fluid:S.fluid, conc:S.conc, oat, key});
   window.__lastResult = R;
-  saveHist(R);
+  if (summaryTxt()!==lastSavedSum){ saveHist(R); lastSavedSum=summaryTxt(); }
   let h='';
   if (R.ok){
     const zero = toMin(R.hot)===0;
@@ -975,20 +989,20 @@ function renderResult(){
   } else {
     h += `<div class="res none"><div class="lab">RÉSULTAT</div><div class="big">AUCUN HOT</div><div class="range" style="color:#ffc2c9">${esc(R.reason)}</div><div class="summary" style="color:#ffc2c9">${esc(summaryTxt())}</div></div>`;
   }
-  if (S.cond==='SNOW'){
+  if (SNOWY.includes(S.cond)){
     const si = snowIntensity(S.vis, S.night, oat), fr=INT_FR[si.intensity];
     const mfr = S.metarInt ? {'-SN':'FAIBLE','SN':'MODÉRÉE','+SN':'FORTE'}[S.metarInt] : null;
     h += `<div class="infobox">Neige : visibilité ${S.vis} m, ${S.night?'nuit':'jour'}, ${fmtC(oat)} → intensité <b>${fr}</b> (Tableau 53).${mfr && mfr!==fr?` METAR dit <span class="mono">${S.metarInt}</span>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.`:''}</div>`;
   }
-  if (S.cond==='SN_FZFG') h += `<div class="warnbox">Neige + FZFG : si la neige est forte → aucun HOT.</div>`;
+  if (S.cond==='SNRA' && key==='FZRA_L') h += `<div class="infobox">Neige très faible ou faible mêlée de pluie/bruine → on utilise la colonne <b>pluie verglaçante faible</b> (note du tableau).</div>`;
   if (R.ok && toMin(R.hot)>0){
     h += `<div class="card"><h3>Démarrer le minuteur</h3><p style="color:var(--mut);font-size:14px;margin-top:0">Heure de début annoncée par le sol (UTC) — début de l'application, ou début de la 2e étape.</p>
-      <input class="num" id="startIn" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${S.start||utcNowHM()}">
+      <input class="num" id="startIn" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${esc(S.start||utcNowHM())}">
       <div class="row"><button class="btn primary" id="startBtn">▶ Démarrer le HOT</button></div></div>`;
   }
   h += `<div class="card"><h3>Voici la case du MANEX</h3>`;
   if (R.tableId){ h += `<div class="mxref">${refText(R.tableId)}${R.tableId==='t1'?' — '+(S.fluid==='I'?'Type I':'Type '+S.fluid):''}</div>`; }
-  if (R.tableId==='t53'){ h += t50Table(snowIntensity(S.vis,S.night,oat)); }
+  if (R.tableId==='t53'){ h += t53Table(snowIntensity(S.vis,S.night,oat)); }
   else if (R.tableId){ h += hotTable(R); h += `<p style="font-size:13px;color:var(--mut)">Case surlignée = ligne (OAT${S.fluid!=='I'?' + concentration':''}) × colonne (condition). Faites défiler le tableau horizontalement.</p>`; }
   else { h += `<div class="infobox">${esc(D.conditions.OTHER)}</div>`; }
   h += '</div>';
@@ -1039,8 +1053,8 @@ $('#calcBody').addEventListener('click', e=>{
   if (t.id==='startBtn'){
     const R=window.__lastResult, v=normHM($('#startIn').value);
     if (!v){ $('#startIn').focus(); $('#startIn').style.borderColor='var(--bad)'; return; }
-    startTimer(v, toMin(R.range.min), toMin(R.range.max), summaryTxt(), refText(R.tableId));
-    location.hash='#timer'; return;
+    if (startTimer(v, toMin(R.range.min), toMin(R.range.max), summaryTxt(), refText(R.tableId))) location.hash='#timer';
+    return;
   }
   if (t.id==='modBtn'){ calcBack(); return; }
   if (t.id==='newBtn'){ resetCalc(); return; }
@@ -1052,27 +1066,37 @@ $('#calcBody').addEventListener('input', e=>{
 
 /* ================= TIMER ================= */
 let T = store.get('hot.timer', null), tickH=null, audioCtx=null, wakeLock=null;
+if (T && !(typeof T==='object' && Number.isFinite(T.start) && T.minM>0 && Number.isFinite(T.maxM) && typeof T.hm==='string'
+      && Date.now() < T.start + T.minM*60e3 + 12*3600e3)) { T=null; store.set('hot.timer', null); }
+/* Heure annoncée → instant UTC le plus proche (±12 h). null si plus de 5 min dans le futur (erreur de saisie probable). */
 function startDate(hm){
-  const [h,m]=hm.split(':').map(Number), now=new Date();
-  let d = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), h, m);
-  if (d - now.getTime() > 60*60*1000) d -= 24*3600*1000;   /* start announced before midnight UTC */
-  return d;
+  const [h,m]=hm.split(':').map(Number), now=Date.now(), n=new Date(now);
+  let d = Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate(), h, m);
+  if (d - now > 12*3600e3) d -= 24*3600e3;
+  else if (now - d > 12*3600e3) d += 24*3600e3;
+  return d - now > 5*60e3 ? null : d;
 }
 function startTimer(hm, minM, maxM, label, ref){
-  try { audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); audioCtx.resume(); } catch(e){}
-  T = {start:startDate(hm), hm, minM, maxM, label, ref, warned:false, alerted:false};
-  store.set('hot.timer', T); keepAwake(); ensureTick();
+  unlockAudio();
+  const st = startDate(hm);
+  if (st===null){ alert(`Heure de début ${hm} UTC dans le futur.\nVérifiez l'heure annoncée par le sol (UTC, pas l'heure locale).`); return false; }
+  T = {start:st, hm, minM, maxM, label, ref, warned:false, alerted:false};
+  store.set('hot.timer', T); keepAwake(); ensureTick(); return true;
+}
+function unlockAudio(){
+  try { audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); if (audioCtx.state!=='running') audioCtx.resume(); } catch(e){}
+  try { if (navigator.audioSession) navigator.audioSession.type='playback'; } catch(e){}
 }
 function stopTimer(){ T=null; store.set('hot.timer', null); $('#tbBtn').hidden=true; $('#tabBadge').className='badge'; releaseAwake(); renderTimer(); }
 function beep(n=3, f=880){
   try{
-    if (!audioCtx) return; const t0=audioCtx.currentTime;
+    unlockAudio(); if (!audioCtx) return; const t0=audioCtx.currentTime;
     for (let i=0;i<n;i++){ const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.frequency.value=f; o.type='square';
       g.gain.setValueAtTime(0.0001,t0+i*0.5); g.gain.exponentialRampToValueAtTime(0.3,t0+i*0.5+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+i*0.5+0.35);
       o.connect(g).connect(audioCtx.destination); o.start(t0+i*0.5); o.stop(t0+i*0.5+0.4); }
   }catch(e){}
 }
-async function keepAwake(){ try{ if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); }catch(e){} }
+async function keepAwake(){ try{ if ('wakeLock' in navigator && !wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', ()=>{ wakeLock=null; }); } }catch(e){ wakeLock=null; } }
 function releaseAwake(){ try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock=null; }
 document.addEventListener('visibilitychange', ()=>{ if (T && document.visibilityState==='visible') keepAwake(); });
 const fmtClock = ms => { const s=Math.max(0,Math.round(Math.abs(ms)/1000)), h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60; return (h?h+':'+String(m).padStart(2,'0'):String(m).padStart(2,'0'))+':'+String(x).padStart(2,'0'); };
@@ -1087,7 +1111,7 @@ function tick(){
   $('#tbLabel').textContent = rem<=0 ? 'HOT DÉPASSÉ' : (now<T.start ? 'DÉBUT '+T.hm : 'HOT');
   $('#tbTime').textContent = (rem<=0?'+':'') + fmtClock(now<T.start ? T.minM*60000 : rem);
   if (!T.warned && rem<=5*60000 && rem>0 && T.minM>5){ T.warned=true; store.set('hot.timer',T); beep(1,660); try{navigator.vibrate&&navigator.vibrate(300);}catch(e){} }
-  if (!T.alerted && rem<=0){ T.alerted=true; store.set('hot.timer',T); beep(4,880); try{navigator.vibrate&&navigator.vibrate([500,200,500,200,500]);}catch(e){} $('#alarm').classList.add('on'); }
+  if (!T.alerted && rem<=0){ T.alerted=true; store.set('hot.timer',T); beep(4,880); try{navigator.vibrate&&navigator.vibrate([500,200,500,200,500]);}catch(e){} $('#alarm').classList.add('on'); setTimeout(()=>$('#alarmOk').focus(),50); }
   if (location.hash==='#timer') updateTimerView(now, rem, state);
   const hs=$('#hsT');
   if (hs){ const st=$('#hStatusCard'); st.className='status live '+state;
@@ -1105,7 +1129,7 @@ function renderTimer(){
   if (!T){
     B.innerHTML = `<div class="card"><h3>Aucun minuteur en cours</h3><p>Calculez d'abord le HOT : le minuteur se lance depuis le résultat, sur l'heure de début annoncée par le sol.</p><a class="btn primary block" href="#calc">Calculateur HOT</a></div>
       <div class="card"><h3>Démarrage manuel</h3><label class="lbl">HEURE DE DÉBUT (UTC)</label><input class="num" id="mStart" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${utcNowHM()}"><label class="lbl">HOT RETENU (h:mm)</label><input class="num" id="mHot" placeholder="0:25" inputmode="numeric"><button class="btn block" id="mGo">▶ Démarrer</button></div>`;
-    $('#mGo').onclick = ()=>{ const v=$('#mHot').value.trim(); const m=v.match(/^(\d{1,2}):([0-5]\d)$/); if(!m){ $('#mHot').focus(); return; } const mm=Number(m[1])*60+Number(m[2]); if(!mm) return; const st=normHM($('#mStart').value); if(!st){ $('#mStart').focus(); return; } startTimer(st, mm, mm, 'HOT saisi manuellement', ''); renderTimer(); };
+    $('#mGo').onclick = ()=>{ const v=$('#mHot').value.trim(); const m=v.match(/^(\d{1,2}):([0-5]\d)$/); if(!m){ $('#mHot').focus(); return; } const mm=Number(m[1])*60+Number(m[2]); if(!mm) return; const st=normHM($('#mStart').value); if(!st){ $('#mStart').focus(); return; } if (startTimer(st, mm, mm, 'HOT saisi manuellement', '')) renderTimer(); };
     return;
   }
   B.innerHTML = `<div class="timer" id="tbox"><div class="ringwrap"><svg viewBox="0 0 120 120"><circle class="rbg" cx="60" cy="60" r="54"/><circle class="rglow" id="tglow" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/><circle class="rfg" id="tring" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
@@ -1250,7 +1274,7 @@ function renderDecode(){
   h += `<button class="btn primary block" id="decGo">Calculer le HOT</button>`;
   out.innerHTML=h;
   $('#decGo').onclick = ()=>{
-    Object.assign(S,{fluid:d.fluid, conc:d.fluid==='I'?null:d.conc, oatStr:'', cond:null, sub:null, vis:null, metarInt:null, start:d.time});
+    Object.assign(S, RESET_S(), {fluid:d.fluid, conc:d.fluid==='I'?null:d.conc, start:d.time}); lastSavedSum=null;
     step='oat'; location.hash='#calc'; renderCalc();
   };
 }
@@ -1297,10 +1321,12 @@ $('#quizBody').addEventListener('click', e=>{
 });
 
 /* ================= HOME (tableau de bord) ================= */
+let lastSavedSum=null;
 function saveHist(R){
   const sum = summaryTxt();
   let h = store.get('hot.hist', []).filter(e => e.sum !== sum);
-  h.unshift({ s: JSON.parse(JSON.stringify(S)), sum, hot: R.ok ? R.hot : null, ref: R.tableId ? 'Tableau '+REF[R.tableId].n : '', ts: Date.now() });
+  const snap = JSON.parse(JSON.stringify(S)); delete snap.start;
+  h.unshift({ s: snap, sum, hot: R.ok ? R.hot : null, ref: R.tableId ? 'Tableau '+REF[R.tableId].n : '', ts: Date.now() });
   store.set('hot.hist', h.slice(0, 5));
 }
 function whenTxt(ts){
@@ -1327,7 +1353,7 @@ function renderHome(){
   $('#hNew').onclick = () => { resetCalc(); location.hash = '#calc'; };
   const hist = store.get('hot.hist', []);
   $('#hHist').innerHTML = hist.length ? `<h2 class="sect">Derniers calculs <button id="hClr">Effacer</button></h2><div class="hist">${hist.map((e,i)=>
-    `<button class="hitem" data-h="${i}"><span class="hv ${e.hot?'':'no'}">${e.hot||'AUCUN<br>HOT'}</span><span><b>${esc(e.sum)}</b><small>${whenTxt(e.ts)}${e.ref?' · '+esc(e.ref):''}</small></span><span class="chev">›</span></button>`).join('')}</div>` : '';
+    `<button class="hitem" data-h="${i}"><span class="hv ${e.hot?'':'no'}">${e.hot?esc(e.hot):'AUCUN<br>HOT'}</span><span><b>${esc(e.sum)}</b><small>${whenTxt(e.ts)}${e.ref?' · '+esc(e.ref):''}</small></span><span class="chev">›</span></button>`).join('')}</div>` : '';
   const total = PROC.reduce((n,p)=>n+p.items.length,0), done = Object.values(checks).filter(Boolean).length;
   $('#tProc').textContent = done ? `${done} / ${total} étapes cochées` : 'Du parking au décollage, à cocher';
   const best = store.get('hot.quizBest', -1);
@@ -1335,10 +1361,12 @@ function renderHome(){
   clock(); tick();
 }
 $('#hHist').addEventListener('click', e=>{
-  if (e.target.closest('#hClr')){ store.set('hot.hist', []); renderHome(); return; }
+  if (e.target.closest('#hClr')){ if (confirm('Effacer les derniers calculs ?')){ store.set('hot.hist', []); renderHome(); } return; }
   const b = e.target.closest('[data-h]'); if (!b) return;
   const en = store.get('hot.hist', [])[Number(b.dataset.h)]; if (!en) return;
-  Object.assign(S, en.s); step = 'result'; location.hash = '#calc';
+  Object.assign(S, RESET_S(), en.s, {start:null}); lastSavedSum = null; step = 'result';
+  lastSavedSum = (()=>{ try{ return summaryTxt(); }catch(e){ return null; } })();
+  location.hash = '#calc';
 });
 function clock(){
   const v = utcNowHM();
@@ -1346,10 +1374,11 @@ function clock(){
   const h = $('#hUtc'); if (h) h.textContent = v;
 }
 document.addEventListener('touchstart', ()=>{}, {passive:true});  /* active le :active (halo) sur iOS */
+document.addEventListener('pointerdown', ()=>{ unlockAudio(); if (T && !wakeLock) keepAwake(); }, {passive:true});
 setInterval(()=>{ clock(); tick(); }, 1000);
 
 /* ================= BOOT ================= */
-if (T) ensureTick();
+if (T){ ensureTick(); keepAwake(); }
 route();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
