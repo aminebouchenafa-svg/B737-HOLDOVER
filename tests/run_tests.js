@@ -36,6 +36,8 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
       f1: (()=>{ const n=new Date(); const fut=new Date(n.getTime()+40*60e3); const hm=String(fut.getUTCHours()).padStart(2,'0')+':'+String(fut.getUTCMinutes()).padStart(2,'0'); return startDate(hm); })(),
       f2: (()=>{ const n=new Date(); const p=new Date(n.getTime()-20*60e3); const hm=String(p.getUTCHours()).padStart(2,'0')+':'+String(p.getUTCMinutes()).padStart(2,'0'); return Math.round((Date.now()-startDate(hm))/60e3); })(),
       st1: (()=>{ localStorage.setItem('x.t','"oops"'); const a=store.get('x.t',[]); localStorage.setItem('x.t','null'); const b=store.get('x.t',{}); localStorage.setItem('x.t','{bad'); const c=store.get('x.t',5); return Array.isArray(a)&&typeof b==='object'&&b!==null&&c===5; })(),
+      d4: decodeCode('2-step Type IV/75 at 1432'), d5: decodeCode('Type I/IV/75 1432'), d6: decodeCode('(Type II/75/ at 1650).'), d7: decodeCode('IV75 1432Z.'),
+      h1: [parseHotMin('25'), parseHotMin('025'), parseHotMin('0:25'), parseHotMin('0h25'), parseHotMin('1:05'), parseHotMin('abc'), parseHotMin('0')],
       d1: decodeCode('Type IV/75 1432'), d2: decodeCode('de-icing complete Type II/75 at 1650'), d3: decodeCode('TYPE I 06:40Z'),
     };
   });
@@ -61,6 +63,11 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   ok(E.f1 === null, 'Minuteur : heure de début > 5 min dans le futur refusée');
   ok(E.f2 >= 19 && E.f2 <= 21, 'Minuteur : heure de début passée acceptée (y compris autour de minuit)');
   ok(E.st1, 'Mémoire : valeurs corrompues ignorées sans planter');
+  ok(E.d4.fluid==='IV' && E.d4.conc==='75/25' && E.d4.time==='14:32', 'Décodeur « 2-step Type IV/75 at 1432 »');
+  ok(E.d5.fluid==='IV' && E.d5.multi && E.d5.conc==='75/25', 'Décodeur « Type I/IV/75 1432 » → 2e étape Type IV + alerte');
+  ok(E.d6.fluid==='II' && E.d6.time==='16:50', 'Décodeur avec parenthèses et point final');
+  ok(E.d7.fluid==='IV' && E.d7.conc==='75/25' && E.d7.time==='14:32', 'Décodeur « IV75 1432Z. »');
+  ok(JSON.stringify(E.h1)==='[25,25,25,25,65,null,null]', 'Minuteur manuel : 25 / 025 / 0:25 / 0h25 / 1:05 acceptés');
   ok(E.d1.fluid === 'IV' && E.d1.conc === '75/25' && E.d1.time === '14:32', 'Décodeur « Type IV/75 1432 »');
   ok(E.d2.fluid === 'II' && E.d2.conc === '75/25' && E.d2.time === '16:50', 'Décodeur « Type II/75 at 1650 »');
   ok(E.d3.fluid === 'I' && E.d3.time === '06:40', 'Décodeur « TYPE I 06:40Z »');
@@ -106,12 +113,14 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   await p.click('[data-fluid="IV"]'); await p.click('[data-key="2"]'); await p.click('#oatOk');
   await p.click('[data-conc="100/0"]'); await p.click('[data-cond="SNRA"]');
   await p.fill('#visIn', '2800');
+  ok(await p.$eval('#snowOk', b => b.disabled), 'UI : « Voir le HOT » bloqué tant que jour/nuit non choisi');
+  await p.click('[data-night="0"]');
   await p.click('#snowOk');
   ok((await p.textContent('.res .big')).trim() === '0:15', 'UI : neige faible + pluie à +2 °C → colonne -FZRA (0:15)');
   await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
   await p.click('[data-fluid="IV"]'); await p.click('[data-key="2"]'); await p.click('#oatOk');
   await p.click('[data-conc="100/0"]'); await p.click('[data-cond="SNRA"]');
-  await p.click('[data-vis="1200"]'); await p.click('#snowOk');
+  await p.click('[data-vis="1200"]'); await p.click('[data-night="0"]'); await p.click('#snowOk');
   ok((await p.textContent('.res .big')).trim() === '0:06', 'UI : neige modérée + pluie à +2 °C → 0:06');
   // ---- Historique : rouvrir un calcul ----
   await p.evaluate(() => location.hash = '#home'); await p.waitForTimeout(200);

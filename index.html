@@ -77,7 +77,7 @@ section.screen.on{display:block;animation:fadeIn .25s ease-out}
 #tbBtn.warn{border-color:var(--warn);background:var(--warnbg);color:#ffe2b0}
 #tbBtn.bad{border-color:var(--bad);background:var(--badbg);color:#ffd0d5;animation:pulse 1s infinite}
 @keyframes pulse{50%{box-shadow:0 0 18px rgba(255,77,94,.6)}}
-@media(max-width:420px){#tbBtn #tbLabel{display:none}}
+
 /* ---------- Components ---------- */
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:0 0 14px}
 .card h3{font-size:15px;color:var(--ice2);margin-bottom:8px}
@@ -134,11 +134,12 @@ section.screen.on{display:block;animation:fadeIn .25s ease-out}
 .navrow .btn{flex:1}
 
 /* keypad */
-.oatdisp{font-family:var(--mono);font-size:64px;text-align:center;color:var(--ice);text-shadow:0 0 16px var(--iceglow);padding:12px;border:1px solid var(--line2);border-radius:14px;background:#03080c;margin-bottom:10px;min-height:100px}
+.oatdisp{font-family:var(--mono);font-size:52px;text-align:center;color:var(--ice);text-shadow:0 0 16px var(--iceglow);padding:12px;border:1px solid var(--line2);border-radius:14px;background:#03080c;margin-bottom:6px;min-height:0;padding:6px 12px}
+.oatrow{display:flex;gap:10px;align-items:stretch;margin-bottom:6px}.oatrow .oatdisp{flex:1;margin:0}.oatrow .btn{min-width:110px;border-radius:14px;font-size:15px}
 .oatdisp .u{font-size:28px;color:var(--mut)}
-.band{font-family:var(--mono);font-size:14px;color:var(--mut);text-align:center;margin:0 0 12px;min-height:20px}
-.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:420px;margin:0 auto}
-.keypad button{min-height:62px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);font-family:var(--mono);font-size:26px;cursor:pointer}
+.band{font-family:var(--mono);font-size:13px;color:var(--mut);text-align:center;margin:0 0 8px;min-height:18px}
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:440px;margin:0 auto}
+.keypad button{min-height:56px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);font-family:var(--mono);font-size:26px;cursor:pointer}
 .keypad button:active{background:#0b2a38}
 .keypad .pm{color:var(--ice)}
 .toggle{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line2);border-radius:12px;background:var(--panel);margin:12px 0;cursor:pointer}
@@ -211,7 +212,7 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
 .pstep h3{font-size:15px;color:var(--ice2);padding-top:5px;margin-bottom:8px}
 .pstep .ref{font-family:var(--mono);font-size:12px;color:var(--dim);font-weight:400}
 .chk{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);margin:0 0 8px;cursor:pointer;font-size:15.5px}
-.chk input{width:26px;height:26px;flex:none;accent-color:var(--ice);margin:0}
+.chk input{width:30px;height:30px;flex:none;accent-color:var(--ice);margin:0}
 .chk.on{border-color:#1d5a70;color:var(--mut)}
 .chk.crit{border-color:#5a1d27}
 .chk .ci{display:flex;align-items:baseline;gap:6px;font-family:var(--mono);font-size:15px}
@@ -340,7 +341,8 @@ body.calm #sky i{animation-play-state:paused}
 .timer.warn .rfg,.status.warn .rfg{stroke:var(--warn)}
 .timer.bad .rfg,.status.bad .rfg{stroke:var(--bad)}
 .ringin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.ringin .t{font-size:clamp(44px,14vw,76px)}
+.ringin .t{font-size:clamp(40px,12vw,64px)}
+.ringwrap svg{overflow:visible}
 .timer .s{font-size:14px;letter-spacing:0;line-height:1.5}
 @media(max-width:619px){
   .tiles{grid-template-columns:1fr 1fr;gap:10px}
@@ -350,6 +352,10 @@ body.calm #sky i{animation-play-state:paused}
   .tile.hero b{font-size:15px}
 }
 .timer{background:rgba(4,18,25,.8)}
+@media(max-width:420px){.cta{flex-direction:column}.cta .btn{width:100%}}
+@media(max-height:700px){.qhead h2{font-size:17px}.qhead{margin-bottom:8px}.steps{margin-bottom:8px}.crumbs{margin-bottom:8px}.crumb{min-height:40px}.keypad button{min-height:48px;font-size:22px}.keypad{gap:6px}.oatdisp{font-size:40px}.oatrow .btn{min-height:56px}.why{min-height:40px;padding:6px 12px}.top h1{font-size:14px}header.top{padding-top:calc(6px + var(--sat));padding-bottom:6px}}
+@media(max-width:380px){.top h1{font-size:13px}.utc{font-size:13px;padding:5px 7px}.utc b{display:none}.tabbar a{font-size:9.5px}.tabbar a svg{width:23px;height:23px}#tbBtn{padding:6px 8px;font-size:13px}}
+@media(min-width:390px){.tabbar a{font-size:11.5px}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
@@ -613,19 +619,22 @@ function fmtC(t){ return (t>0?'+':'')+t+' °C'; }
 
 /* Ground code decoder — "Type IV/75 1432" */
 function decodeCode(s){
-  const u = (s||'').toUpperCase().replace(/TYPE/g,' ').replace(/%/g,' ').replace(/\bAT\b|\bA\b|\bUTC\b/g,' ');
-  const toks = u.split(/[\s\/,\-]+/).filter(Boolean).map(t=>t.replace(/Z$/,''));
+  const u = (s||'').toUpperCase()
+    .replace(/\b(ONE|TWO|1|2)\s*-?\s*STEPS?\b/g,' ')            /* "2-step" n'est pas un type de fluide */
+    .replace(/TYPE/g,' ').replace(/%/g,' ').replace(/\bAT\b|\bA\b|\bUTC\b/g,' ')
+    .replace(/\b(IV|III|II|I)(\d)/g,'$1 $2');                       /* "IV75" → "IV 75" */
+  const toks = u.split(/[\s\/,\-]+/).map(t=>t.replace(/^[(\[]+|[).;:\]]+$/g,'').replace(/Z$/,'')).filter(Boolean);
   const FL = {I:'I',II:'II',III:'III',IV:'IV','1':'I','2':'II','3':'III','4':'IV'};
-  let fluid=null, conc=null, time=null;
+  let fluid=null, conc=null, time=null, multi=false;
   for (const t of toks){
-    if (!fluid && FL[t]) { fluid = FL[t]; continue; }
+    if (FL[t] && !conc && !time) { if (fluid) multi = true; fluid = FL[t]; continue; }
     let m = t.match(/^([01]?\d|2[0-3])[:H.]([0-5]\d)$/);
     if (!time && m) { time = m[1].padStart(2,'0')+':'+m[2]; continue; }
     m = t.match(/^([01]\d|2[0-3])([0-5]\d)$/);
     if (!time && m && t.length===4) { time = m[1]+':'+m[2]; continue; }
     if (!conc && fluid && ['100','75','50'].includes(t)) { conc = {'100':'100/0','75':'75/25','50':'50/50'}[t]; continue; }
   }
-  return {fluid, conc, time};
+  return {fluid, conc, time, multi};
 }
 
 /* ================= UTIL ================= */
@@ -638,6 +647,13 @@ const store = {
     return v; }catch(e){ return d; } },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
 };
+/* HOT saisi : "25" / "025" = minutes ; "0:25", "0h25", "0.25", "1:05" = h:mm. null si invalide. */
+function parseHotMin(v){
+  v = String(v||'').trim().toLowerCase();
+  let m = v.match(/^(\d{1,2})[:h.,]([0-5]\d)$/); if (m){ const x=Number(m[1])*60+Number(m[2]); return x>0&&x<=720?x:null; }
+  m = v.match(/^(\d{1,3})$/); if (m){ const x=Number(m[1]); return x>0&&x<=720?x:null; }
+  return null;
+}
 /* "1432", "14:32", "14h32" → "14:32" (24 h UTC) ; null si invalide */
 function normHM(v){ const m=String(v||'').trim().match(/^([01]?\d|2[0-3])[:hH.]?([0-5]\d)$/); return m ? m[1].padStart(2,'0')+':'+m[2] : null; }
 const utcNowHM = () => { const d=new Date(); return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0'); };
@@ -699,9 +715,11 @@ function icon(kind){
 })();
 
 /* ================= ROUTER ================= */
+let curScreen='home';
 const SCREENS = ['home','learn','calc','timer','proc','decode','quiz','yul','about'];
 function route(){
   let h = (location.hash||'#home').slice(1); if (!SCREENS.includes(h)) h='home';
+  curScreen = h;
   document.querySelectorAll('section.screen').forEach(s=>s.classList.toggle('on', s.id==='s-'+h));
   const sec = $('#s-'+h);
   $('#title').textContent = sec.dataset.title;
@@ -748,9 +766,10 @@ function stepList(){
   return l;
 }
 function go(s){ step=s; renderCalc(); scrollTo(0,0); }
+function saveCalc(){ store.set('hot.calc', {S, step}); }
 function next(){ const l=stepList(); go(l[Math.min(l.indexOf(step)+1,l.length-1)]); }
 function calcBack(){ const l=stepList(), i=l.indexOf(step); if (i>0){ go(l[i-1]); return true; } return false; }
-const RESET_S = () => ({fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:false,metarInt:null,start:null});
+const RESET_S = () => ({fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:null,metarInt:null,start:null});
 function resetCalc(){ Object.assign(S, RESET_S()); lastSavedSum=null; go('fluid'); }
 
 const COND_UI = [
@@ -843,7 +862,7 @@ function renderCalc(){
 
   else if (step==='oat'){
     h += qhead('oat', label(), 'Température extérieure (OAT) ?');
-    h += `<div class="oatdisp">${S.oatStr===''?'<span style="color:var(--dim)">--</span>':esc(S.oatStr)}<span class="u"> °C</span></div>`;
+    h += `<div class="oatrow"><div class="oatdisp">${S.oatStr===''?'<span style="color:var(--dim)">--</span>':esc(S.oatStr)}<span class="u"> °C</span></div><button class="btn primary" id="oatOk" ${oat===null||oat<-60||oat>40?'disabled':''}>Valider</button></div>`;
     let band='';
     if (oat!==null){
       const t = S.fluid==='I'?D.table2_typeI_aluminum:S.fluid==='II'?D.table4_typeII_generic:D.table20_typeIV_generic;
@@ -851,9 +870,8 @@ function renderCalc(){
       if (oat<-60||oat>40) band='<span style="color:var(--bad)">Valeur hors plage</span>';
     }
     h += `<div class="band">${band}</div>`;
-    h += '<div class="keypad">' + ['7','8','9','4','5','6','1','2','3','±','0','⌫'].map(k=>`<button data-key="${k}" class="${k==='±'?'pm':''}" aria-label="${k==='±'?'Changer le signe':k==='⌫'?'Effacer':k}">${k}</button>`).join('') + '</div>';
-    h += `<div class="infobox">Givre actif de longue durée : entrez l'<b>OAT la plus froide</b> rencontrée depuis l'application.</div>`;
-    h += `<div class="navrow"><button class="btn primary" id="oatOk" ${oat===null||oat<-60||oat>40?'disabled':''}>Valider</button></div>`;
+    h += '<div class="keypad">' + ['7','8','9','±','4','5','6','⌫','1','2','3','0'].map(k=>`<button data-key="${k}" class="${k==='±'?'pm':''}" aria-label="${k==='±'?'Changer le signe':k==='⌫'?'Effacer':k}">${k}</button>`).join('') + '</div>';
+    h += `<div class="infobox" style="margin-top:12px">Givre actif de longue durée : entrez l'<b>OAT la plus froide</b> rencontrée depuis l'application.</div>`;
   }
 
   else if (step==='conc'){
@@ -890,10 +908,10 @@ function renderCalc(){
     h += `<label class="lbl" for="visIn">VISIBILITÉ METAR (m)</label><input class="num" id="visIn" inputmode="numeric" pattern="[0-9]*" placeholder="ex. 1600" value="${S.vis??''}">`;
     h += '<div class="chips">' + [400,800,1200,1600,2000,2400,2800,3200,4000,4800,6000,9999].map(v=>`<button data-vis="${v}" class="${S.vis===v?'sel':''}">${v}</button>`).join('') + '</div>';
     h += `<label class="lbl">OU EN MILES TERRESTRES (METAR Canada / US)</label><div class="chips">` + SM.map(([l,v])=>`<button data-vis="${v}" data-sm="${l}">${l} SM</button>`).join('') + '</div>';
-    h += `<label class="lbl">JOUR / NUIT</label><div class="seg"><button data-night="0" class="${!S.night?'sel':''}">☀ JOUR</button><button data-night="1" class="${S.night?'sel':''}">☾ NUIT</button></div>`;
+    h += `<label class="lbl">JOUR / NUIT</label><div class="seg"><button data-night="0" class="${S.night===false?'sel':''}">☀ JOUR</button><button data-night="1" class="${S.night===true?'sel':''}">☾ NUIT</button></div>`;
     h += `<label class="lbl">INTENSITÉ ANNONCÉE PAR LE METAR (facultatif)</label><div class="chips">${[['-SN','-SN'],['SN','SN'],['+SN','+SN'],['','non précisé']].map(([v,t])=>`<button data-metar="${v}" class="${S.metarInt===v?'sel':''}">${t}</button>`).join('')}</div>`;
     h += '<div id="snowOut"></div>';
-    h += `<div class="navrow"><button class="btn primary" id="snowOk" ${S.vis?'':'disabled'}>Voir le HOT</button></div>`;
+    h += `<div class="navrow"><button class="btn primary" id="snowOk" ${S.vis&&S.night!==null?'':'disabled'}>Voir le HOT</button></div>`;
   }
 
   else if (step==='result'){
@@ -901,17 +919,19 @@ function renderCalc(){
   }
 
   B.innerHTML = h;
+  saveCalc();
   if (step==='snow') updateSnow();
   if (step==='result'){ const hx=B.querySelector('td.hx'); if (hx){ const w=hx.closest('.tblwrap'); w.scrollLeft = hx.offsetLeft - 110 - (w.clientWidth-110)/2 + hx.clientWidth/2; } }
 }
 
 function updateSnow(){
   const out = $('#snowOut'); if (!out) return;
-  if (!S.vis){ out.innerHTML=''; $('#snowOk').disabled=true; return; }
+  if (!S.vis || S.night===null){ out.innerHTML = S.vis ? '<div class="warnbox">Choisissez <b>JOUR</b> ou <b>NUIT</b> : l\'intensité de la neige en dépend.</div>' : ''; $('#snowOk').disabled=true; return; }
   $('#snowOk').disabled=false;
   const si = snowIntensity(S.vis, S.night, oatVal());
   const fr = INT_FR[si.intensity];
-  let h = `<div class="intens ${si.intensity==='Heavy'?'h':''}">Intensité Tableau 53 : ${fr}</div>`;
+  const tiny = S.vis < 100 ? `<div class="warnbox">${S.vis} m ? La visibilité se saisit en <b>mètres</b>. Pour des miles, utilisez les boutons SM.</div>` : '';
+  let h = tiny + `<div class="intens ${si.intensity==='Heavy'?'h':''}">Intensité Tableau 53 : ${fr}</div>`;
   if (S.metarInt!==null && S.metarInt!==''){
     const mfr = {'-SN':'FAIBLE','SN':'MODÉRÉE','+SN':'FORTE'}[S.metarInt];
     if (mfr!==fr) h += `<div class="warnbox">METAR dit <b class="mono">${S.metarInt}</b>, mais le tableau dit <b>${fr}</b> : on retient <b>${fr}</b>.</div>`;
@@ -998,7 +1018,7 @@ function renderResult(){
   if (R.ok && toMin(R.hot)>0){
     h += `<div class="card"><h3>Démarrer le minuteur</h3><p style="color:var(--mut);font-size:14px;margin-top:0">Heure de début annoncée par le sol (UTC) — début de l'application, ou début de la 2e étape.</p>
       <input class="num" id="startIn" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${esc(S.start||utcNowHM())}">
-      <div class="row"><button class="btn primary" id="startBtn">▶ Démarrer le HOT</button></div></div>`;
+      <div id="startErr"></div><div class="row"><button class="btn primary" id="startBtn">▶ Démarrer le HOT</button></div></div>`;
   }
   h += `<div class="card"><h3>Voici la case du MANEX</h3>`;
   if (R.tableId){ h += `<div class="mxref">${refText(R.tableId)}${R.tableId==='t1'?' — '+(S.fluid==='I'?'Type I':'Type '+S.fluid):''}</div>`; }
@@ -1046,13 +1066,13 @@ $('#calcBody').addEventListener('click', e=>{
     next(); return;
   }
   if (t.dataset.sub){ S.sub=t.dataset.sub; next(); return; }
-  if (t.dataset.vis){ S.vis=Number(t.dataset.vis); $('#visIn').value=S.vis; document.querySelectorAll('[data-vis]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); return; }
-  if (t.dataset.night!==undefined){ S.night=t.dataset.night==='1'; document.querySelectorAll('[data-night]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); return; }
-  if (t.dataset.metar!==undefined){ S.metarInt=t.dataset.metar; document.querySelectorAll('[data-metar]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); return; }
+  if (t.dataset.vis){ S.vis=Number(t.dataset.vis); $('#visIn').value=S.vis; document.querySelectorAll('[data-vis]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); saveCalc(); return; }
+  if (t.dataset.night!==undefined){ S.night=t.dataset.night==='1'; document.querySelectorAll('[data-night]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); saveCalc(); return; }
+  if (t.dataset.metar!==undefined){ S.metarInt=t.dataset.metar; document.querySelectorAll('[data-metar]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); saveCalc(); return; }
   if (t.id==='snowOk'){ next(); return; }
   if (t.id==='startBtn'){
     const R=window.__lastResult, v=normHM($('#startIn').value);
-    if (!v){ $('#startIn').focus(); $('#startIn').style.borderColor='var(--bad)'; return; }
+    if (!v){ $('#startIn').focus(); $('#startIn').style.borderColor='var(--bad)'; $('#startErr').innerHTML='<div class="badbox">Heure invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).</div>'; return; }
     if (startTimer(v, toMin(R.range.min), toMin(R.range.max), summaryTxt(), refText(R.tableId))) location.hash='#timer';
     return;
   }
@@ -1062,6 +1082,7 @@ $('#calcBody').addEventListener('click', e=>{
 $('#calcBody').addEventListener('input', e=>{
   if (e.target.id==='visIn'){ const v=parseInt(e.target.value,10); S.vis = isNaN(v)?null:v; document.querySelectorAll('[data-vis]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.vis)===S.vis)); updateSnow(); }
   if (e.target.id==='startIn'){ S.start=e.target.value; }
+  saveCalc();
 });
 
 /* ================= TIMER ================= */
@@ -1100,19 +1121,20 @@ async function keepAwake(){ try{ if ('wakeLock' in navigator && !wakeLock){ wake
 function releaseAwake(){ try{ wakeLock && wakeLock.release(); }catch(e){} wakeLock=null; }
 document.addEventListener('visibilitychange', ()=>{ if (T && document.visibilityState==='visible') keepAwake(); });
 const fmtClock = ms => { const s=Math.max(0,Math.round(Math.abs(ms)/1000)), h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60; return (h?h+':'+String(m).padStart(2,'0'):String(m).padStart(2,'0'))+':'+String(x).padStart(2,'0'); };
+const fmtDur = ms => { const s=Math.max(0,Math.round(Math.abs(ms)/1000)), h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60; return h ? `${h} h ${String(m).padStart(2,'0')}` : m ? `${m} min ${String(x).padStart(2,'0')}` : `${x} s`; };
 const hmUTC = ms => { const d=new Date(ms); return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0'); };
 
 function tick(){
   if (!T){ $('#tbBtn').hidden=true; $('#tabBadge').className='badge'; return; }
   const now=Date.now(), end=T.start+T.minM*60000, rem=end-now;
   const state = rem<=0 ? 'bad' : rem<=5*60000 ? 'warn' : '';
-  const b=$('#tbBtn'); b.className=state; b.hidden = ['#timer','#home',''].includes(location.hash);
+  const b=$('#tbBtn'); b.className=state; b.hidden = curScreen==='timer' || curScreen==='home';
   const bd=$('#tabBadge'); bd.className='badge on '+state;
   $('#tbLabel').textContent = rem<=0 ? 'HOT DÉPASSÉ' : (now<T.start ? 'DÉBUT '+T.hm : 'HOT');
-  $('#tbTime').textContent = (rem<=0?'+':'') + fmtClock(now<T.start ? T.minM*60000 : rem);
+  $('#tbTime').textContent = now<T.start ? '' : (rem<=0?'+':'') + fmtDur(rem);
   if (!T.warned && rem<=5*60000 && rem>0 && T.minM>5){ T.warned=true; store.set('hot.timer',T); beep(1,660); try{navigator.vibrate&&navigator.vibrate(300);}catch(e){} }
   if (!T.alerted && rem<=0){ T.alerted=true; store.set('hot.timer',T); beep(4,880); try{navigator.vibrate&&navigator.vibrate([500,200,500,200,500]);}catch(e){} $('#alarm').classList.add('on'); setTimeout(()=>$('#alarmOk').focus(),50); }
-  if (location.hash==='#timer') updateTimerView(now, rem, state);
+  if (curScreen==='timer') updateTimerView(now, rem, state);
   const hs=$('#hsT');
   if (hs){ const st=$('#hStatusCard'); st.className='status live '+state;
     $('#hsLab').textContent = now<T.start ? 'DÉMARRE À '+T.hm+' UTC' : rem<=0 ? 'HOT DÉPASSÉ DEPUIS' : 'HOT RESTANT';
@@ -1128,12 +1150,18 @@ function renderTimer(){
   const B=$('#timerBody');
   if (!T){
     B.innerHTML = `<div class="card"><h3>Aucun minuteur en cours</h3><p>Calculez d'abord le HOT : le minuteur se lance depuis le résultat, sur l'heure de début annoncée par le sol.</p><a class="btn primary block" href="#calc">Calculateur HOT</a></div>
-      <div class="card"><h3>Démarrage manuel</h3><label class="lbl">HEURE DE DÉBUT (UTC)</label><input class="num" id="mStart" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${utcNowHM()}"><label class="lbl">HOT RETENU (h:mm)</label><input class="num" id="mHot" placeholder="0:25" inputmode="numeric"><button class="btn block" id="mGo">▶ Démarrer</button></div>`;
-    $('#mGo').onclick = ()=>{ const v=$('#mHot').value.trim(); const m=v.match(/^(\d{1,2}):([0-5]\d)$/); if(!m){ $('#mHot').focus(); return; } const mm=Number(m[1])*60+Number(m[2]); if(!mm) return; const st=normHM($('#mStart').value); if(!st){ $('#mStart').focus(); return; } if (startTimer(st, mm, mm, 'HOT saisi manuellement', '')) renderTimer(); };
+      <div class="card"><h3>Démarrage manuel</h3><label class="lbl">HEURE DE DÉBUT (UTC)</label><input class="num" id="mStart" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${utcNowHM()}"><label class="lbl">HOT RETENU (minutes, ou h:mm)</label><input class="num" id="mHot" placeholder="25" inputmode="decimal"><div id="mErr"></div><button class="btn block" id="mGo">▶ Démarrer</button></div>`;
+    $('#mGo').onclick = ()=>{
+      const err = t => { $('#mErr').innerHTML = `<div class="badbox">${t}</div>`; };
+      const mm = parseHotMin($('#mHot').value);
+      if (!mm){ err('HOT invalide. Exemples : <b>25</b> (minutes), <b>0:25</b>, <b>1:05</b>.'); $('#mHot').focus(); return; }
+      const st = normHM($('#mStart').value);
+      if (!st){ err('Heure de début invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).'); $('#mStart').focus(); return; }
+      if (startTimer(st, mm, mm, 'HOT saisi manuellement', '')) renderTimer(); };
     return;
   }
   B.innerHTML = `<div class="timer" id="tbox"><div class="ringwrap"><svg viewBox="0 0 120 120"><circle class="rbg" cx="60" cy="60" r="54"/><circle class="rglow" id="tglow" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/><circle class="rfg" id="tring" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
-    <div class="ringin"><div class="lab mono" id="tlab" style="color:var(--ice2);letter-spacing:.12em;font-size:13px">HOT RESTANT</div><div class="t" id="tt">--:--</div></div></div>
+    <div class="ringin"><div class="lab mono" id="tlab" style="color:var(--ice2);letter-spacing:.12em;font-size:13px">HOT RESTANT</div><div class="t" id="tt">--:--</div><div class="mono" id="tunit" style="color:var(--mut);font-size:12px;letter-spacing:.14em">MIN : S</div></div></div>
     <div class="s">Début ${T.hm} UTC · Fin HOT (valeur basse) <b id="tend"></b> UTC</div>
     ${T.maxM!==T.minM?`<div class="s" style="font-size:13px">Haut de fourchette : ${hmUTC(T.start+T.maxM*60000)} UTC (non utilisé — règle Air Algérie)</div>`:''}</div>
     <div class="infobox mono" style="font-size:14px">${esc(T.label)}${T.ref?'<br>'+esc(T.ref):''}</div>
@@ -1148,7 +1176,7 @@ function updateTimerView(now, rem, state){
   $('#tend').textContent = hmUTC(T.start+T.minM*60000);
   if (now<T.start){ $('#tlab').textContent='DÉMARRE À '+T.hm+' UTC'; $('#tt').textContent=fmtClock(T.minM*60000); $('#tring').style.strokeDashoffset=0; $('#tglow').style.strokeDashoffset=0; return; }
   $('#tlab').textContent = rem<=0 ? 'HOT DÉPASSÉ DEPUIS' : 'HOT RESTANT';
-  $('#tt').textContent = (rem<=0?'+':'')+fmtClock(rem);
+  $('#tt').textContent = (rem<=0?'+':'')+fmtClock(rem); $('#tunit').textContent = Math.abs(rem)>=3600e3 ? 'H : MIN : S' : 'MIN : S';
   $('#tring').style.strokeDashoffset = $('#tglow').style.strokeDashoffset = 100 - hotPct(now);
 }
 
@@ -1243,15 +1271,21 @@ function renderProc(){
     <div class="warnbox">Du fluide reste sur l'aile à la rotation (portance réduite, traînée accrue, effet temporaire) : garder le taux de rotation normal.</div></div>`;
   $('#procBody').innerHTML = h;
 }
-$('#procBody').addEventListener('change', e=>{ const k=e.target.dataset.chk; if(!k) return; checks[k]=e.target.checked; store.set('hot.proc2',checks); renderProc(); });
+$('#procBody').addEventListener('change', e=>{
+  const k=e.target.dataset.chk; if(!k) return;
+  checks[k]=e.target.checked; store.set('hot.proc2',checks);
+  e.target.closest('.chk').classList.toggle('on', e.target.checked);
+  const st=e.target.closest('.pstep'); st.classList.toggle('done', [...st.querySelectorAll('input[data-chk]')].every(x=>x.checked));
+});
+let dlgTimer=null;
 $('#procBody').addEventListener('click', e=>{
   if (e.target.closest('#listenBtn')){
-    const box=$('#dlg'); box.innerHTML=''; let i=0;
-    const add=()=>{ if(i>=DIALOG.length) return; const [c,w,txt]=DIALOG[i++]; box.insertAdjacentHTML('beforeend',`<div class="bub ${c} pop"><small>${w}</small>${esc(txt)}</div>`); if(i<DIALOG.length) setTimeout(add,1300); };
+    clearTimeout(dlgTimer); const box=$('#dlg'); box.innerHTML=''; let i=0;
+    const add=()=>{ if(i>=DIALOG.length) return; const [c,w,txt]=DIALOG[i++]; box.insertAdjacentHTML('beforeend',`<div class="bub ${c} pop"><small>${w}</small>${esc(txt)}</div>`); if(i<DIALOG.length) dlgTimer=setTimeout(add,1300); };
     add();
   }
 });
-$('#procReset').onclick = ()=>{ checks={}; store.set('hot.proc2',checks); renderProc(); };
+$('#procReset').onclick = ()=>{ if (!confirm('Décocher toute la procédure ?')) return; checks={}; store.set('hot.proc2',checks); renderProc(); };
 renderProc();
 
 /* ================= DECODER ================= */
@@ -1261,7 +1295,8 @@ function renderDecode(){
   if (!v.trim()){ out.innerHTML=''; return; }
   const d=decodeCode(v); lastDec=d;
   if (!d.fluid){ out.innerHTML=`<div class="warnbox">Type de fluide non reconnu. Format attendu : <span class="mono">Type IV/75 1432</span>.</div>`; return; }
-  let h='<div class="card dec">';
+  let h = d.multi ? `<div class="warnbox">Deux fluides annoncés (procédure en deux étapes) : le HOT dépend du fluide de la <b>2e étape</b> — ici Type ${d.fluid}. Vérifiez avec le sol.</div>` : '';
+  h += '<div class="card dec">';
   if (d.fluid==='III'){ out.innerHTML=`<div class="warnbox"><b>Type III</b> : non utilisé B737 — marque spécifique, voir MANEX Tableaux 17-19.</div>`; return; }
   h += `<div><span class="hl">Type ${d.fluid}</span>`;
   if (d.fluid==='I') h += ` — mélange eau/glycol chauffé (une concentration plus forte n'allonge pas le HOT)`;
@@ -1315,6 +1350,7 @@ $('#quizBody').addEventListener('click', e=>{
     if (j===it.a) Q.score++;
     document.querySelectorAll('.qopt').forEach((x,k)=>{ if(k===it.a) x.classList.add('right'); else if(k===j) x.classList.add('wrong'); });
     $('#qfb').innerHTML = `<div class="${j===it.a?'infobox':'warnbox'}"><b>${j===it.a?'Correct.':'Non.'}</b> ${esc(it.e)}<div class="mono" style="font-size:12px;margin-top:6px;opacity:.8">MANEX A — ${esc(it.r)}</div></div><button class="btn primary block" id="qNext">${Q.i+1<QUIZ.length?'Question suivante':'Voir le score'}</button>`;
+    $('#qNext').scrollIntoView({behavior:'smooth', block:'end'});
     return;
   }
   if (e.target.id==='qNext'){ Q.i++; renderQuiz(); scrollTo(0,0); }
@@ -1378,6 +1414,15 @@ document.addEventListener('pointerdown', ()=>{ unlockAudio(); if (T && !wakeLock
 setInterval(()=>{ clock(); tick(); }, 1000);
 
 /* ================= BOOT ================= */
+(function restoreCalc(){
+  const c = store.get('hot.calc', null);
+  if (!c || typeof c.S!=='object' || typeof c.step!=='string') return;
+  try {
+    Object.assign(S, RESET_S(), c.S);
+    step = stepList().includes(c.step) ? c.step : 'fluid';
+    if (step==='result') lastSavedSum = summaryTxt();
+  } catch(e){ Object.assign(S, RESET_S()); step='fluid'; }
+})();
 if (T){ ensureTick(); keepAwake(); }
 route();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
