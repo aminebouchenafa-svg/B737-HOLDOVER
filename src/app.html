@@ -51,7 +51,14 @@ h1,h2,h3{font-family:var(--head);font-weight:700;letter-spacing:.04em;margin:0}
 .wic span{display:block}
 .sp-sub{font-family:var(--mono);color:var(--ice2);font-size:clamp(12px,3.4vw,18px);letter-spacing:.06em;margin-top:22px;opacity:0;animation:fadeIn 1s ease-out 1.4s forwards}
 .sp-sign{position:absolute;bottom:calc(22px + var(--sab));left:0;right:0;text-align:center;font-family:var(--mono);font-size:13px;color:var(--mut);line-height:1.5;opacity:0;animation:fadeIn 1s ease-out 1.6s forwards}
-.sp-skip{position:absolute;top:calc(14px + var(--sat));right:16px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.sp-brand{position:absolute;top:calc(18px + var(--sat));left:18px;display:flex;align-items:center;gap:12px;opacity:0;animation:fadeIn 1.2s ease-out .4s forwards}
+.sp-emb{width:52px;height:52px;flex:none;filter:drop-shadow(0 0 8px rgba(95,216,255,.55))}
+.sp-al{font-family:'Cinzel',Georgia,serif;font-weight:600;text-transform:uppercase;letter-spacing:.24em;font-size:clamp(17px,4.4vw,26px);line-height:1.1;
+  background:linear-gradient(178deg,#ffffff 0%,#d9e4ea 30%,#8193a0 50%,#e9f2f6 62%,#a9bac6 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 8px rgba(95,216,255,.45))}
+.sp-fleet{font-family:var(--mono);font-size:10.5px;letter-spacing:.32em;color:var(--ice);margin-top:4px;border-top:1px solid rgba(95,216,255,.35);padding-top:4px}
+@media (prefers-reduced-motion:reduce){.sp-brand{animation:none;opacity:1}}
+.sp-skip{position:absolute;bottom:calc(78px + var(--sab));left:0;right:0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--dim)}
 @keyframes wicIn{to{opacity:1;transform:scale(1)}}
 @keyframes fadeIn{to{opacity:1}}
 @media (prefers-reduced-motion:reduce){
@@ -398,6 +405,19 @@ body.calm #sky i{animation-play-state:paused}
 
 <div id="splash" role="button" aria-label="Passer l'introduction">
   <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="sp-brand">
+    <svg class="sp-emb" viewBox="0 0 64 64" aria-hidden="true">
+      <defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#9fb2bf"/><stop offset=".6" stop-color="#e9f3f8"/><stop offset="1" stop-color="#7f93a1"/></linearGradient></defs>
+      <circle cx="32" cy="32" r="29" fill="none" stroke="url(#spg)" stroke-width="2"/>
+      <circle cx="32" cy="32" r="24.5" fill="none" stroke="#5fd8ff" stroke-width="1" opacity=".7"/>
+      <g stroke="url(#spg)" stroke-width="2.4" stroke-linecap="round" fill="none">
+        <path d="M32 13v38M15.5 22.5l33 19M15.5 41.5l33-19"/>
+        <path d="M27.5 16.5L32 21l4.5-4.5M27.5 47.5L32 43l4.5 4.5M17.6 28.4l6.1-1.6-1.6-6.1M46.4 35.6l-6.1 1.6 1.6 6.1M22.1 43.2l1.6-6.1-6.1-1.6M41.9 20.8l-1.6 6.1 6.1 1.6"/>
+      </g>
+      <circle cx="32" cy="32" r="3" fill="#5fd8ff"/>
+    </svg>
+    <div><div class="sp-al">Air Algérie</div><div class="sp-fleet">B737 NG / MAX · FLEET</div></div>
+  </div>
   <div class="sp-skip" data-t="skip">toucher pour passer</div>
   <div class="sp-inner">
     <h1 class="wic"><span>Winter is</span><span>Coming</span></h1>
