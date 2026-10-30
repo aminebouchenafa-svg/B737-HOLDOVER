@@ -75,6 +75,24 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   // ---- Parcours UI : neige 1600 m nuit -6 °C, Type IV 100/0 ----
   await p.click('#splash').catch(() => {});
   await p.waitForTimeout(800);
+  // ---- Accès : utilisateur / mot de passe ----
+  const crypto = require('crypto');
+  const shaOk = await p.evaluate(() => [sha256(''), sha256('abc'), sha256('héllo ✈')]);
+  const nodeSha = ['', 'abc', 'héllo ✈'].map(x => crypto.createHash('sha256').update(x, 'utf8').digest('hex'));
+  ok(JSON.stringify(shaOk) === JSON.stringify(nodeSha), 'SHA-256 de l\'app identique à celui de Node');
+  ok(await p.isVisible('#gate'), 'Écran de connexion affiché au premier lancement');
+  await p.fill('#gUser', 'B737AH'); await p.fill('#gPass', 'mauvais'); await p.click('#gateForm button[type=submit]');
+  ok((await p.textContent('#gErr')).includes('incorrect') && await p.isVisible('#gate'), 'Mauvais mot de passe refusé');
+  // Le vrai mot de passe n'est jamais écrit dans le dépôt : variables HOT_USER / HOT_PASS (facultatives).
+  if (process.env.HOT_USER && process.env.HOT_PASS) {
+    await p.fill('#gUser', ' ' + process.env.HOT_USER.toLowerCase() + ' '); await p.fill('#gPass', process.env.HOT_PASS); await p.click('#gateForm button[type=submit]');
+    ok(!(await p.isVisible('#gate')), 'Bon identifiant accepté (utilisateur insensible à la casse)');
+  } else {
+    await p.evaluate(() => { store.set('hot.auth', AUTH_HASH); gateCheck(); });
+    console.log('(info) HOT_USER / HOT_PASS absents : connexion simulée');
+  }
+  await p.reload(); await p.click('#splash').catch(() => {}); await p.waitForTimeout(700);
+  ok(!(await p.isVisible('#gate')), 'Connexion mémorisée après rechargement');
   if (shots) await p.screenshot({ path: shots + '/02-home.png', fullPage: true });
   await p.click('a[href="#calc"]');
   await p.click('[data-fluid="IV"]');
