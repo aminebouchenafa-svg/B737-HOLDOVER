@@ -1,4 +1,4 @@
-// Service worker : met l'app en cache pour l'usage hors ligne.
+// Service worker : réseau d'abord (pour recevoir les mises à jour), cache si hors ligne.
 const CACHE = '737-holdover-__VERSION__';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });
@@ -8,7 +8,7 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then(r => r || fetch(e.request).then(res => {
+  e.respondWith(fetch(e.request).then(res => {
     const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return res;
-  }).catch(() => caches.match('./index.html'))));
+  }).catch(() => caches.match(e.request, { ignoreSearch: true }).then(r => r || caches.match('./index.html'))));
 });

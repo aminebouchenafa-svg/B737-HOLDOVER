@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Assemble index.html (fichier unique, hors ligne) : gabarit + JSON MANEX + polices + icône en base64.
 Usage : python3 tools/build.py"""
-import base64, json, pathlib, datetime
+import base64, json, pathlib, datetime, hashlib
 R = pathlib.Path(__file__).resolve().parent.parent
 b64 = lambda p: base64.b64encode((R / p).read_bytes()).decode()
 data = json.loads((R / 'data/hot_tables_manexA_2026-2027.json').read_text(encoding='utf-8'))
@@ -18,6 +18,7 @@ for k, v in {
     assert k in html, k
     html = html.replace(k, v)
 (R / 'index.html').write_text(html, encoding='utf-8')
-sw = (R / 'src/sw.js').read_text(encoding='utf-8').replace('__VERSION__', version)
+cache_id = version + '-' + hashlib.sha1(html.encode()).hexdigest()[:8]
+sw = (R / 'src/sw.js').read_text(encoding='utf-8').replace('__VERSION__', cache_id)
 (R / 'sw.js').write_text(sw, encoding='utf-8')
 print(f'index.html : {len(html)//1024} Ko — version {version}')
