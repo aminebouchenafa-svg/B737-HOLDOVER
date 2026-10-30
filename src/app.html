@@ -420,7 +420,7 @@ body.calm #sky i{animation-play-state:paused}
 <!-- ============ HOME ============ -->
 <section class="screen" id="s-home" data-title="737 HOLDOVER" data-title-en="737 HOLDOVER">
   <div class="hello">
-    <div><div class="greet" id="hGreet">Bonjour</div><div class="hdate" id="hDate"></div></div>
+    <div><div class="greet" id="hGreet"></div><div class="hdate" id="hDate"></div></div>
     <div class="bigutc"><span class="mono" id="hUtc">--:--</span><small>UTC</small></div>
   </div>
   <div id="hStatus"></div>
@@ -1533,10 +1533,9 @@ function whenTxt(ts){
 const SNOWFLAKE = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></svg>';
 function renderHome(){
   const hr = new Date().getHours();
-  $('#hGreet').textContent = LANG==='en'
-    ? (hr<5?'Good night':hr<12?'Good morning':hr<18?'Good afternoon':'Good evening') + ', crew'
-    : (hr<5?'Bonne nuit':hr<12?'Bonjour':hr<18?'Bon après-midi':'Bonsoir') + ', équipage';
-  $('#hDate').textContent = new Date().toLocaleDateString(tr('fr-FR','en-GB'),{weekday:'long',day:'numeric',month:'long'});
+  const dstr = new Date().toLocaleDateString(tr('fr-FR','en-GB'),{weekday:'long',day:'numeric',month:'long'});
+  $('#hGreet').textContent = dstr.charAt(0).toUpperCase() + dstr.slice(1);
+  $('#hDate').textContent = 'B737 NG/MAX · MANEX A §8.2.4';
   let st;
   if (T){
     st = `<a class="status live" id="hStatusCard" href="#timer">

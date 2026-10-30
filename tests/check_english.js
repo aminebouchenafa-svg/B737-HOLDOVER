@@ -67,7 +67,7 @@ const ALLOW = /Air Algérie|Algérie|MANEX A|CL-AH-DOA|Éd\./g;
   // back to French works
   await p.click('#langBtn'); await p.evaluate(() => location.hash = '#home'); await p.waitForTimeout(200);
   const fr = await p.evaluate(() => document.querySelector('#hGreet').textContent);
-  console.log('Retour FR :', fr);
+  console.log('Retour FR :', fr); if (!/[a-z]/.test(fr)) found.set('date FR manquante','home');
   console.log(found.size ? 'TEXTE FRANÇAIS RESTANT EN MODE EN :' : 'Aucun texte français en mode EN.');
   for (const [k, v] of found) console.log(`  [${v}] ${k}`);
   console.log(errs.length ? 'ERREURS JS : ' + errs.join(' | ') : 'Aucune erreur JS.');
