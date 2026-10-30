@@ -1,5 +1,5 @@
 // Service worker : réseau d'abord (pour recevoir les mises à jour), cache si hors ligne.
-const CACHE = '737-holdover-2026-10-30-9158231f';
+const CACHE = '737-holdover-2026-10-30-1abc6454';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => {

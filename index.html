@@ -241,10 +241,118 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
 .freq .f{font-family:var(--mono);font-size:26px;color:var(--ice);text-shadow:0 0 10px var(--iceglow);min-width:118px}
 .dec{font-family:var(--mono);font-size:18px;line-height:1.6}
 .dec .hl{color:var(--ice2)}
+
+/* ================= PREMIUM THEME ================= */
+html,body{background:#030812}
+body{background:transparent}
+#sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  background:linear-gradient(180deg,#02060d 0%,#051127 38%,#0a1a36 72%,#0e2444 100%)}
+#sky i{position:absolute;display:block;border-radius:50%;will-change:transform}
+#sky .c1{width:95vmax;height:55vmax;left:-35vmax;top:-24vmax;background:radial-gradient(closest-side,rgba(95,216,255,.30),rgba(95,216,255,0));animation:drift1 38s ease-in-out infinite alternate}
+#sky .c2{width:85vmax;height:52vmax;right:-34vmax;top:-12vmax;background:radial-gradient(closest-side,rgba(146,108,255,.28),rgba(146,108,255,0));animation:drift2 46s ease-in-out infinite alternate}
+#sky .c3{width:110vmax;height:46vmax;left:-25vmax;bottom:-22vmax;background:radial-gradient(closest-side,rgba(38,226,186,.17),rgba(38,226,186,0));animation:drift3 54s ease-in-out infinite alternate}
+#sky .c4{width:75vmax;height:42vmax;right:-28vmax;bottom:2vmax;background:radial-gradient(closest-side,rgba(255,108,186,.14),rgba(255,108,186,0));animation:drift2 62s ease-in-out infinite alternate-reverse}
+#sky .c5{width:150vmax;height:16vmax;left:-25vmax;top:16vh;border-radius:50%;transform:rotate(-9deg);
+  background:radial-gradient(closest-side,rgba(110,255,200,.12),rgba(95,216,255,.08) 55%,rgba(146,108,255,0));animation:aurora 30s ease-in-out infinite alternate}
+#sky .stars{inset:0;border-radius:0;opacity:.55;
+  background-image:radial-gradient(1.2px 1.2px at 18px 26px,#fff,transparent),radial-gradient(1px 1px at 120px 80px,#cfefff,transparent),radial-gradient(1.4px 1.4px at 200px 160px,#fff,transparent),radial-gradient(1px 1px at 60px 190px,#e6f6ff,transparent),radial-gradient(1px 1px at 250px 40px,#fff,transparent);
+  background-size:280px 240px;-webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.6) 45%,transparent 80%);mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.6) 45%,transparent 80%)}
+@keyframes drift1{to{transform:translate(8vmax,5vmax) scale(1.08)}}
+@keyframes drift2{to{transform:translate(-9vmax,6vmax) scale(1.1)}}
+@keyframes drift3{to{transform:translate(10vmax,-4vmax) scale(1.06)}}
+@keyframes aurora{0%{transform:rotate(-9deg) translateX(-4vmax) scaleY(.9);opacity:.7}100%{transform:rotate(-6deg) translateX(5vmax) scaleY(1.2);opacity:1}}
+
+header.top{background:rgba(3,8,16,.62);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border-bottom:1px solid rgba(160,210,255,.10)}
+.utc{flex:none;font-family:var(--mono);font-size:15px;color:var(--ice2);border:1px solid rgba(160,210,255,.18);border-radius:10px;padding:6px 10px;background:rgba(6,24,38,.55)}
+.utc b{color:var(--mut);font-weight:400;font-size:11px;margin-left:4px}
+main{padding-bottom:calc(104px + var(--sab))}
+
+.card,.tile,.status,.hitem{background:rgba(11,19,31,.62);border-color:rgba(160,210,255,.12);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
+.choice,.chk,.qopt,.infobox{background:rgba(11,19,31,.78);border-color:rgba(160,210,255,.13)}
+.card,.tile,.status,.choice{border-radius:18px}
+.tile{min-height:92px;padding:18px}
+.tile .ic{border-radius:14px;background:radial-gradient(circle at 50% 30%,rgba(95,216,255,.16),rgba(95,216,255,.02))}
+.tile.hero{background:linear-gradient(140deg,rgba(14,48,70,.75),rgba(11,19,31,.62))}
+
+/* --- touch halo (bleu glacier) --- */
+.tile,.choice,.btn,.chk,.qopt,.hitem,.status,.keypad button,.chips button,.seg button,.why,.back,#tbBtn,.utc{transition:box-shadow .18s ease,border-color .18s ease,transform .12s ease,background-color .18s ease}
+.tile:active,.choice:not(.dis):active,.btn:not(:disabled):active,.chk:active,.qopt:active,.hitem:active,a.status:active,.keypad button:active,.chips button:active,.seg button:active,.why:active,.back:active,.crumb:active{
+  border-color:var(--ice) !important;box-shadow:0 0 0 1px var(--ice),0 0 28px rgba(95,216,255,.55),inset 0 0 18px rgba(95,216,255,.14) !important;transform:scale(.985)}
+@media (hover:hover){.tile:hover,.choice:not(.dis):hover,.hitem:hover,a.status:hover,.qopt:hover{border-color:rgba(95,216,255,.55);box-shadow:0 0 18px rgba(95,216,255,.22)}}
+
+/* --- home dashboard --- */
+.hello{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 2px 16px}
+.greet{font-family:var(--head);font-size:clamp(20px,5.4vw,28px);font-weight:700;letter-spacing:.02em;background:linear-gradient(90deg,#ffffff,#b4efff 60%,#c9b8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hdate{color:var(--mut);font-size:13.5px;margin-top:4px;text-transform:capitalize}
+.bigutc{text-align:right;line-height:1}
+.bigutc span{font-size:clamp(34px,10vw,52px);color:#fff;text-shadow:0 0 18px rgba(95,216,255,.6)}
+.bigutc small{display:block;font-family:var(--mono);color:var(--ice);font-size:12px;letter-spacing:.2em;margin-top:4px}
+.status{display:flex;align-items:center;gap:16px;padding:18px;border:1px solid rgba(160,210,255,.14);margin-bottom:12px;text-decoration:none;color:var(--txt)}
+.status b{font-family:var(--head);font-size:16px;letter-spacing:.03em;display:block}
+.status small{color:var(--mut);font-size:13.5px;display:block;margin-top:2px}
+.status .sic{width:56px;height:56px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ice);background:radial-gradient(circle,rgba(95,216,255,.22),rgba(95,216,255,.03));box-shadow:0 0 22px rgba(95,216,255,.25)}
+.status.live{border-color:var(--ice);box-shadow:0 0 26px rgba(95,216,255,.22)}
+.status.live.warn{border-color:var(--warn);box-shadow:0 0 26px rgba(255,181,71,.25)}
+.status.live.bad{border-color:var(--bad);box-shadow:0 0 26px rgba(255,77,94,.35);animation:pulse 1.2s infinite}
+.status .hsT{font-family:var(--mono);font-size:clamp(36px,10vw,50px);line-height:1.05;color:#fff;text-shadow:0 0 16px var(--ice)}
+.status.warn .hsT{text-shadow:0 0 16px var(--warn)} .status.bad .hsT{text-shadow:0 0 16px var(--bad)}
+.status .chev,.hitem .chev{margin-left:auto;color:var(--mut);font-size:26px}
+.mini-ring{width:62px;height:62px;flex:none;transform:rotate(-90deg)}
+.mini-ring circle{fill:none;stroke-width:9}
+.cta{margin-bottom:16px}
+.cta .btn{min-height:58px;border-radius:16px}
+.sect{display:flex;align-items:center;justify-content:space-between;font-size:13px;letter-spacing:.16em;color:var(--mut);text-transform:uppercase;margin:22px 4px 10px;font-weight:600}
+.sect button{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:none;color:var(--mut);background:none;border:1px solid rgba(160,210,255,.15);border-radius:8px;padding:6px 10px;cursor:pointer}
+.hist{display:grid;gap:8px}
+.hitem{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 14px;border-radius:14px;border:1px solid rgba(160,210,255,.12);cursor:pointer}
+.hitem .hv{font-family:var(--mono);font-size:24px;color:var(--ice2);min-width:64px;text-shadow:0 0 10px var(--iceglow)}
+.hitem .hv.no{color:#ff9aa5;font-size:14px;text-shadow:none}
+.hitem b{font-family:var(--mono);font-weight:400;font-size:14px;display:block}
+.hitem small{color:var(--mut);font-size:12.5px}
+.disclaimer{font-size:13.5px;padding:12px 14px;background:rgba(42,29,7,.72)}
+
+/* --- tab bar --- */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;gap:2px;padding:6px 8px calc(6px + var(--sab));
+  background:rgba(3,8,16,.72);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-top:1px solid rgba(160,210,255,.12)}
+.tabbar a{flex:1;max-width:130px;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:14px;color:var(--mut);text-decoration:none;font-family:var(--head);font-size:10.5px;letter-spacing:.05em;position:relative;transition:color .2s,background-color .2s}
+.tabbar a svg{width:25px;height:25px}
+.tabbar a.on{color:var(--ice);background:rgba(95,216,255,.08)}
+.tabbar a.on svg{filter:drop-shadow(0 0 6px rgba(95,216,255,.8))}
+.tabbar a:active{background:rgba(95,216,255,.16);box-shadow:0 0 22px rgba(95,216,255,.35)}
+.tabbar .badge{position:absolute;top:6px;left:calc(50% + 8px);width:10px;height:10px;border-radius:50%;background:var(--ice);box-shadow:0 0 8px var(--ice);display:none}
+.tabbar .badge.on{display:block} .tabbar .badge.warn{background:var(--warn);box-shadow:0 0 8px var(--warn)} .tabbar .badge.bad{background:var(--bad);box-shadow:0 0 10px var(--bad);animation:pulse 1s infinite}
+
+/* --- calc breadcrumb --- */
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}
+.crumb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border-radius:999px;border:1px solid rgba(95,216,255,.35);background:rgba(6,32,48,.6);color:var(--ice2);font-family:var(--mono);font-size:14px;cursor:pointer}
+.crumb i{font-style:normal;color:var(--mut);font-size:12px}
+
+/* --- timer ring --- */
+.ringwrap{position:relative;width:min(80vw,330px);aspect-ratio:1;margin:4px auto 10px}
+.ringwrap svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.ringwrap circle{fill:none;stroke-width:7}
+.ringwrap .rbg,.mini-ring .rbg{stroke:rgba(160,210,255,.12)}
+.ringwrap .rfg,.mini-ring .rfg{stroke:var(--ice);stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.ringwrap .rglow{stroke:var(--ice);stroke-width:16;opacity:.16;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.timer.warn .rglow{stroke:var(--warn)} .timer.bad .rglow{stroke:var(--bad)}
+.timer.warn .rfg,.status.warn .rfg{stroke:var(--warn)}
+.timer.bad .rfg,.status.bad .rfg{stroke:var(--bad)}
+.ringin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ringin .t{font-size:clamp(44px,14vw,76px)}
+.timer .s{font-size:14px;letter-spacing:0;line-height:1.5}
+@media(max-width:619px){
+  .tiles{grid-template-columns:1fr 1fr;gap:10px}
+  .tile{flex-direction:column;align-items:flex-start;gap:10px;min-height:132px;padding:14px}
+  .tile b{font-size:13.5px} .tile small{font-size:12px;line-height:1.35;display:block}
+  .tile.hero{grid-column:1/-1;flex-direction:row;align-items:center;min-height:84px}
+  .tile.hero b{font-size:15px}
+}
+.timer{background:rgba(4,18,25,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
 <body>
+<div id="sky" aria-hidden="true"><i class="stars"></i><i class="c1"></i><i class="c2"></i><i class="c5"></i><i class="c3"></i><i class="c4"></i></div>
 
 <div id="splash" role="button" aria-label="Passer l'introduction">
   <canvas id="snow" aria-hidden="true"></canvas>
@@ -263,22 +371,26 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
   <h1 id="title">737 HOLDOVER</h1>
   <button id="tbBtn" hidden aria-label="Minuteur HOT"><span id="tbLabel">HOT</span> <span id="tbTime">--:--</span></button>
   <button class="home-btn" id="homeBtn" hidden>ACCUEIL</button>
+  <span class="utc" id="utcClock" aria-label="Heure UTC">--:--<b>UTC</b></span>
 </header>
 
 <main>
 <!-- ============ HOME ============ -->
 <section class="screen" id="s-home" data-title="737 HOLDOVER">
-  <div class="brand">
-    <div class="logo">737 HOLDOVER</div>
-    <div class="sub">B737 NG/MAX · Dégivrage &amp; antigivrage · MANEX A §8.2.4</div>
+  <div class="hello">
+    <div><div class="greet" id="hGreet">Bonjour</div><div class="hdate" id="hDate"></div></div>
+    <div class="bigutc"><span class="mono" id="hUtc">--:--</span><small>UTC</small></div>
   </div>
+  <div id="hStatus"></div>
   <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (TR 39-4 OCT.26, tableaux FAA Winter 2026-2027). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
+  <div id="hHist"></div>
+  <h2 class="sect">Outils</h2>
   <div class="tiles">
     <a class="tile hero" href="#calc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span><b>Calculateur HOT</b><small>4 questions → le HOT et la case exacte du MANEX</small></span></a>
     <a class="tile" href="#learn"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3"/><path d="M20 5v13h-6"/></svg></span><span><b>Comprendre en 2 minutes</b><small>Les 7 idées à retenir</small></span></a>
-    <a class="tile" href="#proc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span><span><b>La procédure pas à pas</b><small>Du parking au décollage, à cocher</small></span></a>
+    <a class="tile" href="#proc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span><span><b>La procédure pas à pas</b><small id="tProc">Du parking au décollage, à cocher</small></span></a>
     <a class="tile" href="#decode"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span><span><b>Décoder l'annonce du sol</b><small>« Type IV/75 1432 » → en clair</small></span></a>
-    <a class="tile" href="#quiz"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></svg></span><span><b>Quiz</b><small>10 cas pratiques tirés du MANEX</small></span></a>
+    <a class="tile" href="#quiz"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></svg></span><span><b>Quiz</b><small id="tQuiz">10 cas pratiques tirés du MANEX</small></span></a>
     <a class="tile" href="#yul"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b>Montréal YUL</b><small>Pad AeroMag : fréquences et fluides</small></span></a>
     <a class="tile" href="#timer"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span><span><b>Minuteur HOT</b><small>Compte à rebours depuis l'heure annoncée</small></span></a>
     <a class="tile" href="#about"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg></span><span><b>À propos</b><small>Source, version, auteur</small></span></a>
@@ -373,6 +485,14 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
   <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
 </section>
 </main>
+
+<nav class="tabbar" id="tabbar" aria-label="Navigation">
+  <a href="#home" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg><span>Accueil</span></a>
+  <a href="#calc" data-tab="calc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></svg><span>HOT</span></a>
+  <a href="#timer" data-tab="timer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg><span>Minuteur</span><i class="badge" id="tabBadge"></i></a>
+  <a href="#proc" data-tab="proc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg><span>Procédure</span></a>
+  <a href="#decode" data-tab="decode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.3" fill="currentColor"/></svg><span>Décoder</span></a>
+</nav>
 
 <div id="alarm" role="alertdialog" aria-live="assertive">
   <h2>HOT DÉPASSÉ</h2>
@@ -580,7 +700,9 @@ function route(){
   document.querySelectorAll('section.screen').forEach(s=>s.classList.toggle('on', s.id==='s-'+h));
   const sec = $('#s-'+h);
   $('#title').textContent = sec.dataset.title;
-  $('#backBtn').hidden = h==='home'; $('#homeBtn').hidden = h==='home';
+  $('#backBtn').hidden = h==='home'; $('#homeBtn').hidden = true;
+  document.querySelectorAll('.tabbar a').forEach(a=>a.classList.toggle('on', a.dataset.tab===h));
+  if (h==='home') renderHome();
   if (h==='calc') renderCalc();
   if (h==='timer') renderTimer();
   if (h==='quiz' && !Q.started) renderQuiz();
@@ -683,9 +805,15 @@ function stepsBar(){
 }
 function label(){ const l=stepList().filter(s=>s!=='result'); return `ÉTAPE ${l.indexOf(step)+1} / ${l.length}`; }
 
+function crumbs(){
+  const l=stepList(), i=l.indexOf(step), c=[];
+  const lab={fluid:()=>S.fluid&&'Type '+S.fluid, oat:()=>oatVal()!==null&&fmtC(oatVal()), conc:()=>S.conc, cond:()=>{const u=COND_UI.find(x=>x.k===S.cond); return u&&u.t;}};
+  l.slice(0,i).forEach(k=>{ const v=lab[k]&&lab[k](); if (v) c.push(`<button class="crumb" data-goto="${k}">${esc(v)} <i>✎</i></button>`); });
+  return c.length ? `<div class="crumbs">${c.join('')}</div>` : '';
+}
 function renderCalc(){
   const B = $('#calcBody'); let h='';
-  if (step!=='result') h += stepsBar();
+  if (step!=='result') h += stepsBar() + crumbs();
   const oat = oatVal();
 
   if (step==='fluid'){
@@ -836,6 +964,7 @@ function renderResult(){
   const oat=oatVal(), key=condKey();
   const R = computeHOT({fluid:S.fluid, conc:S.conc, oat, key});
   window.__lastResult = R;
+  saveHist(R);
   let h='';
   if (R.ok){
     const zero = toMin(R.hot)===0;
@@ -871,6 +1000,7 @@ function renderResult(){
 /* calc events (delegated) */
 $('#calcBody').addEventListener('click', e=>{
   const t = e.target.closest('button,input'); if (!t) return;
+  if (t.dataset.goto){ go(t.dataset.goto); return; }
   if (t.dataset.why){ $('#why-'+t.dataset.why).classList.toggle('on'); return; }
   if (t.dataset.fluid){
     if (t.dataset.fluid==='III'){ $('#t3msg').innerHTML = `<div class="warnbox"><b>Type III : non utilisé B737</b> — marque spécifique, voir MANEX Tableaux 17-19.</div>`; return; }
@@ -933,7 +1063,7 @@ function startTimer(hm, minM, maxM, label, ref){
   T = {start:startDate(hm), hm, minM, maxM, label, ref, warned:false, alerted:false};
   store.set('hot.timer', T); keepAwake(); ensureTick();
 }
-function stopTimer(){ T=null; store.set('hot.timer', null); $('#tbBtn').hidden=true; releaseAwake(); renderTimer(); }
+function stopTimer(){ T=null; store.set('hot.timer', null); $('#tbBtn').hidden=true; $('#tabBadge').className='badge'; releaseAwake(); renderTimer(); }
 function beep(n=3, f=880){
   try{
     if (!audioCtx) return; const t0=audioCtx.currentTime;
@@ -949,17 +1079,24 @@ const fmtClock = ms => { const s=Math.max(0,Math.round(Math.abs(ms)/1000)), h=Ma
 const hmUTC = ms => { const d=new Date(ms); return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0'); };
 
 function tick(){
-  if (!T){ $('#tbBtn').hidden=true; return; }
+  if (!T){ $('#tbBtn').hidden=true; $('#tabBadge').className='badge'; return; }
   const now=Date.now(), end=T.start+T.minM*60000, rem=end-now;
   const state = rem<=0 ? 'bad' : rem<=5*60000 ? 'warn' : '';
-  const b=$('#tbBtn'); b.className=state; b.hidden = location.hash==='#timer';
+  const b=$('#tbBtn'); b.className=state; b.hidden = ['#timer','#home',''].includes(location.hash);
+  const bd=$('#tabBadge'); bd.className='badge on '+state;
   $('#tbLabel').textContent = rem<=0 ? 'HOT DÉPASSÉ' : (now<T.start ? 'DÉBUT '+T.hm : 'HOT');
   $('#tbTime').textContent = (rem<=0?'+':'') + fmtClock(now<T.start ? T.minM*60000 : rem);
   if (!T.warned && rem<=5*60000 && rem>0 && T.minM>5){ T.warned=true; store.set('hot.timer',T); beep(1,660); try{navigator.vibrate&&navigator.vibrate(300);}catch(e){} }
   if (!T.alerted && rem<=0){ T.alerted=true; store.set('hot.timer',T); beep(4,880); try{navigator.vibrate&&navigator.vibrate([500,200,500,200,500]);}catch(e){} $('#alarm').classList.add('on'); }
   if (location.hash==='#timer') updateTimerView(now, rem, state);
+  const hs=$('#hsT');
+  if (hs){ const st=$('#hStatusCard'); st.className='status live '+state;
+    $('#hsLab').textContent = now<T.start ? 'DÉMARRE À '+T.hm+' UTC' : rem<=0 ? 'HOT DÉPASSÉ DEPUIS' : 'HOT RESTANT';
+    hs.textContent = (rem<=0?'+':'')+fmtClock(now<T.start ? T.minM*60000 : rem);
+    $('#hsRing').style.strokeDashoffset = 100 - (now<T.start?100:hotPct(now)); }
 }
-function ensureTick(){ if (!tickH) tickH=setInterval(tick,1000); tick(); }
+function hotPct(now){ return Math.max(0, Math.min(100, (T.start+T.minM*60000-now)/(T.minM*60000)*100)); }
+function ensureTick(){ tick(); }
 $('#tbBtn').onclick = ()=> location.hash='#timer';
 $('#alarmOk').onclick = ()=> $('#alarm').classList.remove('on');
 
@@ -971,8 +1108,8 @@ function renderTimer(){
     $('#mGo').onclick = ()=>{ const v=$('#mHot').value.trim(); const m=v.match(/^(\d{1,2}):([0-5]\d)$/); if(!m){ $('#mHot').focus(); return; } const mm=Number(m[1])*60+Number(m[2]); if(!mm) return; const st=normHM($('#mStart').value); if(!st){ $('#mStart').focus(); return; } startTimer(st, mm, mm, 'HOT saisi manuellement', ''); renderTimer(); };
     return;
   }
-  B.innerHTML = `<div class="timer" id="tbox"><div class="lab mono" id="tlab" style="color:var(--ice2);letter-spacing:.12em;font-size:13px">HOT RESTANT</div><div class="t" id="tt">--:--</div>
-    <div class="bar"><i id="tbar" style="width:100%"></i></div>
+  B.innerHTML = `<div class="timer" id="tbox"><div class="ringwrap"><svg viewBox="0 0 120 120"><circle class="rbg" cx="60" cy="60" r="54"/><circle class="rglow" id="tglow" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/><circle class="rfg" id="tring" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
+    <div class="ringin"><div class="lab mono" id="tlab" style="color:var(--ice2);letter-spacing:.12em;font-size:13px">HOT RESTANT</div><div class="t" id="tt">--:--</div></div></div>
     <div class="s">Début ${T.hm} UTC · Fin HOT (valeur basse) <b id="tend"></b> UTC</div>
     ${T.maxM!==T.minM?`<div class="s" style="font-size:13px">Haut de fourchette : ${hmUTC(T.start+T.maxM*60000)} UTC (non utilisé — règle Air Algérie)</div>`:''}</div>
     <div class="infobox mono" style="font-size:14px">${esc(T.label)}${T.ref?'<br>'+esc(T.ref):''}</div>
@@ -985,10 +1122,10 @@ function updateTimerView(now, rem, state){
   const box=$('#tbox'); if (!box) return;
   box.className='timer '+state;
   $('#tend').textContent = hmUTC(T.start+T.minM*60000);
-  if (now<T.start){ $('#tlab').textContent='DÉMARRE À '+T.hm+' UTC'; $('#tt').textContent=fmtClock(T.minM*60000); $('#tbar').style.width='100%'; return; }
+  if (now<T.start){ $('#tlab').textContent='DÉMARRE À '+T.hm+' UTC'; $('#tt').textContent=fmtClock(T.minM*60000); $('#tring').style.strokeDashoffset=0; $('#tglow').style.strokeDashoffset=0; return; }
   $('#tlab').textContent = rem<=0 ? 'HOT DÉPASSÉ DEPUIS' : 'HOT RESTANT';
   $('#tt').textContent = (rem<=0?'+':'')+fmtClock(rem);
-  $('#tbar').style.width = Math.max(0,Math.min(100, rem/(T.minM*60000)*100))+'%';
+  $('#tring').style.strokeDashoffset = $('#tglow').style.strokeDashoffset = 100 - hotPct(now);
 }
 
 /* ================= PROCEDURE ================= */
@@ -1138,6 +1275,7 @@ const Q = {i:0, score:0, answered:false, started:false};
 function renderQuiz(){
   const B=$('#quizBody'); Q.started=true;
   if (Q.i>=QUIZ.length){
+    if (Q.score > store.get('hot.quizBest',-1)) store.set('hot.quizBest', Q.score);
     B.innerHTML = `<div class="card" style="text-align:center"><h3>Résultat</h3><div class="score">${Q.score}/${QUIZ.length}</div><p>${Q.score>=8?'Très bien.':'Relisez « Comprendre en 2 minutes » et réessayez.'}</p><button class="btn primary block" id="qRe">Recommencer</button></div>`;
     $('#qRe').onclick=()=>{ Q.i=0; Q.score=0; Q.answered=false; renderQuiz(); }; return;
   }
@@ -1157,6 +1295,58 @@ $('#quizBody').addEventListener('click', e=>{
   }
   if (e.target.id==='qNext'){ Q.i++; renderQuiz(); scrollTo(0,0); }
 });
+
+/* ================= HOME (tableau de bord) ================= */
+function saveHist(R){
+  const sum = summaryTxt();
+  let h = store.get('hot.hist', []).filter(e => e.sum !== sum);
+  h.unshift({ s: JSON.parse(JSON.stringify(S)), sum, hot: R.ok ? R.hot : null, ref: R.tableId ? 'Tableau '+REF[R.tableId].n : '', ts: Date.now() });
+  store.set('hot.hist', h.slice(0, 5));
+}
+function whenTxt(ts){
+  const d=new Date(ts), today=new Date();
+  const same = d.toDateString()===today.toDateString();
+  return (same ? "aujourd'hui" : d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})) + ' · ' + hmUTC(ts) + ' UTC';
+}
+const SNOWFLAKE = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></svg>';
+function renderHome(){
+  const hr = new Date().getHours();
+  $('#hGreet').textContent = (hr<5?'Bonne nuit':hr<12?'Bonjour':hr<18?'Bon après-midi':'Bonsoir') + ', équipage';
+  $('#hDate').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  let st;
+  if (T){
+    st = `<a class="status live" id="hStatusCard" href="#timer">
+      <svg class="mini-ring" viewBox="0 0 70 70"><circle class="rbg" cx="35" cy="35" r="29"/><circle class="rfg" id="hsRing" cx="35" cy="35" r="29" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
+      <span><small id="hsLab" class="mono" style="letter-spacing:.12em">HOT RESTANT</small><span class="hsT" id="hsT">--:--</span><small>${esc(T.label)}</small></span><span class="chev">›</span></a>
+      <div class="row cta"><button class="btn primary" id="hNew">${SNOWFLAKE} Nouveau calcul</button></div>`;
+  } else {
+    st = `<div class="status"><span class="sic">${SNOWFLAKE}</span><span><b>Aucun HOT en cours</b><small>Calculez le HOT en 4 questions, ou décodez l'annonce du sol.</small></span></div>
+      <div class="row cta"><button class="btn primary" id="hNew">${SNOWFLAKE} Nouveau calcul HOT</button><a class="btn" href="#decode">Décoder une annonce</a></div>`;
+  }
+  $('#hStatus').innerHTML = st;
+  $('#hNew').onclick = () => { resetCalc(); location.hash = '#calc'; };
+  const hist = store.get('hot.hist', []);
+  $('#hHist').innerHTML = hist.length ? `<h2 class="sect">Derniers calculs <button id="hClr">Effacer</button></h2><div class="hist">${hist.map((e,i)=>
+    `<button class="hitem" data-h="${i}"><span class="hv ${e.hot?'':'no'}">${e.hot||'AUCUN<br>HOT'}</span><span><b>${esc(e.sum)}</b><small>${whenTxt(e.ts)}${e.ref?' · '+esc(e.ref):''}</small></span><span class="chev">›</span></button>`).join('')}</div>` : '';
+  const total = PROC.reduce((n,p)=>n+p.items.length,0), done = Object.values(checks).filter(Boolean).length;
+  $('#tProc').textContent = done ? `${done} / ${total} étapes cochées` : 'Du parking au décollage, à cocher';
+  const best = store.get('hot.quizBest', -1);
+  $('#tQuiz').textContent = best>=0 ? `10 cas pratiques · meilleur score ${best}/10` : '10 cas pratiques tirés du MANEX';
+  clock(); tick();
+}
+$('#hHist').addEventListener('click', e=>{
+  if (e.target.closest('#hClr')){ store.set('hot.hist', []); renderHome(); return; }
+  const b = e.target.closest('[data-h]'); if (!b) return;
+  const en = store.get('hot.hist', [])[Number(b.dataset.h)]; if (!en) return;
+  Object.assign(S, en.s); step = 'result'; location.hash = '#calc';
+});
+function clock(){
+  const v = utcNowHM();
+  $('#utcClock').firstChild.nodeValue = v;
+  const h = $('#hUtc'); if (h) h.textContent = v;
+}
+document.addEventListener('touchstart', ()=>{}, {passive:true});  /* active le :active (halo) sur iOS */
+setInterval(()=>{ clock(); tick(); }, 1000);
 
 /* ================= BOOT ================= */
 if (T) ensureTick();
