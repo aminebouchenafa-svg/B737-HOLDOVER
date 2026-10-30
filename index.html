@@ -281,6 +281,35 @@ body.calm #sky i{animation-play-state:paused}
 .lang span{display:flex;align-items:center;padding:0 9px;font-family:var(--mono);font-size:13px;color:var(--mut);transition:background-color .2s,color .2s}
 .lang span.on{background:var(--ice);color:#001018;font-weight:700;box-shadow:0 0 12px var(--iceglow)}
 .lang:active{box-shadow:0 0 0 1px var(--ice),0 0 22px rgba(95,216,255,.5)}
+/* --- guide --- */
+.gstep{display:flex;gap:14px;padding:16px;margin:0 0 12px;border-radius:18px;background:rgba(11,19,31,.86);border:1px solid rgba(160,210,255,.13)}
+.gstep .gn{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:800;color:#001018;background:var(--ice);box-shadow:0 0 14px var(--iceglow)}
+.gstep h3{font-size:16px;color:var(--ice2);margin:6px 0 6px}
+.gstep p{margin:6px 0;font-size:15.5px}
+.kbd{display:inline-flex;align-items:center;min-height:30px;padding:2px 10px;margin:2px 2px;border-radius:9px;border:1px solid var(--ice);background:#062030;color:var(--ice2);font-family:var(--mono);font-size:14px;white-space:nowrap}
+.kbd.p{background:var(--ice);color:#001018;font-weight:700}
+.gmock{margin:10px 0 4px;border-radius:14px;padding:12px;text-align:center;border:1px solid var(--ice);background:radial-gradient(120% 90% at 50% 0%,#0b3346 0%,#05141c 70%)}
+.gmock .big{font-family:var(--mono);font-size:52px;line-height:1;color:#fff;text-shadow:0 0 16px var(--ice)}
+.gmock small{display:block;font-family:var(--mono);color:var(--mut);font-size:12.5px;margin-top:6px}
+.gex{border:1px solid rgba(146,108,255,.5);background:linear-gradient(140deg,rgba(60,40,120,.55),rgba(11,19,31,.8));border-radius:18px;padding:16px;margin-bottom:14px}
+.gex h3{color:#d6c8ff;font-size:15px;margin-bottom:6px}
+.gex .mono{font-size:13.5px;color:#e6deff;word-break:break-word}
+.opt{display:flex;gap:12px;padding:12px;border-radius:14px;background:rgba(6,24,38,.6);border:1px solid rgba(160,210,255,.15);margin:8px 0}
+.opt .oi{font-size:24px;flex:none}
+.opt b{display:block;color:var(--ice2);margin-bottom:2px}
+.newbie{display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:12px;border-radius:18px;text-decoration:none;color:var(--txt);border:1px solid rgba(146,108,255,.55);background:linear-gradient(120deg,rgba(80,52,160,.55),rgba(11,19,31,.75));box-shadow:0 0 22px rgba(146,108,255,.2)}
+.newbie b{font-family:var(--head);font-size:15px;display:block}
+.newbie small{color:#d6c8ff;font-size:13px}
+.newbie .chev{margin-left:auto;font-size:26px;color:#d6c8ff}
+/* --- coach (exemple guidé) --- */
+.coach{position:relative;display:flex;gap:10px;align-items:flex-start;padding:12px 44px 12px 14px;margin:0 0 14px;border-radius:14px;border:1px solid #c9b8ff;background:linear-gradient(120deg,rgba(90,60,180,.75),rgba(30,20,70,.85));color:#f3eeff;font-size:15.5px;box-shadow:0 0 22px rgba(146,108,255,.35)}
+.coach .ci2{font-size:22px;flex:none}
+.coach .coachX{position:absolute;top:6px;right:6px;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;font-size:16px;cursor:pointer}
+.coach .btn{margin-top:10px;min-height:44px}
+.coach-target{position:relative;z-index:2;animation:coachPulse 1.3s ease-in-out infinite;border-color:#c9b8ff !important}
+@keyframes coachPulse{0%,100%{box-shadow:0 0 0 2px #c9b8ff,0 0 10px rgba(201,184,255,.5)}50%{box-shadow:0 0 0 4px #c9b8ff,0 0 30px rgba(201,184,255,.9)}}
+.tendbig{font-family:var(--mono);font-size:22px;color:#fff;margin:2px 0 6px}
+.tendbig b{font-size:30px;color:var(--ice2);text-shadow:0 0 12px var(--iceglow)}
 /* --- touch halo (bleu glacier) --- */
 .tile,.choice,.btn,.chk,.qopt,.hitem,.status,.keypad button,.chips button,.seg button,.why,.back,#tbBtn,.utc{transition:box-shadow .18s ease,border-color .18s ease,transform .12s ease,background-color .18s ease}
 .tile:active,.choice:not(.dis):active,.btn:not(:disabled):active,.chk:active,.qopt:active,.hitem:active,a.status:active,.keypad button:active,.chips button:active,.seg button:active,.why:active,.back:active,.crumb:active{
@@ -396,10 +425,12 @@ body.calm #sky i{animation-play-state:paused}
   </div>
   <div id="hStatus"></div>
   <div class="disclaimer" data-t="disc"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (TR 39-4 OCT.26, tableaux FAA Winter 2026-2027). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
+  <div id="hGuide"></div>
   <div id="hHist"></div>
   <h2 class="sect" data-t="tools">Outils</h2>
   <div class="tiles">
     <a class="tile hero" href="#calc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span><b data-t="t_calc_b">Calculateur HOT</b><small data-t="t_calc_s">4 questions → le HOT et la case exacte du MANEX</small></span></a>
+    <a class="tile" href="#guide"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span><span><b data-t="t_guide_b">Guide d'utilisation</b><small data-t="t_guide_s">Comment se servir de l'app, avec un exemple</small></span></a>
     <a class="tile" href="#learn"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3"/><path d="M20 5v13h-6"/></svg></span><span><b data-t="t_learn_b">Comprendre en 2 minutes</b><small data-t="t_learn_s">Les 7 idées à retenir</small></span></a>
     <a class="tile" href="#proc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span><span><b data-t="t_proc_b">La procédure pas à pas</b><small id="tProc">Du parking au décollage, à cocher</small></span></a>
     <a class="tile" href="#decode"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span><span><b data-t="t_dec_b">Décoder l'annonce du sol</b><small data-t="t_dec_s">« Type IV/75 1432 » → en clair</small></span></a>
@@ -409,6 +440,11 @@ body.calm #sky i{animation-play-state:paused}
     <a class="tile" href="#about"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg></span><span><b data-t="t_about_b">À propos</b><small data-t="t_about_s">Source, version, auteur</small></span></a>
   </div>
   <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
+</section>
+
+<!-- ============ GUIDE ============ -->
+<section class="screen" id="s-guide" data-title="Guide d'utilisation" data-title-en="User guide">
+  <div id="guideBody"></div>
 </section>
 
 <!-- ============ LEARN ============ -->
@@ -757,7 +793,7 @@ function icon(kind){
 
 /* ================= ROUTER ================= */
 let curScreen='home';
-const SCREENS = ['home','learn','calc','timer','proc','decode','quiz','yul','about'];
+const SCREENS = ['home','guide','learn','calc','timer','proc','decode','quiz','yul','about'];
 function route(){
   let h = (location.hash||'#home').slice(1); if (!SCREENS.includes(h)) h='home';
   curScreen = h;
@@ -771,6 +807,7 @@ function route(){
   if (h==='calc') renderCalc();
   if (h==='timer') renderTimer();
   if (h==='quiz' && !Q.started) renderQuiz();
+  if (h==='guide') renderGuide();
   scrollTo(0,0);
 }
 addEventListener('hashchange', route);
@@ -993,7 +1030,8 @@ function renderCalc(){
     h += renderResult();
   }
 
-  B.innerHTML = h;
+  B.innerHTML = (COACH ? coachHTML() : '') + h;
+  if (COACH) coachTarget();
   saveCalc();
   if (step==='snow') updateSnow();
   if (step==='result'){ const hx=B.querySelector('td.hx'); if (hx){ const w=hx.closest('.tblwrap'); w.scrollLeft = hx.offsetLeft - 110 - (w.clientWidth-110)/2 + hx.clientWidth/2; } }
@@ -1083,7 +1121,7 @@ function renderResult(){
   const oat=oatVal(), key=condKey();
   const R = computeHOT({fluid:S.fluid, conc:S.conc, oat, key});
   window.__lastResult = R;
-  const hk = histKey(); if (hk!==lastSavedKey){ saveHist(R); lastSavedKey=hk; }
+  const hk = histKey(); if (!COACH && hk!==lastSavedKey){ saveHist(R); lastSavedKey=hk; }
   let h='';
   if (R.ok){
     const zero = toMin(R.hot)===0;
@@ -1154,6 +1192,8 @@ $('#calcBody').addEventListener('click', e=>{
   if (t.dataset.night!==undefined){ S.night=t.dataset.night==='1'; document.querySelectorAll('[data-night]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); saveCalc(); return; }
   if (t.dataset.metar!==undefined){ S.metarInt=t.dataset.metar; document.querySelectorAll('[data-metar]').forEach(b=>b.classList.toggle('sel',b===t)); updateSnow(); saveCalc(); return; }
   if (t.id==='snowOk'){ next(); return; }
+  if (t.closest('.coachX') || t.id==='coachEnd'){ COACH=false; if (t.id==='coachEnd'){ resetCalc(); location.hash='#home'; } else renderCalc(); return; }
+  if (t.id==='startBtn' && COACH){ COACH=false; alert(tr("C'était un exemple : le minuteur n'est pas lancé.\nEn vrai, vous tapez l'heure annoncée par le sol puis ▶ Démarrer le HOT.","That was an example: the timer is not started.\nFor real, type the time announced by the ground crew, then ▶ Start HOT.")); resetCalc(); location.hash='#home'; return; }
   if (t.id==='startBtn'){
     const R=window.__lastResult, v=normHM($('#startIn').value);
     if (!v){ $('#startIn').focus(); $('#startIn').style.borderColor='var(--bad)'; $('#startErr').innerHTML='<div class="badbox">'+tr('Heure invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).','Invalid time. Examples: <b>1432</b> or <b>14:32</b> (UTC).')+'</div>'; return; }
@@ -1246,12 +1286,19 @@ function renderTimer(){
   }
   B.innerHTML = `<div class="timer" id="tbox"><div class="ringwrap"><svg viewBox="0 0 120 120"><circle class="rbg" cx="60" cy="60" r="54"/><circle class="rglow" id="tglow" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/><circle class="rfg" id="tring" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
     <div class="ringin"><div class="lab mono" id="tlab" style="color:var(--ice2);letter-spacing:.12em;font-size:13px">${tr('HOT RESTANT','HOT REMAINING')}</div><div class="t" id="tt">--:--</div><div class="mono" id="tunit" style="color:var(--mut);font-size:12px;letter-spacing:.14em">MIN : S</div></div></div>
-    <div class="s">${tr(`Début ${T.hm} UTC · Fin HOT (valeur basse)`,`Start ${T.hm} UTC · HOT end (lowest value)`)} <b id="tend"></b> UTC</div>
+    <div class="tendbig">${tr('FIN HOT','HOT ENDS')} <b id="tend"></b> UTC</div>
+    <div class="s">${tr(`Début ${T.hm} UTC · valeur basse de la case`,`Start ${T.hm} UTC · lowest value in the cell`)}</div>
     ${T.maxM!==T.minM?`<div class="s" style="font-size:13px">${tr(`Haut de fourchette : ${hmUTC(T.start+T.maxM*60000)} UTC (non utilisé — règle Air Algérie)`,`Top of range: ${hmUTC(T.start+T.maxM*60000)} UTC (not used — Air Algérie rule)`)}</div>`:''}</div>
     <div class="infobox mono" style="font-size:14px">${esc(T.label)}${T.ref?'<br>'+esc(T.ref):''}</div>
-    <div class="warnbox">${hotReminder()} ${tr("Les fortes précipitations, le vent, le souffle réacteur ou une aile froide raccourcissent le HOT. Gardez l'écran allumé : l'alerte sonne dans l'app.","Heavy precipitation, wind, jet blast or a cold-soaked wing shorten the HOT. Keep the screen on: the alert sounds in the app.")}</div>
+    <div class="card"><h3>${tr('Pendant le roulage avec Jeppesen FD','Taxiing with Jeppesen FD open')}</h3>
+      <p style="margin-top:0;font-size:14.5px;color:var(--mut)">${tr("Si une autre app passe devant, celle-ci se met en pause : le temps restera juste au retour, mais elle ne pourra pas sonner. Pour être prévenu :","If another app comes to the front, this one is paused: the time will still be right when you come back, but it cannot ring. To be alerted:")}</p>
+      <button class="btn primary block" id="iosAlarm">⏰ ${tr("Lancer l'alarme de l'iPad / iPhone","Start the iPad / iPhone alarm")}</button>
+      <p style="font-size:13px;color:var(--mut);margin:8px 0 0">${tr("Elle sonne même avec Jeppesen à l'écran. À régler une seule fois :","It rings even with Jeppesen on screen. One-time setup:")} <a href="#guide" id="iosHow">${tr('comment faire','how to')}</a>. ${tr("Sinon : notez l'heure de FIN HOT sur le log de vol.","Otherwise: write the HOT END time on the flight log.")}</p></div>
+    <div class="warnbox">${hotReminder()} ${tr("Les fortes précipitations, le vent, le souffle réacteur ou une aile froide raccourcissent le HOT.","Heavy precipitation, wind, jet blast or a cold-soaked wing shorten the HOT.")}</div>
     <button class="btn bad block" id="tStop">${tr('■ Arrêter le minuteur','■ Stop timer')}</button>`;
   $('#tStop').onclick = ()=>{ if (confirm(tr('Arrêter le minuteur HOT ?','Stop the HOT timer?'))) stopTimer(); };
+  $('#iosAlarm').onclick = startIosAlarm;
+  $('#iosHow').onclick = ()=>{ guideAnchor='g-taxi'; };
   ensureTick();
 }
 function updateTimerView(now, rem, state){
@@ -1502,6 +1549,7 @@ function renderHome(){
   }
   $('#hStatus').innerHTML = st;
   $('#hNew').onclick = () => { resetCalc(); location.hash = '#calc'; };
+  guideBanner();
   const hist = store.get('hot.hist', []).filter(e => e && typeof e==='object' && e.s && typeof e.s==='object');
   $('#hHist').innerHTML = hist.length ? `<h2 class="sect">${tr('Derniers calculs','Recent calculations')} <button id="hClr">${tr('Effacer','Clear')}</button></h2><div class="hist">${hist.map((e,i)=>{
     const sum = withS(e.s, summaryTxt) || e.sum || '';
@@ -1541,6 +1589,7 @@ const I18N = {
   t_yul_b:'Montreal YUL', t_yul_s:'AeroMag pad: frequencies and fluids',
   t_timer_b:'HOT timer', t_timer_s:'Countdown from the announced time',
   t_about_b:'About', t_about_s:'Source, version, author',
+  t_guide_b:'User guide', t_guide_s:'How to use the app, with an example',
   learn_lead:'One idea per card. Read them in order.', learn_btn:'Go to the HOT calculator',
   proc_lead:'Tick as you go. Ticks are saved on this device.', proc_reset:'Untick all',
   dec_lead:'Type the code announced by the ground crew (e.g. <span class="mono">Type IV/75 1432</span>).',
@@ -1607,7 +1656,102 @@ $('#langBtn').onclick = ()=>{
   applyLang(); renderLearn(); renderProc(); renderDecode();
   if (Q.started) renderQuiz();
   const y = scrollY; route(); scrollTo(0, y);
+  if (curScreen!=='guide') renderGuide();
 };
+
+/* ================= GUIDE D'UTILISATION ================= */
+let COACH = false, guideAnchor = null;
+const SHORTCUT = 'HOT 737';
+/* Minuteur de l'horloge iOS via l'app Raccourcis (sonne même si une autre app est à l'écran) */
+function startIosAlarm(){
+  if (!T) return;
+  const rem = T.start + T.minM*60e3 - Date.now();
+  if (rem <= 60e3){ alert(tr('HOT presque écoulé ou dépassé : contrôle des surfaces critiques.','HOT almost over or exceeded: check the critical surfaces.')); return; }
+  const min = Math.floor(rem/60e3);   /* arrondi vers le bas : l'alarme sonne un peu avant la fin */
+  location.href = `shortcuts://run-shortcut?name=${encodeURIComponent(SHORTCUT)}&input=text&text=${min}`;
+}
+const K = t => `<span class="kbd">${t}</span>`, KP = t => `<span class="kbd p">${t}</span>`;
+function renderGuide(){
+  store.set('hot.guideSeen', true);
+  const st = (n, title, body, id) => `<div class="gstep"${id?` id="${id}"`:''}><span class="gn">${n}</span><div style="flex:1;min-width:0"><h3>${title}</h3>${body}</div></div>`;
+  let h = '';
+  h += `<div class="card"><h3>${tr("L'app fait 3 choses","The app does 3 things")}</h3><ul class="notes" style="font-size:15.5px">
+    <li>${tr('<b>Trouver le HOT</b> dans le MANEX, en répondant à 4 questions.','<b>Find the HOT</b> in the MANEX by answering 4 questions.')}</li>
+    <li>${tr('<b>Compter le temps</b> qui reste, depuis l\'heure annoncée par le sol.','<b>Count down</b> the time left, from the time announced by the ground crew.')}</li>
+    <li>${tr('<b>Vous guider</b> dans la procédure, du parking au décollage.','<b>Guide you</b> through the procedure, from gate to takeoff.')}</li></ul></div>`;
+  h += `<div class="gex"><h3>📍 ${tr('Exemple : Paris-CDG, après le night stop','Example: Paris-CDG, after the night stop')}</h3>
+    <p style="margin:4px 0">${tr('Le METAR :','The METAR:')} <span class="mono">LFPG 0630Z 0300 FZFG VV001 M03/M04</span></p>
+    <p style="margin:4px 0">${tr('→ brouillard givrant, <b>−3 °C</b>.','→ freezing fog, <b>−3 °C</b>.')}</p>
+    <p style="margin:4px 0">${tr('Le sol annonce :','The ground crew calls:')} <span class="mono">« Type I / Type IV 100, at 0658 »</span></p>
+    <button class="btn primary block" id="gTry" style="margin-top:12px">▶ ${tr("Faire l'exemple avec moi","Do the example with me")}</button>
+    <p style="font-size:13px;color:#d6c8ff;margin:8px 0 0">${tr("L'app vous montre où toucher, en violet. Rien n'est enregistré.","The app shows you where to tap, in purple. Nothing is saved.")}</p></div>`;
+  h += st(1, tr('Ouvrir le calculateur','Open the calculator'),
+    `<p>${tr(`Sur l'accueil, touchez ${KP('❄ Nouveau calcul HOT')}. Ou l'onglet ${K('HOT')} en bas.`,`On the home screen, tap ${KP('❄ New HOT calculation')}. Or the ${K('HOT')} tab at the bottom.`)}</p>`);
+  h += st(2, tr('Le fluide','The fluid'),
+    `<p>${tr(`Touchez ${K('Type IV')}. En deux étapes (Type I puis Type IV), c'est <b>toujours le fluide de la 2e étape</b> qui compte.`,`Tap ${K('Type IV')}. In two steps (Type I then Type IV), <b>the 2nd-step fluid always</b> counts.`)}</p>`);
+  h += st(3, tr('La température','The temperature'),
+    `<p>${tr(`Le METAR dit M03 : touchez ${K('±')} puis ${K('3')}. L'écran affiche −3 °C. Puis ${KP('Valider')}.`,`The METAR says M03: tap ${K('±')} then ${K('3')}. The screen shows −3 °C. Then ${KP('Confirm')}.`)}</p>`);
+  h += st(4, tr('La concentration','The concentration'),
+    `<p>${tr(`Le sol a dit « IV <b>100</b> » : touchez ${K('100/0')}. Les choix interdits par le MANEX sont grisés, avec la raison.`,`The ground crew said "IV <b>100</b>": tap ${K('100/0')}. Choices the MANEX forbids are greyed out, with the reason.`)}</p>`);
+  h += st(5, tr('La météo','The weather'),
+    `<p>${tr(`Le METAR dit FZFG : touchez ${K('FZFG')}. S'il neige, l'app vous demande en plus la visibilité et jour / nuit.`,`The METAR says FZFG: tap ${K('FZFG')}. If it is snowing, the app also asks for visibility and day / night.`)}</p>`);
+  h += st(6, tr('Le résultat','The result'),
+    `<div class="gmock"><div class="big">1:15</div><small>${tr('Fourchette MANEX : 1:15 – 2:15','MANEX range: 1:15 – 2:15')}</small></div>
+     <p>${tr('Le chiffre en gros est <b>le HOT à retenir</b> (la valeur basse de la case). En dessous, la case du MANEX est surlignée (Tableau 20, page 35).','The big number is <b>the HOT to use</b> (the lowest value in the cell). Below, the MANEX cell is highlighted (Table 20, page 35).')}</p>
+     <p style="font-size:14px;color:var(--mut)">${tr(`Erreur de saisie ? Touchez la pastille en haut (ex. ${K('−3 °C ✎')}) pour corriger sans tout refaire.`,`Typing mistake? Tap the chip at the top (e.g. ${K('−3 °C ✎')}) to fix it without starting again.`)}</p>`);
+  h += st(7, tr('Le minuteur','The timer'),
+    `<p>${tr(`Dans « Démarrer le minuteur », tapez l'heure annoncée par le sol : ${K('0658')}. Puis ${KP('▶ Démarrer le HOT')}.`,`In "Start the timer", type the time announced by the ground crew: ${K('0658')}. Then ${KP('▶ Start HOT')}.`)}</p>
+     <p>${tr('L\'app affiche <b>FIN HOT 08:13 UTC</b> et compte à rebours. Orange 5 min avant, rouge à la fin.','The app shows <b>HOT ENDS 08:13 UTC</b> and counts down. Amber 5 min before, red at the end.')}</p>
+     <p style="font-size:14px;color:var(--mut)">${tr(`Raccourci : onglet ${K('Décoder')}, tapez <span class="mono">Type I/IV/100 0658</span> → ${KP('Calculer le HOT')}. Le fluide, la concentration et l'heure sont remplis tout seuls.`,`Shortcut: ${K('Decode')} tab, type <span class="mono">Type I/IV/100 0658</span> → ${KP('Calculate HOT')}. Fluid, concentration and time are filled in for you.`)}</p>`);
+  h += st(8, tr('Pendant le roulage, avec Jeppesen FD à l\'écran','While taxiing, with Jeppesen FD on screen'),
+    `<p>${tr("Quand Jeppesen est devant, 737 HOLDOVER est en pause : le temps reste juste quand vous revenez, mais <b>elle ne peut pas sonner</b>. Trois solutions :","When Jeppesen is in front, 737 HOLDOVER is paused: the time is still right when you come back, but <b>it cannot ring</b>. Three solutions:")}</p>
+     <div class="opt"><span class="oi">✍️</span><div><b>${tr('Toujours : notez l\'heure de FIN HOT','Always: write down the HOT END time')}</b>${tr('Sur le log de vol (ex. 08:13 UTC), et comparez avec l\'horloge de bord.','On the flight log (e.g. 08:13 UTC), and compare with the aircraft clock.')}</div></div>
+     <div class="opt"><span class="oi">⏰</span><div><b>${tr("L'alarme de l'iPad / iPhone","The iPad / iPhone alarm")}</b>${tr(`Sur l'écran Minuteur, touchez ${KP("⏰ Lancer l'alarme de l'iPad / iPhone")}. Le minuteur de l'horloge iOS démarre et <b>sonne même avec Jeppesen à l'écran</b>.`,`On the Timer screen, tap ${KP('⏰ Start the iPad / iPhone alarm')}. The iOS clock timer starts and <b>rings even with Jeppesen on screen</b>.`)}</div></div>
+     <div class="opt"><span class="oi">📱</span><div><b>${tr('Ou l\'app sur le téléphone','Or the app on your phone')}</b>${tr('Jeppesen sur l\'iPad, 737 HOLDOVER ouverte sur l\'iPhone posé à portée de vue : l\'écran reste allumé et l\'alarme sonne.','Jeppesen on the iPad, 737 HOLDOVER open on the iPhone within sight: the screen stays on and the alarm rings.')}</div></div>
+     <div class="card" style="margin:12px 0 0;background:rgba(6,24,38,.7)"><h3>⚙️ ${tr("Régler l'alarme iOS (une seule fois, 1 minute)","Set up the iOS alarm (once, 1 minute)")}</h3>
+       <ol class="notes" style="font-size:14.5px;padding-left:20px">
+        <li>${tr("Ouvrez l'app <b>Raccourcis</b> (Shortcuts) de l'iPad, puis touchez <b>+</b>.","Open the iPad <b>Shortcuts</b> app, then tap <b>+</b>.")}</li>
+        <li>${tr("Ajoutez l'action <b>« Démarrer le minuteur »</b>.","Add the <b>\"Start Timer\"</b> action.")}</li>
+        <li>${tr("Dans cette action, touchez la durée et choisissez <b>« Entrée du raccourci »</b>, en <b>minutes</b>.","In that action, tap the duration and choose <b>\"Shortcut Input\"</b>, in <b>minutes</b>.")}</li>
+        <li>${tr(`Nommez le raccourci exactement : <b class="mono">${SHORTCUT}</b>.`,`Name the shortcut exactly: <b class="mono">${SHORTCUT}</b>.`)}</li>
+        <li>${tr("Testez une fois au sol : lancez un HOT, touchez ⏰, vérifiez que le minuteur iOS démarre.","Test it once on the ground: start a HOT, tap ⏰, check that the iOS timer starts.")}</li>
+       </ol>
+       <p style="font-size:13px;color:var(--mut);margin:6px 0 0">${tr("L'alarme est réglée un peu avant la fin du HOT (minute entière inférieure).","The alarm is set slightly before the HOT ends (rounded down to the minute).")}</p></div>`, 'g-taxi');
+  h += st(9, tr('Avant le décollage','Before takeoff'),
+    `<div class="opt"><span class="oi">✅</span><div><b>${tr('HOT encore valable, aucun doute','HOT still valid, no doubt')}</b>${tr('Décollage.','Take off.')}</div></div>
+     <div class="opt"><span class="oi">⚠️</span><div><b>${tr('HOT dépassé ou le moindre doute','HOT exceeded or any doubt')}</b>${tr('Contrôle des surfaces critiques par une personne qualifiée, juste avant la piste.','Critical surfaces checked by a qualified person, just before the runway.')}</div></div>
+     <div class="opt"><span class="oi">⛔</span><div><b>${tr('Doute sur un dépôt','Doubt about a deposit')}</b>${tr('Pas de décollage : retour au dégivrage.','No takeoff: back to de-icing.')}</div></div>`);
+  h += `<div class="card"><h3>💡 ${tr('Bon à savoir','Good to know')}</h3><ul class="notes" style="font-size:15px">
+    <li>${tr('Un seul degré peut tout changer : à −4 °C au lieu de −3 °C, le même exemple donne <b>0:15</b> au lieu de 1:15. Entrez toujours l\'OAT exacte.','One degree can change everything: at −4 °C instead of −3 °C, the same example gives <b>0:15</b> instead of 1:15. Always enter the exact OAT.')}</li>
+    <li>${tr('Vos derniers calculs sont sur l\'accueil : un toucher les rouvre.','Your recent calculations are on the home screen: one tap reopens them.')}</li>
+    <li>${tr('Le bouton FR | EN en haut change la langue.','The FR | EN button at the top switches the language.')}</li></ul></div>`;
+  $('#guideBody').innerHTML = h;
+  $('#gTry').onclick = ()=>{ COACH = true; resetCalc(); location.hash = '#calc'; };
+  if (guideAnchor){ const el = document.getElementById(guideAnchor); guideAnchor = null; if (el) setTimeout(()=>el.scrollIntoView({block:'start'}), 50); }
+}
+/* Bulle d'aide de l'exemple guidé, et bouton à toucher en surbrillance */
+function coachInfo(){
+  const o = S.oatStr;
+  switch (step){
+    case 'fluid': return {sel:'[data-fluid="IV"]', t:tr('Le sol a annoncé Type I puis Type IV. On prend le fluide de la 2e étape : touchez <b>Type IV</b>.','The ground crew called Type I then Type IV. Use the 2nd-step fluid: tap <b>Type IV</b>.')};
+    case 'oat': return o==='' ? {sel:'[data-key="±"]', t:tr('Le METAR dit M03, soit −3 °C. Touchez <b>±</b> pour le signe moins.','The METAR says M03, i.e. −3 °C. Tap <b>±</b> for the minus sign.')}
+      : o==='-' ? {sel:'[data-key="3"]', t:tr('Maintenant touchez <b>3</b>.','Now tap <b>3</b>.')}
+      : o==='-3' ? {sel:'#oatOk', t:tr('L\'écran affiche −3 °C. Touchez <b>Valider</b>.','The screen shows −3 °C. Tap <b>Confirm</b>.')}
+      : {sel:'[data-key="⌫"]', t:tr('Ce n\'est pas −3. Effacez avec <b>⌫</b>.','That is not −3. Delete with <b>⌫</b>.')};
+    case 'conc': return {sel:'[data-conc="100/0"]', t:tr('Le sol a dit « IV <b>100</b> » : touchez <b>100/0</b>.','The ground crew said "IV <b>100</b>": tap <b>100/0</b>.')};
+    case 'cond': return {sel:'[data-cond="FZFG"]', t:tr('Le METAR dit FZFG (brouillard givrant) : touchez <b>FZFG</b>.','The METAR says FZFG (freezing fog): tap <b>FZFG</b>.')};
+    case 'result': { const R = window.__lastResult;
+      return {sel:'.res', t:(R && R.ok ? tr(`Voilà le HOT : <b>${R.hot}</b>. C'est le chiffre à retenir. En dessous : la case du MANEX surlignée.`,`Here is the HOT: <b>${R.hot}</b>. That is the number to use. Below: the highlighted MANEX cell.`) : tr('Voilà le résultat.','Here is the result.'))
+        + `<br>${tr("En vrai, vous taperiez ensuite l'heure du sol (0658) et ▶ Démarrer le HOT.","For real, you would then type the ground time (0658) and ▶ Start HOT.")}<br><button class="btn primary" id="coachEnd">${tr('Terminer l\'exemple','Finish the example')}</button>`}; }
+    default: return {sel:null, t:tr('Répondez à la question.','Answer the question.')};
+  }
+}
+function coachHTML(){ return `<div class="coach" role="status"><span class="ci2">🧭</span><div>${coachInfo().t}</div><button class="coachX" aria-label="${tr('Quitter l\'exemple','Leave the example')}">✕</button></div>`; }
+function coachTarget(){ const sel = coachInfo().sel; const el = sel && $('#calcBody').querySelector(sel); if (el){ el.classList.add('coach-target'); } }
+function guideBanner(){
+  $('#hGuide').innerHTML = store.get('hot.guideSeen', false) ? '' :
+    `<a class="newbie" href="#guide"><span style="font-size:28px">🧭</span><span><b>${tr('Première fois ?','First time?')}</b><small>${tr("Le guide d'utilisation en 2 minutes, avec un exemple.","The 2-minute user guide, with an example.")}</small></span><span class="chev">›</span></a>`;
+}
 
 /* ================= BOOT ================= */
 (function restoreCalc(){

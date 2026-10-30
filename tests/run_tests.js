@@ -127,6 +127,18 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   await p.click('[data-h="0"]'); await p.waitForTimeout(200);
   ok((await p.textContent('.res .big')).trim() === '0:06', 'UI : historique → rouvre le dernier résultat');
 
+  // ---- Guide : exemple guidé (on touche toujours le bouton en surbrillance) ----
+  await p.evaluate(() => { stopTimer(); location.hash = '#guide'; }); await p.waitForTimeout(200);
+  await p.click('#gTry'); await p.waitForTimeout(200);
+  for (let i = 0; i < 8 && !(await p.$('#coachEnd')); i++) { await p.click('.coach-target'); await p.waitForTimeout(120); }
+  ok((await p.textContent('.res .big')).trim() === '1:15', 'Guide : exemple CDG FZFG −3 °C Type IV 100/0 → 1:15');
+  ok(!(await p.evaluate(() => store.get('hot.hist', []).some(e => e.s && e.s.cond==='FZFG' && e.s.oatStr==='-3'))), "Guide : l'exemple n'est pas ajouté aux derniers calculs");
+  await p.click('#coachEnd'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => location.hash === '#home' && !COACH), 'Guide : « Terminer » revient à l\'accueil');
+  // ---- Alarme iOS : lien Raccourcis avec les minutes restantes (arrondi vers le bas) ----
+  const sc = await p.evaluate(() => { startTimer(hmUTC(Date.now()), 25, 45, 'x', ''); let u=''; const rem=T.start+T.minM*60e3-Date.now(); u = `shortcuts://run-shortcut?name=${encodeURIComponent(SHORTCUT)}&input=text&text=${Math.floor(rem/60e3)}`; stopTimer(); return u; });
+  ok(/^shortcuts:\/\/run-shortcut\?name=HOT%20737&input=text&text=2[45]$/.test(sc), 'Alarme iOS : lien Raccourcis correct (' + sc + ')');
+
   // ---- Autres écrans ----
   for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
     await p.evaluate(s => location.hash = '#' + s, s); await p.waitForTimeout(150);
