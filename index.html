@@ -145,7 +145,7 @@ section.screen.on{display:block;animation:fadeIn .25s ease-out}
 .toggle{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line2);border-radius:12px;background:var(--panel);margin:12px 0;cursor:pointer}
 .toggle input{width:26px;height:26px;accent-color:var(--ice);flex:none}
 .seg{display:flex;border:1px solid var(--line2);border-radius:12px;overflow:hidden;margin:6px 0 14px}
-.seg button{flex:1;min-height:52px;background:var(--panel);border:0;border-right:1px solid var(--line2);font-family:var(--head);font-size:13px;cursor:pointer}
+.seg button{flex:1;min-height:52px;background:var(--panel);border:0;border-right:1px solid var(--line2);font-family:var(--body);font-weight:700;font-size:15px;letter-spacing:.06em;cursor:pointer}
 .seg button:last-child{border-right:0}
 .seg button.sel{background:var(--ice);color:#001018;font-weight:800}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
@@ -308,6 +308,7 @@ body.calm #sky i{animation-play-state:paused}
 .coach .btn{margin-top:10px;min-height:44px}
 .coach-target{position:relative;z-index:2;animation:coachPulse 1.3s ease-in-out infinite;border-color:#c9b8ff !important}
 @keyframes coachPulse{0%,100%{box-shadow:0 0 0 2px #c9b8ff,0 0 10px rgba(201,184,255,.5)}50%{box-shadow:0 0 0 4px #c9b8ff,0 0 30px rgba(201,184,255,.9)}}
+.nowbtn{min-height:44px;margin:0 0 12px;font-family:var(--mono);font-size:14px;letter-spacing:0}
 .tendbig{font-family:var(--mono);font-size:22px;color:#fff;margin:2px 0 6px}
 .tendbig b{font-size:30px;color:var(--ice2);text-shadow:0 0 12px var(--iceglow)}
 /* --- touch halo (bleu glacier) --- */
@@ -350,7 +351,7 @@ body.calm #sky i{animation-play-state:paused}
 /* --- tab bar --- */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;gap:2px;padding:6px 8px calc(6px + var(--sab));
   background:rgba(3,8,16,.72);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-top:1px solid rgba(160,210,255,.12)}
-.tabbar a{flex:1;max-width:130px;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:14px;color:var(--mut);text-decoration:none;font-family:var(--head);font-size:10.5px;letter-spacing:.05em;position:relative;transition:color .2s,background-color .2s}
+.tabbar a{flex:1;max-width:130px;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:14px;color:var(--mut);text-decoration:none;font-family:var(--body);font-weight:600;font-size:10.5px;letter-spacing:.05em;position:relative;transition:color .2s,background-color .2s}
 .tabbar a svg{width:25px;height:25px}
 .tabbar a.on{color:var(--ice);background:rgba(95,216,255,.08)}
 .tabbar a.on svg{filter:drop-shadow(0 0 6px rgba(95,216,255,.8))}
@@ -1139,7 +1140,7 @@ function renderResult(){
   if (S.cond==='SNRA' && key==='FZRA_L') h += `<div class="infobox">${tr('Neige très faible ou faible mêlée de pluie/bruine → on utilise la colonne <b>pluie verglaçante faible</b> (note du tableau).','Very light or light snow mixed with rain/drizzle → use the <b>light freezing rain</b> column (table note).')}</div>`;
   if (R.ok && toMin(R.hot)>0){
     h += `<div class="card"><h3>${tr('Démarrer le minuteur','Start the timer')}</h3><p style="color:var(--mut);font-size:14px;margin-top:0">${tr("Heure de début annoncée par le sol (UTC) — début de l'application, ou début de la 2e étape.","Start time announced by the ground crew (UTC) — start of application, or start of the 2nd step.")}</p>
-      <input class="num" id="startIn" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${esc(S.start||utcNowHM())}">
+      <input class="num" id="startIn" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${esc(S.start||utcNowHM())}"><button class="btn ghost nowbtn" data-now="startIn">⏱ ${tr('Maintenant','Now')} · ${utcNowHM()} UTC</button>
       <div id="startErr"></div><div class="row"><button class="btn primary" id="startBtn">${tr('▶ Démarrer le HOT','▶ Start HOT')}</button></div></div>`;
   }
   h += `<div class="card"><h3>${tr('Voici la case du MANEX','Here is the MANEX cell')}</h3>`;
@@ -1197,7 +1198,8 @@ $('#calcBody').addEventListener('click', e=>{
   if (t.id==='startBtn'){
     const R=window.__lastResult, v=normHM($('#startIn').value);
     if (!v){ $('#startIn').focus(); $('#startIn').style.borderColor='var(--bad)'; $('#startErr').innerHTML='<div class="badbox">'+tr('Heure invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).','Invalid time. Examples: <b>1432</b> or <b>14:32</b> (UTC).')+'</div>'; return; }
-    if (startTimer(v, toMin(R.range.min), toMin(R.range.max), summaryTxt(), refText(R.tableId))) location.hash='#timer';
+    const r = startTimer(v, toMin(R.range.min), toMin(R.range.max), summaryTxt(), refText(R.tableId));
+    if (r===true) location.hash='#timer'; else { $('#startIn').style.borderColor='var(--bad)'; $('#startErr').innerHTML='<div class="badbox">'+r.err+'</div>'; }
     return;
   }
   if (t.id==='modBtn'){ calcBack(); return; }
@@ -1224,7 +1226,9 @@ function startDate(hm){
 function startTimer(hm, minM, maxM, label, ref){
   unlockAudio();
   const st = startDate(hm);
-  if (st===null){ alert(tr(`Heure de début ${hm} UTC dans le futur.\nVérifiez l'heure annoncée par le sol (UTC, pas l'heure locale).`,`Start time ${hm} UTC is in the future.\nCheck the time announced by the ground crew (UTC, not local time).`)); return false; }
+  if (st===null) return {err: tr(
+    `<b>${hm} UTC n'est pas encore passé</b> (il est ${utcNowHM()} UTC).<br>Entrez l'heure <b>annoncée par le sol à la fin du dégivrage</b> (début de l'application, ou de la 2e étape) : elle est déjà passée. Attention à bien utiliser l'heure <b>UTC</b>, pas l'heure locale.`,
+    `<b>${hm} UTC has not happened yet</b> (it is ${utcNowHM()} UTC).<br>Enter the time <b>announced by the ground crew at the end of de-icing</b> (start of application, or of the 2nd step): it is already in the past. Make sure you use <b>UTC</b>, not local time.`)};
   T = {start:st, hm, minM, maxM, label, ref, warned:false, alerted:false};
   store.set('hot.timer', T); keepAwake(); ensureTick(); return true;
 }
@@ -1274,14 +1278,15 @@ function renderTimer(){
   const B=$('#timerBody');
   if (!T){
     B.innerHTML = `<div class="card"><h3>${tr('Aucun minuteur en cours','No timer running')}</h3><p>${tr("Calculez d'abord le HOT : le minuteur se lance depuis le résultat, sur l'heure de début annoncée par le sol.","Calculate the HOT first: the timer starts from the result, on the start time announced by the ground crew.")}</p><a class="btn primary block" href="#calc">${tr('Calculateur HOT','HOT calculator')}</a></div>
-      <div class="card"><h3>${tr('Démarrage manuel','Manual start')}</h3><label class="lbl">${tr('HEURE DE DÉBUT (UTC)','START TIME (UTC)')}</label><input class="num" id="mStart" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${utcNowHM()}"><label class="lbl">${tr('HOT RETENU (minutes, ou h:mm)','HOT TO USE (minutes, or h:mm)')}</label><input class="num" id="mHot" placeholder="25" inputmode="decimal"><div id="mErr"></div><button class="btn block" id="mGo">${tr('▶ Démarrer','▶ Start')}</button></div>`;
+      <div class="card"><h3>${tr('Démarrage manuel','Manual start')}</h3><label class="lbl">${tr('HEURE DE DÉBUT (UTC)','START TIME (UTC)')}</label><input class="num" id="mStart" inputmode="numeric" maxlength="5" placeholder="hh:mm UTC" value="${utcNowHM()}"><button class="btn ghost nowbtn" data-now="mStart">⏱ ${tr('Maintenant','Now')} · ${utcNowHM()} UTC</button><label class="lbl">${tr('HOT RETENU (minutes, ou h:mm)','HOT TO USE (minutes, or h:mm)')}</label><input class="num" id="mHot" placeholder="25" inputmode="decimal"><div id="mErr"></div><button class="btn block" id="mGo">${tr('▶ Démarrer','▶ Start')}</button></div>`;
     $('#mGo').onclick = ()=>{
       const err = t => { $('#mErr').innerHTML = `<div class="badbox">${t}</div>`; };
       const mm = parseHotMin($('#mHot').value);
       if (!mm){ err(tr('HOT invalide. Exemples : <b>25</b> (minutes), <b>0:25</b>, <b>1:05</b>.','Invalid HOT. Examples: <b>25</b> (minutes), <b>0:25</b>, <b>1:05</b>.')); $('#mHot').focus(); return; }
       const st = normHM($('#mStart').value);
       if (!st){ err(tr('Heure de début invalide. Exemples : <b>1432</b> ou <b>14:32</b> (UTC).','Invalid start time. Examples: <b>1432</b> or <b>14:32</b> (UTC).')); $('#mStart').focus(); return; }
-      if (startTimer(st, mm, mm, tr('HOT saisi manuellement','HOT entered manually'), '')) renderTimer(); };
+      const r = startTimer(st, mm, mm, tr('HOT saisi manuellement','HOT entered manually'), '');
+      if (r===true) renderTimer(); else err(r.err); };
     return;
   }
   B.innerHTML = `<div class="timer" id="tbox"><div class="ringwrap"><svg viewBox="0 0 120 120"><circle class="rbg" cx="60" cy="60" r="54"/><circle class="rglow" id="tglow" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/><circle class="rfg" id="tring" cx="60" cy="60" r="54" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
@@ -1572,6 +1577,7 @@ function clock(){
   $('#utcClock').firstChild.nodeValue = v;
   const h = $('#hUtc'); if (h) h.textContent = v;
 }
+document.addEventListener('click', e=>{ const b=e.target.closest('[data-now]'); if (!b) return; const inp=document.getElementById(b.dataset.now); if (inp){ inp.value=utcNowHM(); inp.style.borderColor=''; inp.dispatchEvent(new Event('input',{bubbles:true})); } });
 document.addEventListener('touchstart', ()=>{}, {passive:true});  /* active le :active (halo) sur iOS */
 document.addEventListener('pointerdown', ()=>{ unlockAudio(); if (T && !wakeLock) keepAwake(); }, {passive:true});
 setInterval(()=>{ clock(); tick(); }, 1000);
@@ -1701,6 +1707,7 @@ function renderGuide(){
   h += st(7, tr('Le minuteur','The timer'),
     `<p>${tr(`Dans « Démarrer le minuteur », tapez l'heure annoncée par le sol : ${K('0658')}. Puis ${KP('▶ Démarrer le HOT')}.`,`In "Start the timer", type the time announced by the ground crew: ${K('0658')}. Then ${KP('▶ Start HOT')}.`)}</p>
      <p>${tr('L\'app affiche <b>FIN HOT 08:13 UTC</b> et compte à rebours. Orange 5 min avant, rouge à la fin.','The app shows <b>HOT ENDS 08:13 UTC</b> and counts down. Amber 5 min before, red at the end.')}</p>
+     <p style="font-size:14px;color:var(--mut)">${tr(`L'heure à taper est toujours <b>déjà passée</b> : c'est l'heure annoncée par le sol à la fin du dégivrage, en UTC. Pour essayer tout de suite, touchez ${K('⏱ Maintenant')}.`,`The time to type is always <b>in the past</b>: it is the time announced by the ground crew at the end of de-icing, in UTC. To try it right now, tap ${K('⏱ Now')}.`)}</p>
      <p style="font-size:14px;color:var(--mut)">${tr(`Raccourci : onglet ${K('Décoder')}, tapez <span class="mono">Type I/IV/100 0658</span> → ${KP('Calculer le HOT')}. Le fluide, la concentration et l'heure sont remplis tout seuls.`,`Shortcut: ${K('Decode')} tab, type <span class="mono">Type I/IV/100 0658</span> → ${KP('Calculate HOT')}. Fluid, concentration and time are filled in for you.`)}</p>`);
   h += st(8, tr('Pendant le roulage, avec Jeppesen FD à l\'écran','While taxiing, with Jeppesen FD on screen'),
     `<p>${tr("Quand Jeppesen est devant, 737 HOLDOVER est en pause : le temps reste juste quand vous revenez, mais <b>elle ne peut pas sonner</b>. Trois solutions :","When Jeppesen is in front, 737 HOLDOVER is paused: the time is still right when you come back, but <b>it cannot ring</b>. Three solutions:")}</p>

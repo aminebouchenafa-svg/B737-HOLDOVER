@@ -139,6 +139,18 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   const sc = await p.evaluate(() => { startTimer(hmUTC(Date.now()), 25, 45, 'x', ''); let u=''; const rem=T.start+T.minM*60e3-Date.now(); u = `shortcuts://run-shortcut?name=${encodeURIComponent(SHORTCUT)}&input=text&text=${Math.floor(rem/60e3)}`; stopTimer(); return u; });
   ok(/^shortcuts:\/\/run-shortcut\?name=HOT%20737&input=text&text=2[45]$/.test(sc), 'Alarme iOS : lien Raccourcis correct (' + sc + ')');
 
+  // ---- Heure de début dans le futur : message clair sur la page ----
+  await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
+  await p.click('[data-fluid="IV"]'); await p.click('[data-key="2"]'); await p.click('#oatOk'); await p.click('[data-conc="100/0"]'); await p.click('[data-cond="FZFG"]');
+  const fut = await p.evaluate(() => { const d=new Date(Date.now()+7*3600e3); return String(d.getUTCHours()).padStart(2,'0')+String(d.getUTCMinutes()).padStart(2,'0'); });
+  await p.fill('#startIn', fut); await p.click('#startBtn');
+  ok((await p.textContent('#startErr')).includes("n'est pas encore passé"), 'Heure future : message clair affiché sous le champ');
+  await p.click('[data-now="startIn"]');
+  ok(await p.$eval('#startIn', e => e.value) === await p.evaluate(() => utcNowHM()), 'Bouton « Maintenant » remplit l\'heure UTC actuelle');
+  await p.click('#startBtn'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => location.hash === '#timer' && !!T), 'Minuteur lancé avec « Maintenant »');
+  await p.evaluate(() => stopTimer());
+
   // ---- Autres écrans ----
   for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
     await p.evaluate(s => location.hash = '#' + s, s); await p.waitForTimeout(150);
