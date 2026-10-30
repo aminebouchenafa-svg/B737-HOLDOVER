@@ -13,6 +13,7 @@ for k, v in {
     '__FONT_STM__': b64('src/fonts/stm.woff2'),
     '__FONT_CINZEL__': b64('src/fonts/cinzel.woff2'),
     '__ICON_180__': b64('icons/icon-180.png'),
+    '__LOGO__': b64('src/img/airalgerie-logo.png'),
     '__VERSION__': version,
 }.items():
     assert k in html, k
