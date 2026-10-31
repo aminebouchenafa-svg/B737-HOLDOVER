@@ -311,6 +311,7 @@ body.calm #sky i{animation-play-state:paused}
 .gate-sub{color:var(--mut);margin:6px 0 16px;font-size:15px}
 .gate-box input.txt{font-size:20px}
 .gate-foot{font-family:var(--mono);font-size:11.5px;color:var(--dim);text-align:center;margin:18px 0 0;line-height:1.6}
+.sel{width:100%;min-height:52px;border-radius:12px;border:1px solid var(--line2);background:#03080c;color:var(--txt);font-size:16px;padding:10px 12px;margin:6px 0 12px;-webkit-appearance:none;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ice) 50%),linear-gradient(135deg,var(--ice) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat}
 /* --- METAR --- */
 .mcard{border-color:rgba(95,216,255,.35)}
 .mrow{display:flex;gap:8px}.mrow .txt{margin:0;font-size:18px;min-height:52px}.mrow .btn{min-width:72px}
@@ -566,7 +567,7 @@ body.calm #sky i{animation-play-state:paused}
     <h3>Fluides utilisés à YUL</h3>
     <p><b>Type I</b> — <span class="mono">CHEMCO CHEMR REG1</span></p>
     <p><b>Type IV</b> — <span class="mono">DOW UCAR ENDURANCE EG106</span></p>
-    <div class="infobox">Le Type IV étant de marque connue, sa table de marque (MANEX A, Tableau 37) peut donner un HOT différent du Tableau 20 générique utilisé par le calculateur.</div>
+    <div class="infobox">Le Type IV étant de marque connue, sa table de marque (MANEX A, Tableau 37) peut donner un HOT différent du Tableau 20 générique : choisissez « DOW INC. UCAR ENDURANCE EG106 » dans le calculateur, étape Concentration.</div>
   </div>
 </div>
 </section>
@@ -580,7 +581,7 @@ body.calm #sky i{animation-play-state:paused}
     <h3>Source</h3>
     <p>MANEX A Air Algérie, §8.2.4 « Dégivrage et antigivrage au sol » — Éd. 02, TR 39-4, OCT.26. Tableaux FAA Holdover Time Guidelines Winter 2026-2027.</p>
     <p>Procédure pas à pas complétée par l'OPS INFO B737 « Cold Weather Operations » (CL-AH-DOA-DOC-B737-002 Éd. 06, NOV 22) et le FCOM 737-8D6 SP.16 « Cold Weather Operations » (NG) et le FCOM 737 MAX SP.16 (MAX).</p>
-    <p>Tableaux intégrés : 1 (givre actif), 2 (Type I aluminium), 4 (Type II générique), 20 (Type IV générique), 53 (intensité de la neige), 54 et 55 (application des fluides).</p>
+    <p>Tableaux intégrés : 1 (givre actif), 2 (Type I aluminium), 4 (Type II générique), 20 (Type IV générique), 5 à 16 et 21 à 52 (tables de marque Type II et IV), 53 (intensité de la neige), 54 et 55 (application des fluides). METAR en ligne : metar.vatsim.net (copie non officielle) ; coordonnées des aéroports : aviationweather.gov.</p>
     <p>Aucune valeur n'est interpolée : l'app lit la case du tableau, et retient la valeur basse (règle Air Algérie, 8.2.4.9 NOTE).</p>
   </div>
   <div class="card">
@@ -612,6 +613,7 @@ body.calm #sky i{animation-play-state:paused}
 "use strict";
 /* ================= DATA (MANEX A §8.2.4.9 — FAA HOT Winter 2026-2027) ================= */
 const D = __HOT_JSON__;
+const BRAND = __BRAND_JSON__;   /* tables de marque : Type II = 5-16, Type IV = 21-52 */
 
 /* ================= LANGUE / LANGUAGE ================= */
 let LANG = (()=>{ try{ return JSON.parse(localStorage.getItem('hot.lang'))==='en' ? 'en' : 'fr'; }catch(e){ return 'fr'; } })();
@@ -646,7 +648,8 @@ function dt(s){
 
 /* Table references (MANEX A 8.2.4.9) */
 const REF = { t1:{n:1,p:12}, t2:{n:2,p:14}, t4:{n:4,p:17}, t20:{n:20,p:35}, t53:{n:53,p:69}, t54:{n:54,p:70}, t55:{n:55,p:71} };
-const refText = id => `MANEX A 8.2.4.9 — ${tr('Tableau','Table')} ${REF[id].n}, page ${REF[id].p}`;
+const refOf = id => id && id[0]==='b' && BRAND[id.slice(1)] ? {n:BRAND[id.slice(1)].n, p:BRAND[id.slice(1)].page} : REF[id];
+const refText = id => `MANEX A 8.2.4.9 — ${tr('Tableau','Table')} ${refOf(id).n}, page ${refOf(id).p}`;
 const COL_FR = { FZFG:'FZFG / brume givrante', SN_FZFG:'SN + FZFG', SN_VL:'SN très faible', SN_L:'SN faible', SN_M:'SN modérée',
   SN:'SN (≤ modérée)', FZDZ:'FZDZ', FZRA_L:'-FZRA', SN_RA_M:'SN mod. + RA', RA_COLDSOAK:'RA aile froide' };
 const COL_EN = { FZFG:'FZFG / freezing mist', SN_FZFG:'SN + FZFG', SN_VL:'SN very light', SN_L:'SN light', SN_M:'SN moderate',
@@ -679,6 +682,12 @@ function allowedConc(oat){
   if (oat>=-14) return ['100/0','75/25'];
   return ['100/0'];
 }
+/* Concentration absente de la table de marque à cette température (« N/A » dans le MANEX) */
+function brandRefusal(conc, oat){
+  const bt = S.brand && BRAND[S.brand]; if (!bt || bt.type!==S.fluid) return null;
+  const b = bt.bands[pickBand(bt.bands, oat)];
+  return b.rows[conc] ? null : tr(`Non prévu par la table de marque (Tableau ${bt.n}) dans la bande « ${b.oat} ».`,`Not provided by the brand table (Table ${bt.n}) in band "${dt(b.oat)}".`);
+}
 function concRefusal(conc, oat, coldWing){
   if (conc==='50/50' && coldWing) return tr("Aile froide (givre/glace à l'intrados zone réservoirs) : pas de 50/50 Type II/IV pour l'antigivrage (Tableau 55).",
     "Cold-soaked wing (frost/ice on the lower wing surface at the fuel tanks): no 50/50 Type II/IV for anti-icing (Table 55).");
@@ -698,7 +707,7 @@ function snowIntensity(visM, night, oat){
 }
 
 /* Main lookup. fluid: 'I'|'II'|'IV'; conc: '100/0'|'75/25'|'50/50'; key: table column key, 'FROST', 'OTHER', or 'SNOW_HEAVY' */
-function computeHOT({fluid, conc, oat, key}){
+function computeHOT({fluid, conc, oat, key, brand}){
   const R = {ok:false, fluid, conc, oat, key, notes:[], tableId:null, bandIdx:null, colIdx:null};
   const none = reason => Object.assign(R, {ok:false, reason});
   if (key==='OTHER') return none(tr("Neige forte, granules de glace, pluie verglaçante modérée ou forte, grêle ou petite grêle : AUCUN HOT n'existe pour ces conditions.",
@@ -722,13 +731,21 @@ function computeHOT({fluid, conc, oat, key}){
     return Object.assign(R,{ok:true, hot:v, range:{min:v,max:v}, single:true});
   }
 
-  const tbl = fluid==='I' ? D.table2_typeI_aluminum : fluid==='II' ? D.table4_typeII_generic : D.table20_typeIV_generic;
-  R.tableId = fluid==='I' ? 't2' : fluid==='II' ? 't4' : 't20';
-  R.notes.push(...tbl.notes);
+  const bt = brand && BRAND[brand] && BRAND[brand].type===fluid ? BRAND[brand] : null;
+  const tbl = bt || (fluid==='I' ? D.table2_typeI_aluminum : fluid==='II' ? D.table4_typeII_generic : D.table20_typeIV_generic);
+  R.tableId = bt ? 'b'+bt.n : fluid==='I' ? 't2' : fluid==='II' ? 't4' : 't20';
+  R.tbl = tbl; R.brand = bt ? bt.n : null;
+  R.notes.push(...(bt ? D[fluid==='II'?'table4_typeII_generic':'table20_typeIV_generic'].notes.slice(0,1) : tbl.notes));
+  /* tables à colonne neige unique (≤ modérée) : très faible / faible / modérée → « SN » */
+  if (/^SN_(VL|L|M)$/.test(key) && !tbl.columns.includes(key) && tbl.columns.includes('SN')) key = 'SN';
+  R.key = key;
   const ci = tbl.columns.indexOf(key);
   R.colIdx = ci;
   const bi = pickBand(tbl.bands, oat), b = tbl.bands[bi];
   R.bandIdx = bi;
+  if (b.min_c!==null && oat < b.min_c)
+    return none(tr(`OAT ${fmtC(oat)} plus froide que la dernière bande du tableau (« ${b.oat} ») : aucun HOT — limite d'utilisation du fluide (LOUT).`,
+                   `OAT ${fmtC(oat)} is colder than the last band of the table ("${dt(b.oat)}"): no HOT — fluid lowest operational use temperature (LOUT).`));
   let cell;
   if (fluid==='I') cell = b.values[ci];
   else {
@@ -986,7 +1003,7 @@ function go(s){ step=s; renderCalc(); scrollTo(0,0); }
 function saveCalc(){ store.set('hot.calc', {S, step}); }
 function next(){ const l=stepList(); go(l[Math.min(l.indexOf(step)+1,l.length-1)]); }
 function calcBack(){ const l=stepList(), i=l.indexOf(step); if (i>0){ go(l[i-1]); return true; } return false; }
-const RESET_S = () => ({fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:null,metarInt:null,start:null,metar:null});
+const RESET_S = () => ({fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:null,metarInt:null,start:null,metar:null,brand:null});
 function resetCalc(){ Object.assign(S, RESET_S()); lastSavedKey=null; go('fluid'); }
 
 const COND_UI = [
@@ -1022,7 +1039,7 @@ function condKey(){
   if (c==='SNOW'){
     const si = snowIntensity(S.vis, S.night, oatVal());
     if (si.intensity==='Heavy') return 'SNOW_HEAVY';
-    return S.fluid==='II' ? 'SN' : INT_COL[si.intensity];
+    return INT_COL[si.intensity];
   }
   return c;
 }
@@ -1073,7 +1090,7 @@ function label(){ const l=stepList().filter(s=>s!=='result'); return `${tr('ÉTA
 
 function crumbs(){
   const l=stepList(), i=l.indexOf(step), c=[];
-  const lab={fluid:()=>S.fluid&&'Type '+S.fluid, oat:()=>oatVal()!==null&&fmtC(oatVal()), conc:()=>S.conc, cond:()=>{const u=COND_UI.find(x=>x.k===S.cond); return u&&L(u.t);}};
+  const lab={fluid:()=>S.fluid&&'Type '+S.fluid, oat:()=>oatVal()!==null&&fmtC(oatVal()), conc:()=>S.conc && (S.conc + (S.brand?' · T.'+S.brand:'')), cond:()=>{const u=COND_UI.find(x=>x.k===S.cond); return u&&L(u.t);}};
   l.slice(0,i).forEach(k=>{ const v=lab[k]&&lab[k](); if (v) c.push(`<button class="crumb" data-goto="${k}">${esc(v)} <i>✎</i></button>`); });
   return c.length ? `<div class="crumbs">${c.join('')}</div>` : '';
 }
@@ -1143,10 +1160,13 @@ function renderCalc(){
   else if (step==='conc'){
     h += qhead('conc', label(), tr('Quelle concentration ?','Which concentration?'));
     h += `<p class="lead" style="margin-top:-4px">Type ${S.fluid} ${tr('à','at')} ${fmtC(oat)} — ${tr('Tableau','Table')} 55</p>`;
+    const brands = Object.values(BRAND).filter(b=>b.type===S.fluid).sort((a,b)=>a.name.localeCompare(b.name));
+    h += `<label class="lbl" for="brandSel">${tr('MARQUE DU FLUIDE ANNONCÉE PAR LE SOL (facultatif)','FLUID BRAND ANNOUNCED BY THE GROUND CREW (optional)')}</label>
+      <select id="brandSel" class="sel"><option value="">${tr('Non annoncée — table générique','Not announced — generic table')} (${tr('Tableau','Table')} ${S.fluid==='II'?4:20})</option>${brands.map(b=>`<option value="${b.n}" ${String(S.brand)===String(b.n)?'selected':''}>${esc(b.name)} — ${tr('Tableau','Table')} ${b.n}</option>`).join('')}</select>`;
     h += `<label class="toggle"><input type="checkbox" id="coldWing" ${S.coldWing?'checked':''}><span>${tr("Givre ou glace à l'<b>intrados</b> dans la zone des réservoirs (aile froide)","Frost or ice on the <b>lower wing surface</b> at the fuel tanks (cold-soaked wing)")}</span></label>`;
     h += '<div class="choices">';
     [['100/0',tr('100 % fluide · HOT maximum','100 % fluid · maximum HOT')],['75/25',tr('75 % fluide / 25 % eau','75 % fluid / 25 % water')],['50/50',tr('50 % fluide / 50 % eau · HOT court','50 % fluid / 50 % water · short HOT')]].forEach(([v,d])=>{
-      const why = concRefusal(v, oat, S.coldWing);
+      const why = concRefusal(v, oat, S.coldWing) || brandRefusal(v, oat);
       h += `<button class="choice ${S.conc===v?'sel':''} ${why?'dis':''}" data-conc="${v}" ${why?'aria-disabled="true"':''}><span><b class="mono" style="font-size:22px">${v}</b><small>${d}</small>${why?`<span class="reason">✕ ${esc(why)}</span>`:''}</span></button>`;
     });
     h += '</div>';
@@ -1246,7 +1266,7 @@ function hotTable(R){
     });
     return h+'</tbody></table></div>';
   }
-  const tbl = R.tableId==='t2'?D.table2_typeI_aluminum:R.tableId==='t4'?D.table4_typeII_generic:D.table20_typeIV_generic;
+  const tbl = R.tbl || (R.tableId==='t2'?D.table2_typeI_aluminum:R.tableId==='t4'?D.table4_typeII_generic:D.table20_typeIV_generic);
   let h=`<div class="tblwrap"><table class="mx"><thead><tr><th class="rh">OAT${R.tableId!=='t2'?' · conc.':''}</th>${tbl.columns.map((c,j)=>`<th class="${j===R.colIdx?'hc':''}">${colTxt(c)}</th>`).join('')}</tr></thead><tbody>`;
   tbl.bands.forEach((b,bi)=>{
     if (R.tableId==='t2'){
@@ -1270,12 +1290,12 @@ function summaryTxt(){
     : key==='OTHER' ? L(u.t)
     : (S.cond==='SNRA'&&key==='FZRA_L') ? tr('Neige faible + pluie → -FZRA','Light snow + rain → -FZRA')
     : colTxt(key);
-  return `Type ${S.fluid}${S.fluid!=='I'?' '+S.conc:''} · ${fmtC(oat)} · ${cname}`;
+  return `Type ${S.fluid}${S.fluid!=='I'?' '+S.conc:''}${S.brand&&S.fluid!=='I'?' ('+tr('T.','T.')+S.brand+')':''} · ${fmtC(oat)} · ${cname}`;
 }
 
 function renderResult(){
   const oat=oatVal(), key=condKey();
-  const R = computeHOT({fluid:S.fluid, conc:S.conc, oat, key});
+  const R = computeHOT({fluid:S.fluid, conc:S.conc, oat, key, brand:S.brand});
   window.__lastResult = R;
   const hk = histKey(); if (!COACH && hk!==lastSavedKey){ saveHist(R); lastSavedKey=hk; }
   let h='';
@@ -1292,6 +1312,10 @@ function renderResult(){
     const si = snowIntensity(S.vis, S.night, oat), fr=intTxt(si.intensity), m=metarSentence(si);
     h += `<div class="infobox">${tr(`Neige : visibilité ${S.vis} m, ${S.night?'nuit':'jour'}, ${fmtC(oat)} → intensité <b>${fr}</b> (Tableau 53).`,`Snow: visibility ${S.vis} m, ${S.night?'night':'day'}, ${fmtC(oat)} → intensity <b>${fr}</b> (Table 53).`)}${m?' '+m:''}</div>`;
   }
+  if (R.brand){
+    const G = computeHOT({fluid:S.fluid, conc:S.conc, oat, key});
+    h += `<div class="infobox">🏷 ${tr(`Table de marque : <b>Tableau ${R.brand} — ${esc(BRAND[R.brand].name)}</b>. Table générique : <b>${G.ok?G.hot:'aucun HOT'}</b>.`,`Brand table: <b>Table ${R.brand} — ${esc(BRAND[R.brand].name)}</b>. Generic table: <b>${G.ok?G.hot:'no HOT'}</b>.`)} ${tr('À utiliser seulement si le sol confirme la marque du fluide.','Use only if the ground crew confirms the fluid brand.')}</div>`;
+  }
   if (S.cond==='SNRA' && key==='FZRA_L') h += `<div class="infobox">${tr('Neige très faible ou faible mêlée de pluie/bruine → on utilise la colonne <b>pluie verglaçante faible</b> (note du tableau).','Very light or light snow mixed with rain/drizzle → use the <b>light freezing rain</b> column (table note).')}</div>`;
   if (R.ok && toMin(R.hot)>0){
     h += `<div class="card"><h3>${tr('Démarrer le minuteur','Start the timer')}</h3><p style="color:var(--mut);font-size:14px;margin-top:0">${tr("Heure de début annoncée par le sol (UTC) — début de l'application, ou début de la 2e étape.","Start time announced by the ground crew (UTC) — start of application, or start of the 2nd step.")}</p>
@@ -1299,7 +1323,7 @@ function renderResult(){
       <div id="startErr"></div><div class="row"><button class="btn primary" id="startBtn">${tr('▶ Démarrer le HOT','▶ Start HOT')}</button></div></div>`;
   }
   h += `<div class="card"><h3>${tr('Voici la case du MANEX','Here is the MANEX cell')}</h3>`;
-  if (R.tableId){ h += `<div class="mxref">${refText(R.tableId)}${R.tableId==='t1'?' — Type '+S.fluid:''}</div>`; }
+  if (R.tableId){ h += `<div class="mxref">${refText(R.tableId)}${R.tableId==='t1'?' — Type '+S.fluid:''}${R.brand?' — '+esc(BRAND[R.brand].name):''}</div>`; }
   if (R.tableId==='t53'){ h += t53Table(snowIntensity(S.vis,S.night,oat)); }
   else if (R.tableId){ h += hotTable(R); h += `<p style="font-size:13px;color:var(--mut)">${tr(`Case surlignée = ligne (OAT${S.fluid!=='I'?' + concentration':''}) × colonne (condition). Faites défiler le tableau horizontalement.`,`Highlighted cell = row (OAT${S.fluid!=='I'?' + concentration':''}) × column (condition). Scroll the table sideways.`)}</p>`; }
   else { h += `<div class="infobox">${esc(dt(D.conditions.OTHER))}</div>`; }
@@ -1313,12 +1337,13 @@ function renderResult(){
 $('#calcBody').addEventListener('click', e=>{
   const t = e.target.closest('button,input'); if (!t) return;
   if (t.id==='metGo'){ runMetar(); return; }
+  if (t.id==='brandSel') return;
   if (t.id==='metClr'){ S.metar=null; saveCalc(); renderCalc(); return; }
   if (t.dataset.goto){ go(t.dataset.goto); return; }
   if (t.dataset.why){ $('#why-'+t.dataset.why).classList.toggle('on'); return; }
   if (t.dataset.fluid){
     if (t.dataset.fluid==='III'){ $('#t3msg').innerHTML = `<div class="warnbox">${tr('<b>Type III : non utilisé B737</b> — marque spécifique, voir MANEX Tableaux 17-19.','<b>Type III: not used on B737</b> — brand-specific, see MANEX Tables 17-19.')}</div>`; return; }
-    if (S.fluid!==t.dataset.fluid){ S.conc=null; }
+    if (S.fluid!==t.dataset.fluid){ S.conc=null; S.brand=null; }
     S.fluid=t.dataset.fluid; if (S.fluid==='I') S.conc=null; next(); return;
   }
   if (t.dataset.key){
@@ -1335,7 +1360,7 @@ $('#calcBody').addEventListener('click', e=>{
   }
   if (t.id==='coldWing'){ S.coldWing=t.checked; if (S.conc && concRefusal(S.conc,oatVal(),S.coldWing)) S.conc=null; renderCalc(); return; }
   if (t.dataset.conc){
-    if (concRefusal(t.dataset.conc, oatVal(), S.coldWing)) return;
+    if (concRefusal(t.dataset.conc, oatVal(), S.coldWing) || brandRefusal(t.dataset.conc, oatVal())) return;
     S.conc=t.dataset.conc; next(); return;
   }
   if (t.dataset.cond){
@@ -1362,6 +1387,7 @@ $('#calcBody').addEventListener('click', e=>{
   if (t.id==='modBtn'){ calcBack(); return; }
   if (t.id==='newBtn'){ resetCalc(); return; }
 });
+$('#calcBody').addEventListener('change', e=>{ if (e.target.id==='brandSel'){ S.brand = e.target.value || null; if (S.conc && (concRefusal(S.conc,oatVal(),S.coldWing)||brandRefusal(S.conc,oatVal()))) S.conc=null; renderCalc(); } });
 $('#calcBody').addEventListener('keydown', e=>{ if (e.target.id==='metIn' && e.key==='Enter'){ e.preventDefault(); runMetar(); } });
 $('#calcBody').addEventListener('input', e=>{
   if (e.target.id==='visIn'){ const v=parseInt(e.target.value,10); S.vis = isNaN(v)?null:v; document.querySelectorAll('[data-vis]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.vis)===S.vis)); updateSnow(); }
@@ -1692,7 +1718,7 @@ $('#quizBody').addEventListener('click', e=>{
 
 /* ================= HOME (tableau de bord) ================= */
 let lastSavedKey=null;
-const histKey = (s=S) => JSON.stringify([s.fluid,s.conc,s.oatStr,s.cond,s.sub,s.vis,s.night,s.coldWing]);
+const histKey = (s=S) => JSON.stringify([s.fluid,s.conc,s.oatStr,s.cond,s.sub,s.vis,s.night,s.coldWing,s.brand||null]);
 /* Calcule un texte (ex. résumé) pour un calcul mémorisé, dans la langue courante */
 function withS(snap, fn){
   const keep = JSON.parse(JSON.stringify(S));
@@ -1732,7 +1758,7 @@ function renderHome(){
   const hist = store.get('hot.hist', []).filter(e => e && typeof e==='object' && e.s && typeof e.s==='object');
   $('#hHist').innerHTML = hist.length ? `<h2 class="sect">${tr('Derniers calculs','Recent calculations')} <button id="hClr">${tr('Effacer','Clear')}</button></h2><div class="hist">${hist.map((e,i)=>{
     const sum = withS(e.s, summaryTxt) || e.sum || '';
-    const ref = e.tid && REF[e.tid] ? tr('Tableau','Table')+' '+REF[e.tid].n : (e.ref ? (LANG==='en' ? String(e.ref).replace('Tableau','Table') : e.ref) : '');
+    const ref = e.tid && refOf(e.tid) ? tr('Tableau','Table')+' '+refOf(e.tid).n : (e.ref ? (LANG==='en' ? String(e.ref).replace('Tableau','Table') : e.ref) : '');
     return `<button class="hitem" data-h="${i}"><span class="hv ${e.hot?'':'no'}">${e.hot?esc(e.hot):tr('AUCUN<br>HOT','NO<br>HOT')}</span><span><b>${esc(sum)}</b><small>${whenTxt(e.ts)}${ref?' · '+esc(ref):''}</small></span><span class="chev">›</span></button>`; }).join('')}</div>` : '';
   const total = PROC.reduce((n,p)=>n+visItems(p).length,0), done = PROC.reduce((n,p,i)=>n+visItems(p).filter(([,j])=>checks[i+'.'+j]).length,0);
   $('#tProc').textContent = done ? tr(`${done} / ${total} étapes cochées`,`${done} / ${total} items ticked`) : tr('Du parking au décollage, à cocher','From gate to takeoff, tick as you go');
@@ -1804,7 +1830,7 @@ const I18N = {
     <h3>Fluids used at YUL</h3>
     <p><b>Type I</b> — <span class="mono">CHEMCO CHEMR REG1</span></p>
     <p><b>Type IV</b> — <span class="mono">DOW UCAR ENDURANCE EG106</span></p>
-    <div class="infobox">As the Type IV brand is known, its brand table (MANEX A, Table 37) may give a different HOT from the generic Table 20 used by the calculator.</div>
+    <div class="infobox">As the Type IV brand is known, its brand table (MANEX A, Table 37) may give a different HOT from the generic Table 20: choose "DOW INC. UCAR ENDURANCE EG106" in the calculator, Concentration step.</div>
   </div>`,
   about:`<div class="brand"><div class="logo" style="font-size:34px">737 HOLDOVER</div><div class="sub">version ${VERSION}</div></div>
   <div class="disclaimer"><b>⚠ Disclaimer.</b> Training tool based on MANEX A §8.2.4 (TR 39-4 OCT.26, FAA Winter 2026-2027 tables). In case of any difference, the MANEX A in force prevails. The HOT is guidance only and never replaces the inspection of critical surfaces. The final decision rests with the captain.</div>
@@ -1812,7 +1838,7 @@ const I18N = {
     <h3>Source</h3>
     <p>Air Algérie MANEX A, §8.2.4 "Ground de-icing and anti-icing" — Ed. 02, TR 39-4, OCT.26. FAA Holdover Time Guidelines Winter 2026-2027 tables.</p>
     <p>Step-by-step procedure completed with the B737 OPS INFO "Cold Weather Operations" (CL-AH-DOA-DOC-B737-002 Ed. 06, NOV 22) and the FCOM 737-8D6 SP.16 "Cold Weather Operations" (NG) and the 737 MAX FCOM SP.16 (MAX).</p>
-    <p>Tables included: 1 (active frost), 2 (Type I aluminium), 4 (generic Type II), 20 (generic Type IV), 53 (snowfall intensity), 54 and 55 (fluid application).</p>
+    <p>Tables included: 1 (active frost), 2 (Type I aluminium), 4 (generic Type II), 20 (generic Type IV), 5 to 16 and 21 to 52 (Type II and IV brand tables), 53 (snowfall intensity), 54 and 55 (fluid application). Online METAR: metar.vatsim.net (unofficial copy); airport coordinates: aviationweather.gov.</p>
     <p>No value is interpolated: the app reads the table cell and uses the lowest value (Air Algérie rule, 8.2.4.9 NOTE).</p>
   </div>
   <div class="card">

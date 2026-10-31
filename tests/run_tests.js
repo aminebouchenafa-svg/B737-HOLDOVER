@@ -17,6 +17,7 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   // ---- Moteur ----
   const E = await p.evaluate(() => {
     const c = (fluid, conc, oat, key) => computeHOT({ fluid, conc, oat, key });
+    const c2 = o => { const r = computeHOT(o); delete r.tbl; return r; };
     return {
       t1: c('IV', '100/0', -5, 'FZFG'),
       t2: c('I', null, -2, 'SN_L'),
@@ -38,6 +39,11 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
       st1: (()=>{ localStorage.setItem('x.t','"oops"'); const a=store.get('x.t',[]); localStorage.setItem('x.t','null'); const b=store.get('x.t',{}); localStorage.setItem('x.t','{bad'); const c=store.get('x.t',5); return Array.isArray(a)&&typeof b==='object'&&b!==null&&c===5; })(),
       d4: decodeCode('2-step Type IV/75 at 1432'), d5: decodeCode('Type I/IV/75 1432'), d6: decodeCode('(Type II/75/ at 1650).'), d7: decodeCode('IV75 1432Z.'),
       h1: [parseHotMin('25'), parseHotMin('025'), parseHotMin('0:25'), parseHotMin('0h25'), parseHotMin('1:05'), parseHotMin('abc'), parseHotMin('0')],
+      b1: c2({fluid:'IV', conc:'100/0', oat:-3, key:'FZFG', brand:'37'}), b1g: c('IV','100/0',-3,'FZFG'),
+      b2: c2({fluid:'IV', conc:'100/0', oat:-24, key:'FZFG', brand:'25'}),
+      b3: c2({fluid:'II', conc:'100/0', oat:-5, key:'SN_M', brand:'10'}),
+      b4: c2({fluid:'IV', conc:'100/0', oat:-12, key:'FZRA_L', brand:'37'}),
+      b5: c2({fluid:'II', conc:'100/0', oat:-5, key:'SN_M', brand:'37'}),
       d1: decodeCode('Type IV/75 1432'), d2: decodeCode('de-icing complete Type II/75 at 1650'), d3: decodeCode('TYPE I 06:40Z'),
     };
   });
@@ -68,6 +74,11 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   ok(E.d6.fluid==='II' && E.d6.time==='16:50', 'Décodeur avec parenthèses et point final');
   ok(E.d7.fluid==='IV' && E.d7.conc==='75/25' && E.d7.time==='14:32', 'Décodeur « IV75 1432Z. »');
   ok(JSON.stringify(E.h1)==='[25,25,25,25,65,null,null]', 'Minuteur manuel : 25 / 025 / 0:25 / 0h25 / 1:05 acceptés');
+  ok(E.b1.ok && E.b1.hot === '2:05' && E.b1.tableId === 'b37' && E.b1g.hot === '1:15', 'Marque : DOW EG106 (T37) Type IV 100/0 −3 °C FZFG → 2:05 (générique 1:15)');
+  ok(!E.b2.ok && /LOUT/.test(E.b2.reason), 'Marque : OAT sous la dernière bande (T25, −24 °C) → aucun HOT (LOUT)');
+  ok(E.b3.ok && E.b3.key === 'SN' && E.b3.tableId === 'b10', 'Marque à colonne neige unique (T10) : neige modérée → colonne SN');
+  ok(!E.b4.ok, 'Marque : -FZRA sous −10 °C → aucun HOT (note 10)');
+  ok(E.b5.tableId === 't4', 'Marque Type IV ignorée si le fluide est du Type II');
   ok(E.d1.fluid === 'IV' && E.d1.conc === '75/25' && E.d1.time === '14:32', 'Décodeur « Type IV/75 1432 »');
   ok(E.d2.fluid === 'II' && E.d2.conc === '75/25' && E.d2.time === '16:50', 'Décodeur « Type II/75 at 1650 »');
   ok(E.d3.fluid === 'I' && E.d3.time === '06:40', 'Décodeur « TYPE I 06:40Z »');
@@ -195,6 +206,18 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   ok(await p.$eval('[data-cond="FZFG"]', e => e.classList.contains('sel')), 'METAR : FZFG présélectionné');
   await p.click('[data-cond="FZFG"]');
   ok((await p.textContent('.res .big')).trim() === '1:15', 'METAR : résultat 1:15 (Type IV 100/0, −3 °C, FZFG)');
+
+  // ---- Marque du fluide dans l'interface ----
+  await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
+  await p.click('[data-fluid="IV"]'); await p.click('[data-key="±"]'); await p.click('[data-key="3"]'); await p.click('#oatOk');
+  await p.selectOption('#brandSel', '37'); await p.waitForTimeout(100);
+  await p.click('[data-conc="100/0"]'); await p.click('[data-cond="FZFG"]');
+  ok((await p.textContent('.res .big')).trim() === '2:05' && (await p.textContent('.mxref')).includes('Tableau 37, page 52'), 'UI marque : DOW EG106 → 2:05, Tableau 37 page 52');
+  ok((await p.textContent('#calcBody')).includes('Table générique : 1:15'), 'UI marque : HOT générique affiché pour comparaison');
+  await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
+  await p.click('[data-fluid="IV"]'); await p.click('[data-key="±"]'); await p.click('[data-key="3"]'); await p.click('#oatOk');
+  await p.selectOption('#brandSel', '21'); await p.waitForTimeout(100);
+  ok(await p.$eval('[data-conc="75/25"]', e => e.classList.contains('dis')) && !(await p.$eval('[data-conc="100/0"]', e => e.classList.contains('dis'))), 'UI marque : 75/25 grisé quand la table de marque ne le prévoit pas (T21)');
 
   // ---- Autres écrans ----
   for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
