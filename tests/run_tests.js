@@ -231,6 +231,42 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   ok(await p.evaluate(() => location.hash === '#calc' && document.getElementById('metIn').value === 'LFPG'), 'Escales : bouton METAR ouvre le calculateur avec LFPG');
   await p.fill('#stSearch', '').catch(()=>{}); await p.evaluate(() => { stQuery=''; });
 
+  // ---- Corrections grand froid (FCOM SP.16) ----
+  const CC = await p.evaluate(() => ({
+    a: coldCorr(-20, 1000, 'ft'), b: coldCorr(-15, 1000, 'ft'), c: coldCorr(-10, 250, 'ft'), d: coldCorr(-10, 6000, 'ft'),
+    e: coldCorr(5, 1000, 'ft'), f: coldCorr(-55, 1000, 'ft'), g: coldCorr(-30, 300, 'm'), h: coldCorr(0, 2000, 'ft'), i: coldCorr(-40, 120, 'ft') }));
+  ok(CC.a.corr === 140, 'Grand froid : −20 °C, hauteur 1000 ft → +140 ft');
+  ok(CC.b.corr === 140, 'Grand froid : −15 °C → ligne −20 °C (prudent) → +140 ft');
+  ok(CC.c.corr === 30, 'Grand froid : hauteur 250 ft → colonne 300 ft (prudent) → +30 ft à −10 °C');
+  ok(CC.d.corr === 580, 'Grand froid : 6000 ft à −10 °C → 2 × 290 = +580 ft (extrapolation FCOM)');
+  ok(CC.e.none && CC.f.out, 'Grand froid : > 0 °C pas de correction ; < −50 °C hors tableau');
+  ok(CC.g.corr === 60 && CC.h.corr === 120 && CC.i.corr === 50, 'Grand froid : mètres −30 °C 300 m → +60 m ; 0 °C 2000 ft → +120 ; 120 ft → colonne 200');
+  await p.evaluate(() => { localStorage.removeItem('hot.ca'); location.hash = '#coldalt'; });
+  await p.waitForTimeout(150);
+  await p.fill('#caTemp', '-20'); await p.fill('#caElev', '400'); await p.fill('[data-cav="1"]', '1400'); await p.waitForTimeout(100);
+  const caTxt = await p.textContent('#caOut');
+  ok(caTxt.includes('1540') && caTxt.includes('1600'), 'UI grand froid : DA 1400 ft, élévation 400 ft, −20 °C → 1540 ft, MCP 1600');
+  // ---- Anti-givrage & run-ups ----
+  await p.evaluate(() => { localStorage.removeItem('hot.ai'); Object.assign(AI,{oat:'',moist:false,contam:false,severe:false,src:null}); FLEET='ng'; location.hash = '#antiice'; });
+  await p.waitForTimeout(150);
+  await p.fill('#aiMet', 'LFPG 150630Z 00000KT 0300 FZFG VV001 M03/M04 Q1027'); await p.click('#aiMetGo'); await p.waitForTimeout(150);
+  let aiTxt = await p.textContent('#aiBody');
+  ok(aiTxt.includes('CONDITIONS GIVRANTES') && aiTxt.includes('toutes les 10 min'), 'Anti-givrage : FZFG −3 °C NG → conditions givrantes, run-up 1 s toutes les 10 min');
+  await p.click('[data-aifleet="max"]'); aiTxt = await p.textContent('#aiBody');
+  ok(aiTxt.includes('60 min') && aiTxt.includes('50 % N1'), 'Anti-givrage : MAX → 50 % N1 toutes les 60 min');
+  await p.click('#ruStart'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => RU && RU.int === 60) && (await p.textContent('#ruT')).match(/\d/), 'Rappel run-up MAX démarré (60 min)');
+  await p.evaluate(() => { RU.start = Date.now() - 61*60e3; RU.alerted=false; }); await p.waitForTimeout(1300);
+  ok(await p.isVisible('#ruAlarm'), 'Rappel run-up : alerte à l\'échéance');
+  await p.click('#ruAlarmOk'); await p.waitForTimeout(150);
+  ok(!(await p.isVisible('#ruAlarm')) && await p.evaluate(() => Date.now() - RU.start < 5000), '« Run-up effectué » relance l\'intervalle');
+  await p.click('#ruStop'); await p.click('[data-aifleet="ng"]');
+  await p.fill('#aiMet', 'LFPG 150700Z 21012KT 6000 -RA BKN008 04/03 Q1002'); await p.click('#aiMetGo'); await p.waitForTimeout(150);
+  aiTxt = await p.textContent('#aiBody');
+  ok(aiTxt.includes('CONDITIONS GIVRANTES') && !aiTxt.includes('Run-ups moteur'), 'Anti-givrage : −RA +4 °C → conditions givrantes, pas de run-up (OAT > 3 °C)');
+  await p.fill('#aiOat', '12'); await p.dispatchEvent('#aiOat', 'change'); await p.waitForTimeout(100);
+  ok((await p.textContent('#aiBody')).includes('ne pas utiliser'), 'Anti-givrage : OAT 12 °C → ne pas utiliser l\'anti-givrage');
+
   // ---- Autres écrans ----
   for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
     await p.evaluate(s => location.hash = '#' + s, s); await p.waitForTimeout(150);
