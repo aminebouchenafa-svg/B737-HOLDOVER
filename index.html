@@ -564,7 +564,7 @@ body.calm #sky i{animation-play-state:paused}
 <!-- ============ ABOUT ============ -->
 <section class="screen" id="s-about" data-title="À propos" data-title-en="About">
 <div data-t="about">
-  <div class="brand"><div class="logo" style="font-size:34px">737 HOLDOVER</div><div class="sub">version 2026-10-30</div></div>
+  <div class="brand"><div class="logo" style="font-size:34px">737 HOLDOVER</div><div class="sub">version 2026-10-31</div></div>
   <div class="disclaimer"><b>⚠ Avertissement.</b> Outil pédagogique basé sur le MANEX A §8.2.4 (TR 39-4 OCT.26, tableaux FAA Winter 2026-2027). En cas de différence, le MANEX A en vigueur fait foi. Le HOT n'est qu'un repère et ne dispense jamais de l'inspection des surfaces critiques. La décision finale appartient au commandant de bord.</div>
   <div class="card">
     <h3>Source</h3>
@@ -607,7 +607,7 @@ const D = {"source":"MANEX A Air Algérie, §8.2.4.9 — FAA Holdover Time Guide
 let LANG = (()=>{ try{ return JSON.parse(localStorage.getItem('hot.lang'))==='en' ? 'en' : 'fr'; }catch(e){ return 'fr'; } })();
 const tr = (fr, en) => LANG==='en' ? en : fr;
 const L = o => (o && typeof o==='object' && !Array.isArray(o) && 'fr' in o) ? (LANG==='en' ? o.en : o.fr) : o;
-const VERSION = '2026-10-30';
+const VERSION = '2026-10-31';
 /* Textes des tableaux MANEX (stockés en français) → anglais */
 const DATA_EN = {
   "Aucun HOT":"No holdover time guidelines exist",
@@ -1763,7 +1763,7 @@ function renderGuide(){
      <div class="card" style="margin:12px 0 0;background:rgba(6,24,38,.7)"><h3>⚙️ ${tr("Régler l'alarme iOS (une seule fois, 1 minute)","Set up the iOS alarm (once, 1 minute)")}</h3>
        <ol class="notes" style="font-size:14.5px;padding-left:20px">
         <li>${tr("Ouvrez l'app <b>Raccourcis</b> (Shortcuts) de l'iPad, puis touchez <b>+</b>.","Open the iPad <b>Shortcuts</b> app, then tap <b>+</b>.")}</li>
-        <li>${tr("Ajoutez l'action <b>« Démarrer le minuteur »</b>.","Add the <b>\"Start Timer\"</b> action.")}</li>
+        <li>${tr("Ajoutez l'action <b>« Lancer le minuteur »</b> (Horloge).","Add the <b>\"Start Timer\"</b> action.")}</li>
         <li>${tr("Dans cette action, touchez la durée et choisissez <b>« Entrée du raccourci »</b>, en <b>minutes</b>.","In that action, tap the duration and choose <b>\"Shortcut Input\"</b>, in <b>minutes</b>.")}</li>
         <li>${tr(`Nommez le raccourci exactement : <b class="mono">${SHORTCUT}</b>.`,`Name the shortcut exactly: <b class="mono">${SHORTCUT}</b>.`)}</li>
         <li>${tr("Testez une fois au sol : lancez un HOT, touchez ⏰, vérifiez que le minuteur iOS démarre.","Test it once on the ground: start a HOT, tap ⏰, check that the iOS timer starts.")}</li>
