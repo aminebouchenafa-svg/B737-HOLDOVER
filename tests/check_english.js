@@ -50,7 +50,7 @@ const ALLOW = /Air Algérie|Algérie|MANEX A|CL-AH-DOA|Éd\./g;
   await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
   await p.click('[data-fluid="IV"]'); await p.click('[data-key="±"]'); await p.click('[data-key="5"]'); await p.click('#oatOk');
   await p.click('[data-conc="100/0"]'); await p.click('[data-cond="SNOW"]'); await p.click('[data-vis="400"]'); await p.click('[data-night="0"]'); await p.click('#snowOk'); await scan('result-heavy');
-  for (const s of ['home', 'guide', 'learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
+  for (const s of ['home', 'stations', 'guide', 'learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
     await p.evaluate(s => location.hash = '#' + s, s); await p.waitForTimeout(150);
     if (s === 'decode') { await p.fill('#decIn', 'Type I/IV/75 1432'); }
     if (s === 'proc') { await p.click('#listenBtn'); }

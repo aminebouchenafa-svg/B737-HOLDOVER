@@ -312,6 +312,13 @@ body.calm #sky i{animation-play-state:paused}
 .gate-box input.txt{font-size:20px}
 .gate-foot{font-family:var(--mono);font-size:11.5px;color:var(--dim);text-align:center;margin:18px 0 0;line-height:1.6}
 .sel{width:100%;min-height:52px;border-radius:12px;border:1px solid var(--line2);background:#03080c;color:var(--txt);font-size:16px;padding:10px 12px;margin:6px 0 12px;-webkit-appearance:none;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ice) 50%),linear-gradient(135deg,var(--ice) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat}
+/* --- escales --- */
+.st .sthead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.stcity{font-family:var(--head);font-size:16px;color:var(--ice2)} .stic{color:var(--mut);font-size:14px;margin-left:6px}
+.strow{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.strow span{color:var(--mut)} .strow b{text-align:right}
+.dn{font-size:12.5px;padding:3px 10px;border-radius:999px;border:1px solid var(--line2);white-space:nowrap}
+.dn.n{color:#c9b8ff;border-color:rgba(146,108,255,.5)} .dn.d{color:#ffe2b0;border-color:rgba(255,181,71,.5)}
 /* --- METAR --- */
 .mcard{border-color:rgba(95,216,255,.35)}
 .mrow{display:flex;gap:8px}.mrow .txt{margin:0;font-size:18px;min-height:52px}.mrow .btn{min-width:72px}
@@ -489,11 +496,16 @@ body.calm #sky i{animation-play-state:paused}
     <a class="tile" href="#proc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span><span><b data-t="t_proc_b">La procédure pas à pas</b><small id="tProc">Du parking au décollage, à cocher</small></span></a>
     <a class="tile" href="#decode"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 15a8 8 0 0 1 16 0M8 15a4 4 0 0 1 8 0"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/></svg></span><span><b data-t="t_dec_b">Décoder l'annonce du sol</b><small data-t="t_dec_s">« Type IV/75 1432 » → en clair</small></span></a>
     <a class="tile" href="#quiz"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></svg></span><span><b>Quiz</b><small id="tQuiz">10 cas pratiques tirés du MANEX</small></span></a>
-    <a class="tile" href="#yul"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b data-t="t_yul_b">Montréal YUL</b><small data-t="t_yul_s">Pad AeroMag : fréquences et fluides</small></span></a>
+    <a class="tile" href="#stations"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b data-t="t_st_b">Escales</b><small data-t="t_st_s">Handling, fréquences, METAR — 51 escales</small></span></a>
     <a class="tile" href="#timer"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span><span><b data-t="t_timer_b">Minuteur HOT</b><small data-t="t_timer_s">Compte à rebours depuis l'heure annoncée</small></span></a>
     <a class="tile" href="#about"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg></span><span><b data-t="t_about_b">À propos</b><small data-t="t_about_s">Source, version, auteur</small></span></a>
   </div>
   <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
+</section>
+
+<!-- ============ STATIONS ============ -->
+<section class="screen" id="s-stations" data-title="Escales" data-title-en="Stations">
+  <div id="stBody"></div>
 </section>
 
 <!-- ============ GUIDE ============ -->
@@ -766,7 +778,7 @@ function computeHOT({fluid, conc, oat, key, brand}){
 function fmtC(t){ return (t>0?'+':'')+t+' °C'; }
 
 /* ================= METAR : lecture automatique ================= */
-const APT = {"KIAD":[38.95,-77.46],"KJFK":[40.64,-73.78],"CYYZ":[43.68,-79.63],"CYUL":[45.47,-73.74],"DAAE":[36.71,5.07],"DAAG":[36.69,3.21],"DAAS":[36.18,5.33],"DAAT":[22.81,5.45],"DAAV":[36.79,5.87],"DABB":[36.82,7.81],"DABC":[36.28,6.62],"DAOB":[35.34,1.47],"DAOF":[27.7,-8.17],"DAON":[35.01,-1.46],"DAOO":[35.62,-0.62],"DAOR":[31.65,-2.26],"DAUA":[27.84,-0.19],"DAUB":[34.8,5.74],"DAUG":[32.38,3.8],"DAUH":[31.67,6.14],"DAUO":[33.51,6.78],"DAUZ":[28.05,9.64],"DFFD":[12.35,-1.51],"DIAP":[5.26,-3.93],"DNMM":[6.58,3.32],"DRRN":[13.48,2.18],"DTTA":[36.85,10.22],"EBBR":[50.9,4.49],"EDDB":[52.36,13.5],"EDDF":[50.04,8.57],"EDDM":[48.35,11.79],"EGLL":[51.47,-0.46],"EHAM":[52.31,4.76],"EKCH":[55.62,12.65],"EPWA":[52.17,20.97],"ESSA":[59.65,17.92],"GMMN":[33.37,-7.59],"GOBD":[14.67,-17.07],"HECA":[30.12,31.41],"HLLT":[32.66,13.15],"LEAL":[38.28,-0.55],"LEBL":[41.29,2.08],"LEMD":[40.48,-3.57],"LEVC":[39.49,-0.48],"LFBD":[44.83,-0.71],"LFBO":[43.63,1.36],"LFBP":[43.38,-0.42],"LFJL":[48.98,6.25],"LFLC":[45.79,3.16],"LFLL":[45.72,5.09],"LFML":[43.44,5.22],"LFMN":[43.66,7.21],"LFMP":[42.74,2.87],"LFMT":[43.58,3.96],"LFPG":[49.0,2.56],"LFPO":[48.73,2.38],"LFQQ":[50.57,3.1],"LFRS":[47.15,-1.61],"LFSB":[47.6,7.53],"LFST":[48.54,7.63],"LGAV":[37.94,23.93],"LHBP":[47.43,19.26],"LIMC":[45.63,8.72],"LIRF":[41.8,12.25],"LKPR":[50.11,14.26],"LOWW":[48.11,16.58],"LPPT":[38.78,-9.13],"LSGG":[46.24,6.11],"LSZH":[47.46,8.55],"LTBA":[40.97,28.82],"LTFM":[41.26,28.74],"OEJN":[21.68,39.16],"OEMA":[24.55,39.71],"OERK":[24.96,46.7],"OMDB":[25.25,55.37],"OTHH":[25.27,51.61],"UUDD":[55.41,37.91],"UUEE":[55.97,37.41],"ZBAA":[40.07,116.61]};   /* coordonnées (aviationweather.gov) pour le calcul jour / nuit */
+const APT = {"CYUL":[45.47,-73.74],"CYYZ":[43.68,-79.63],"DAAE":[36.71,5.07],"DAAG":[36.69,3.21],"DAAJ":[24.29,9.46],"DAAP":[26.72,8.62],"DAAS":[36.18,5.33],"DAAT":[22.81,5.45],"DAAV":[36.79,5.87],"DAAY":[33.53,-0.25],"DABB":[36.82,7.81],"DABC":[36.28,6.62],"DABT":[35.75,6.31],"DAOB":[35.34,1.47],"DAOF":[27.7,-8.17],"DAOI":[36.22,1.33],"DAON":[35.01,-1.46],"DAOO":[35.62,-0.62],"DAOR":[31.65,-2.26],"DAOY":[33.72,1.09],"DATM":[21.38,0.92],"DAUA":[27.84,-0.19],"DAUB":[34.8,5.74],"DAUE":[30.57,2.86],"DAUG":[32.38,3.8],"DAUH":[31.67,6.14],"DAUL":[33.76,2.93],"DAUO":[33.51,6.78],"DAUU":[31.92,5.41],"DAUZ":[28.05,9.64],"DFFD":[12.35,-1.51],"DIAP":[5.26,-3.93],"DNAA":[9.01,7.26],"DNMM":[6.58,3.32],"DRRN":[13.48,2.18],"DTTA":[36.85,10.22],"DTTJ":[33.87,10.78],"EBBR":[50.9,4.49],"EBCI":[50.46,4.45],"EDDB":[52.36,13.5],"EDDF":[50.04,8.57],"EDDM":[48.35,11.79],"EFHK":[60.32,24.95],"EGBB":[52.45,-1.75],"EGCC":[53.35,-2.27],"EGLL":[51.47,-0.46],"EGSS":[51.89,0.24],"EHAM":[52.31,4.76],"EHRD":[51.96,4.44],"EIDW":[53.42,-6.27],"EKCH":[55.62,12.65],"EPWA":[52.17,20.97],"ESMS":[55.54,13.37],"ESSA":[59.65,17.92],"FAOR":[-26.14,28.24],"FKKD":[4.01,9.72],"FOOL":[0.46,9.41],"FTTJ":[12.13,15.03],"GABS":[12.54,-7.95],"GFLL":[8.62,-13.2],"GMMN":[33.37,-7.59],"GOBD":[14.67,-17.07],"GQNO":[18.31,-15.97],"GUCY":[9.58,-13.61],"HAAB":[8.98,38.8],"HECA":[30.12,31.41],"HESH":[27.98,34.39],"HLLB":[32.09,20.27],"HLLM":[32.9,13.28],"HLLT":[32.66,13.15],"KIAD":[38.95,-77.46],"KJFK":[40.64,-73.78],"LEAL":[38.28,-0.55],"LEAS":[43.56,-6.03],"LEBB":[43.3,-2.91],"LEBL":[41.29,2.08],"LEMD":[40.48,-3.57],"LEMG":[36.67,-4.5],"LEPA":[39.55,2.73],"LEPP":[42.77,-1.65],"LEST":[42.9,-8.42],"LEVC":[39.49,-0.48],"LEVT":[42.88,-2.73],"LEVX":[42.22,-8.63],"LEZG":[41.66,-1.03],"LEZL":[37.42,-5.89],"LFBD":[44.83,-0.71],"LFBO":[43.63,1.36],"LFBP":[43.38,-0.42],"LFJL":[48.98,6.25],"LFLC":[45.79,3.16],"LFLL":[45.72,5.09],"LFML":[43.44,5.22],"LFMN":[43.66,7.21],"LFMP":[42.74,2.87],"LFMT":[43.58,3.96],"LFPG":[49.0,2.56],"LFPO":[48.73,2.38],"LFQQ":[50.57,3.1],"LFRS":[47.15,-1.61],"LFSB":[47.6,7.53],"LFST":[48.54,7.63],"LGAV":[37.94,23.93],"LHBP":[47.43,19.26],"LHSM":[46.69,17.16],"LIMC":[45.63,8.72],"LIRF":[41.8,12.25],"LKPR":[50.11,14.26],"LOWW":[48.11,16.58],"LPPT":[38.78,-9.13],"LSGG":[46.24,6.11],"LSZH":[47.46,8.55],"LTBA":[40.97,28.82],"LTFM":[41.26,28.74],"OEJN":[21.68,39.16],"OEMA":[24.55,39.71],"OERK":[24.96,46.7],"OJAI":[31.72,35.99],"OKKK":[29.23,47.98],"OLBA":[33.82,35.49],"OMDB":[25.25,55.37],"OSDI":[33.41,36.52],"OSLK":[35.4,35.95],"OTHH":[25.27,51.61],"ULLI":[59.8,30.27],"UUDD":[55.41,37.91],"UUEE":[55.97,37.41],"ZBAA":[40.07,116.61]};   /* coordonnées (aviationweather.gov) pour le calcul jour / nuit */
 /* Hauteur du soleil (degrés) — algorithme NOAA simplifié */
 function sunElev(lat, lon, ms){
   const rad=Math.PI/180, d = ms/86400000 + 2440587.5 - 2451545.0;
@@ -933,7 +945,7 @@ function icon(kind){
 
 /* ================= ROUTER ================= */
 let curScreen='home';
-const SCREENS = ['home','guide','learn','calc','timer','proc','decode','quiz','yul','about'];
+const SCREENS = ['home','stations','guide','learn','calc','timer','proc','decode','quiz','yul','about'];
 function route(){
   let h = (location.hash||'#home').slice(1); if (!SCREENS.includes(h)) h='home';
   curScreen = h;
@@ -948,6 +960,7 @@ function route(){
   if (h==='timer') renderTimer();
   if (h==='quiz' && !Q.started) renderQuiz();
   if (h==='guide') renderGuide();
+  if (h==='stations') renderStations();
   scrollTo(0,0);
 }
 addEventListener('hashchange', route);
@@ -1795,6 +1808,7 @@ const I18N = {
   t_yul_b:'Montreal YUL', t_yul_s:'AeroMag pad: frequencies and fluids',
   t_timer_b:'HOT timer', t_timer_s:'Countdown from the announced time',
   t_about_b:'About', t_about_s:'Source, version, author',
+  t_st_b:'Stations', t_st_s:'Handling, frequencies, METAR — 51 stations',
   t_guide_b:'User guide', t_guide_s:'How to use the app, with an example',
   learn_lead:'One idea per card. Read them in order.', learn_btn:'Go to the HOT calculator',
   proc_lead:'Tick as you go. Ticks are saved on this device.', proc_reset:'Untick all',
@@ -1867,7 +1881,42 @@ function switchLang(){
   if (Q.started) renderQuiz();
   const y = scrollY; route(); scrollTo(0, y);
   if (curScreen!=='guide') renderGuide();
+  const ss=$('#stSearch'); if (ss){ $('#stBody').innerHTML=''; } if (curScreen==='stations') renderStations();
 };
+
+/* ================= ESCALES (OM C §4.2.1) ================= */
+const STN = {"source":"OM C Air Algérie Éd. 03 Rév. 20 (SEP 2026), §4.2.1 Company communications — VHF, réseau international","domestic":"Réseau domestique : AH 131.85 (sauf exceptions, voir OM C §4.2.1)","stations":[["DIAP","Abidjan","NAS","131.600","NAS","131.60"],["LEAL","Alicante","GROUNDFORCE","131.625","HLA","130.65"],["OJAI","Amman","RJ","131.900","RJ","131.9"],["GABS","Bamako","ASAM","131.600","NIL","NIL"],["LEBL","Barcelona","IBERIA","131.550","NIL","NIL"],["LFSB","Basle-Mulhouse","SWISSPORT","131.755","NIL","NIL"],["ZBAA","Beijing","BGS","131.250","AMECO","NIL"],["OLBA","Beirut","LAT","131.600","KU","NIL"],["LEBB","Bilbao","IBERIA","NIL","NIL","NIL"],["LFBD","Bordeaux","AVIAPARTNER","131.800","NIL","NIL"],["EBBR","Bruxelles","SWISSPORT","131.455","SN AEROSPACE","130.600"],["EBCI","Brussels South Charleroi","AEROPORT DE CHARLEROI","131.47","NIL","NIL"],["LHBP","Budapest","MENZIES","131.850","NIL","NIL"],["HECA","Cairo","CAIRO GROUND NORTH","131.850","NIL","NIL"],["GMMN","Casablanca","RAM","131.7","DUTY OFFICER","-"],["GOBD","Dakar","2 AS","131.900","NIL","NIL"],["OTHH","Doha","NIL","115.050","NIL","NIL"],["OMDB","Dubai","DNATA","131.600","KUWAIT AIRWAYS","130.525"],["EDDF","Frankfurt/Main","WISAG","131.705","NIL","NIL"],["LSGG","Geneva","SWISSPORT","129.705","NIL","NIL"],["LTFM","Istanbul","CELEBI","131.650","NIL","NIL"],["OEJN","Jeddah","SGS","NIL","NIL","NIL"],["LFQQ","Lille","AVIAPARTNER","131.485","ASSISTANCE","-"],["LPPT","Lisbon","GROUND FORCE","131.475","-","-"],["EGLL","London - Heathrow","G H LONDON","131.585","KLM","PAS DE FRÉQUENCE"],["EGSS","London - Stansted","NIL","131.410","NIL","NIL"],["LFLL","Lyon","AVIAPARTNER","130.590","NIL","NIL"],["LEMD","Madrid","IBERIA","131.550","KLM ENGINEERING","NIL"],["LEMG","Malaga","IBERIA","131.675","-","-"],["LFML","Marseille","ALYZIA","131.490","NIL","NIL"],["OEMA","Medina","SGS","NIL","NIL","NIL"],["LFJL","Metz","SWISSPORT","131.570","NIL","NIL"],["LIMC","Milan","AVIAPARTNER","131.605","NIL","NIL"],["LFMT","Montpellier","AVIAPARTNER","131.400","NIL","NIL"],["CYUL","Montreal","SWISSPORT","130.500","AIR CANADA","130.175"],["UUEE","Moscow","TERMINAL F / TERMINAL E ET D","131.600","",""],["LFRS","Nantes","AVIAPARTNER","131.630","NIL","NIL"],["DRRN","Niamey","RAE","131.600","A.ZOUAOUI DR NIAMEY","131.6"],["LFMN","Nice","AVIAPARTNER","131.625","AVIACARE","Joignable via OPS AVIAPARTNER — CTC AVIACARE 0489985120"],["GQNO","Nouakchott","M.A.I","N,TRS","YOSSOUF I","129.0"],["DFFD","Ouagadougou","R.E.G.G.A.E","131.600","R.E.G.G.A.E","131.5"],["LEAS","Oviedo","IBERIA","131.475","NIL","NIL"],["LEPA","Palma","GROUND FORCE","131.850","NIL","NIL"],["LEPP","Pampelune","IBERIA","131.475","NIL","NIL"],["LFPG","Paris CDG","ALYZIA","131.915","NIL","NIL"],["LFPO","Paris Orly","AVIAPARTNER","131.410","NIL","NIL"],["LIRF","Rome","AVIAPARTNER","131.465","NIL","NIL"],["LFST","Strasbourg","AVIAPARTNER","134.480","NIL","NIL"],["LFBO","Toulouse","AVIAPARTNER","131.400","NIL","NIL"],["DTTA","Tunis","TUNISAR","131.700","NIL","NIL"],["LOWW","Vienna","CELEBI","131.675","NIL","NIL"]]};
+const isNil = v => !v || /^(NIL|-)$/i.test(v.trim());
+let stQuery = '';
+function renderStations(){
+  const B = $('#stBody'); if (!B) return;
+  if (!$('#stSearch')){
+    B.innerHTML = `<input class="txt" id="stSearch" style="font-size:17px" placeholder="${tr('Ville ou code OACI (ex. Vienna, LOWW)','City or ICAO code (e.g. Vienna, LOWW)')}" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <p class="lead" style="font-size:14px;margin:4px 0 12px">${tr('Agent de handling, fréquence compagnie et agent technique de chaque escale. Pour le dégivrage, demandez via le handling.','Handling agent, company frequency and engineering agent for each station. For de-icing, ask through the handling agent.')}</p>
+      <div id="stList"></div>
+      <div class="infobox" style="font-size:13.5px">${tr(STN.domestic, 'Domestic network: AH 131.85 (except where stated, see OM C §4.2.1)')}<br><span class="mono" style="font-size:12px">${tr('Source : '+esc(STN.source),'Source: Air Algérie OM C Ed. 03 Rev. 20 (SEP 2026), §4.2.1 Company communications — VHF, international network')}</span></div>`;
+    $('#stSearch').addEventListener('input', e=>{ stQuery = e.target.value.trim().toUpperCase(); stList(); });
+  }
+  $('#stSearch').value = stQuery; stList();
+}
+function stList(){
+  const now = Date.now(), q = stQuery;
+  const rows = STN.stations.filter(st => !q || st[0].includes(q) || st[1].toUpperCase().includes(q));
+  $('#stList').innerHTML = rows.length ? rows.map(([icao, city, ag, fq, eng, efq])=>{
+    const n = isNight(icao, now);
+    const dn = n===null ? '' : `<span class="dn ${n?'n':'d'}">${n?tr('☾ nuit','☾ night'):tr('☀ jour','☀ day')}</span>`;
+    const engTxt = isNil(eng) ? '' : `<div class="strow"><span>${tr('Technique','Engineering')}</span><b>${esc(eng)}${isNil(efq)?'':' · '+esc(efq)}</b></div>`;
+    return `<div class="card st"><div class="sthead"><div><b class="stcity">${esc(city)}</b> <span class="mono stic">${icao}</span></div>${dn}</div>
+      <div class="strow"><span>Handling</span><b>${isNil(ag)?'—':esc(ag)}</b></div>
+      <div class="strow"><span>${tr('Fréq. compagnie','Company freq.')}</span><b class="mono">${isNil(fq)?'—':esc(fq)}</b></div>${engTxt}
+      <div class="row" style="margin-top:10px"><button class="btn" data-stmetar="${icao}">📡 ${tr('METAR → calcul HOT','METAR → HOT calculation')}</button>${icao==='CYUL'?`<a class="btn ghost" href="#yul">${tr('Pad AeroMag ›','AeroMag pad ›')}</a>`:''}</div></div>`; }).join('')
+    : `<div class="infobox">${tr('Aucune escale trouvée.','No station found.')}</div>`;
+}
+$('#stBody').addEventListener('click', e=>{
+  const b = e.target.closest('[data-stmetar]'); if (!b) return;
+  const icao = b.dataset.stmetar; resetCalc(); location.hash = '#calc';
+  setTimeout(()=>{ const i=$('#metIn'); if (i){ i.value = icao; runMetar(); } }, 60);
+});
 
 /* ================= GUIDE D'UTILISATION ================= */
 let COACH = false, guideAnchor = null;

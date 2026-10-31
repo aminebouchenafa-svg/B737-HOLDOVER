@@ -219,6 +219,18 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   await p.selectOption('#brandSel', '21'); await p.waitForTimeout(100);
   ok(await p.$eval('[data-conc="75/25"]', e => e.classList.contains('dis')) && !(await p.$eval('[data-conc="100/0"]', e => e.classList.contains('dis'))), 'UI marque : 75/25 grisé quand la table de marque ne le prévoit pas (T21)');
 
+  // ---- Escales (OM C) ----
+  await p.evaluate(() => { location.hash = '#stations'; }); await p.waitForTimeout(200);
+  ok((await p.$$('.card.st')).length === 51, 'Escales : 51 escales listées');
+  await p.fill('#stSearch', 'vienna'); await p.waitForTimeout(100);
+  let stTxt = await p.textContent('#stList');
+  ok((await p.$$('.card.st')).length === 1 && stTxt.includes('CELEBI') && stTxt.includes('131.675'), 'Escales : recherche « vienna » → LOWW, CELEBI 131.675');
+  await p.fill('#stSearch', 'LFPG'); await p.waitForTimeout(100);
+  ok((await p.textContent('#stList')).includes('ALYZIA') && (await p.textContent('#stList')).includes('131.915'), 'Escales : LFPG → ALYZIA 131.915');
+  await p.click('[data-stmetar="LFPG"]'); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => location.hash === '#calc' && document.getElementById('metIn').value === 'LFPG'), 'Escales : bouton METAR ouvre le calculateur avec LFPG');
+  await p.fill('#stSearch', '').catch(()=>{}); await p.evaluate(() => { stQuery=''; });
+
   // ---- Autres écrans ----
   for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
     await p.evaluate(s => location.hash = '#' + s, s); await p.waitForTimeout(150);
