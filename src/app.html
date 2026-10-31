@@ -321,7 +321,8 @@ body.calm #sky i{animation-play-state:paused}
 .ailist .el{color:var(--txt)}.ailist .dots{flex:1;border-bottom:1px dotted var(--dim);transform:translateY(-4px)}.ailist .act{color:var(--ice2)}
 .mx.cat th,.mx.cat td{padding:7px 5px;font-size:13px}.mx.cat th.rh{min-width:0;max-width:92px;font-size:11.5px}.mx.cat thead th{min-width:0}
 .cagrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.carow{display:grid;grid-template-columns:1fr 130px;gap:8px}.carow .txt{font-size:16px;min-height:50px;margin:4px 0}.carow .num{font-size:20px;min-height:50px;margin:4px 0}
+.carow{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center}.calbl b{display:block;font-size:15px}.calbl small{color:var(--mut);font-size:12.5px}
+.how{border-color:rgba(95,216,255,.35)}.carow .num{font-size:20px;min-height:50px;margin:4px 0}
 /* --- escales --- */
 .st .sthead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
 .stcity{font-family:var(--head);font-size:16px;color:var(--ice2)} .stic{color:var(--mut);font-size:14px;margin-left:6px}
@@ -500,7 +501,7 @@ body.calm #sky i{animation-play-state:paused}
   <div id="hHist"></div>
   <h2 class="sect" data-t="tools">Outils</h2>
   <div class="tiles">
-    <a class="tile hero" href="#calc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span><b data-t="t_calc_b">Calculateur HOT</b><small data-t="t_calc_s">4 questions → le HOT et la case exacte du MANEX</small></span></a>
+    <a class="tile hero" href="#calc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span><span><b data-t="t_calc_b">Calculateur HOT</b><small data-t="t_calc_s">Trouver le HOT : 4 questions → la durée de protection</small></span></a>
     <a class="tile" href="#guide"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span><span><b data-t="t_guide_b">Guide d'utilisation</b><small data-t="t_guide_s">Comment se servir de l'app, avec un exemple</small></span></a>
     <a class="tile" href="#learn"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H4zM20 5h-5a3 3 0 0 0-3 3"/><path d="M20 5v13h-6"/></svg></span><span><b data-t="t_learn_b">Comprendre en 2 minutes</b><small data-t="t_learn_s">Les 7 idées à retenir</small></span></a>
     <a class="tile" href="#proc"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span><span><b data-t="t_proc_b">La procédure pas à pas</b><small id="tProc">Du parking au décollage, à cocher</small></span></a>
@@ -509,7 +510,7 @@ body.calm #sky i{animation-play-state:paused}
     <a class="tile" href="#antiice"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.8 2.8M16.2 16.2L19 19M5 19l2.8-2.8M16.2 7.8L19 5"/></svg></span><span><b data-t="t_ai_b">Anti-givrage &amp; run-ups</b><small data-t="t_ai_s">Conditions givrantes ? Rappel des run-ups moteur</small></span></a>
     <a class="tile" href="#coldalt"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13.5V4a2 2 0 1 1 4 0v9.5a4 4 0 1 1-4 0z"/><path d="M12 9v6"/><path d="M19 4v6M17 8l2 2 2-2"/></svg></span><span><b data-t="t_ca_b">Corrections grand froid</b><small data-t="t_ca_s">Altitudes minimales corrigées (FCOM SP.16)</small></span></a>
     <a class="tile" href="#stations"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b data-t="t_st_b">Escales</b><small data-t="t_st_s">Handling, fréquences, METAR — 51 escales</small></span></a>
-    <a class="tile" href="#timer"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span><span><b data-t="t_timer_b">Minuteur HOT</b><small data-t="t_timer_s">Compte à rebours depuis l'heure annoncée</small></span></a>
+    <a class="tile" href="#timer"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span><span><b data-t="t_timer_b">Minuteur HOT</b><small data-t="t_timer_s">Suivre le temps restant du HOT en cours</small></span></a>
     <a class="tile" href="#about"><span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg></span><span><b data-t="t_about_b">À propos</b><small data-t="t_about_s">Source, version, auteur</small></span></a>
   </div>
   <div class="sign">Prepared by CPT M.A BOUCHENAFA<br>Fleet Training Manager B737NG/MAX</div>
@@ -561,6 +562,7 @@ body.calm #sky i{animation-play-state:paused}
 
 <!-- ============ DECODE ============ -->
 <section class="screen" id="s-decode" data-title="Décoder l'annonce" data-title-en="Decode the call">
+  <div class="card how" data-t="dec_how"><h3>À quoi ça sert</h3><p style="margin:0 0 6px">À la fin du dégivrage, le sol annonce un <b>code</b> : type de fluide / mélange / heure de début. Exemple : <span class="mono">« Type IV/75 at 1432 »</span>.</p><p style="margin:0">Tapez ce code ici : l'app le traduit en clair (Type IV, 75 % fluide et 25 % eau, HOT démarré à 14:32 UTC), vous rappelle quoi noter à l'ATL, puis <b>« Calculer le HOT »</b> pré-remplit le calculateur avec le fluide, la concentration et l'heure.</p></div>
   <p class="lead" data-t="dec_lead">Tapez le code annoncé par le sol (ex. <span class="mono">Type IV/75 1432</span>).</p>
   <input class="txt" id="decIn" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Type IV/75 1432">
   <div class="chips" id="decQuick"></div>
@@ -1833,12 +1835,12 @@ const I18N = {
   skip:'tap to skip',
   disc:'<b>⚠ Disclaimer.</b> Training tool based on MANEX A §8.2.4 (TR 39-4 OCT.26, FAA Winter 2026-2027 tables). In case of any difference, the MANEX A in force prevails. The HOT is guidance only and never replaces the inspection of critical surfaces. The final decision rests with the captain.',
   tools:'Tools',
-  t_calc_b:'HOT calculator', t_calc_s:'4 questions → the HOT and the exact MANEX cell',
+  t_calc_b:'HOT calculator', t_calc_s:'Find the HOT: 4 questions → the protection time',
   t_learn_b:'Understand in 2 minutes', t_learn_s:'The 7 key ideas',
   t_proc_b:'Step-by-step procedure',
   t_dec_b:"Decode the ground crew's call", t_dec_s:'"Type IV/75 1432" → plain language',
   t_yul_b:'Montreal YUL', t_yul_s:'AeroMag pad: frequencies and fluids',
-  t_timer_b:'HOT timer', t_timer_s:'Countdown from the announced time',
+  t_timer_b:'HOT timer', t_timer_s:'Track the time left on the running HOT',
   t_about_b:'About', t_about_s:'Source, version, author',
   t_ai_b:'Anti-ice &amp; run-ups', t_ai_s:'Icing conditions? Engine run-up reminder',
   t_ca_b:'Cold temperature corrections', t_ca_s:'Corrected minimum altitudes (FCOM SP.16)',
@@ -1846,6 +1848,7 @@ const I18N = {
   t_guide_b:'User guide', t_guide_s:'How to use the app, with an example',
   learn_lead:'One idea per card. Read them in order.', learn_btn:'Go to the HOT calculator',
   proc_lead:'Tick as you go. Ticks are saved on this device.', proc_reset:'Untick all',
+  dec_how:'<h3>What it is for</h3><p style="margin:0 0 6px">At the end of de-icing, the ground crew calls a <b>code</b>: fluid type / mix / start time. Example: <span class="mono">"Type IV/75 at 1432"</span>.</p><p style="margin:0">Type that code here: the app translates it (Type IV, 75 % fluid and 25 % water, HOT started at 14:32 UTC), reminds you what to enter in the ATL, then <b>"Calculate HOT"</b> pre-fills the calculator with the fluid, concentration and time.</p>',
   dec_lead:'Type the code announced by the ground crew (e.g. <span class="mono">Type IV/75 1432</span>).',
   tab_home:'Home', tab_timer:'Timer', tab_proc:'Procedure', tab_dec:'Decode',
   al_t:'HOT EXCEEDED',
@@ -2035,17 +2038,29 @@ function coldCorr(temp, height, unit){
   else { hi=T.h.findIndex(x=>height<=x); corr=T.c[ti][hi]; }
   return {corr: Math.ceil(corr/T.step-1e-9)*T.step, ti, hi, extra: height>T.h[11]};
 }
-const CA = Object.assign({unit:'ft', elev:'', temp:'', alts:[{l:'FAF / FAP',v:''},{l:'DA / MDA',v:''},{l:'GA / MAP',v:''},{l:'MSA',v:''}]}, store.get('hot.ca', {}));
+const CA_ROWS = () => [
+  {l:tr('Altitude de passage du FAF / FAP','FAF / FAP crossing altitude'), d:tr('ex. 2000 ft au FAF','e.g. 2000 ft at the FAF')},
+  {l:tr('DA ou MDA','DA or MDA'), d:tr('minima de l\'approche','approach minima')},
+  {l:tr('Altitude de remise des gaz','Missed approach altitude'), d:tr('palier de la remise des gaz','missed approach level-off')},
+  {l:tr('Autre altitude minimale','Other minimum altitude'), d:tr('MSA, palier initial, départ…','MSA, initial altitude, departure…')}];
+const CA = Object.assign({unit:'ft', elev:'', temp:'', alts:[{v:''},{v:''},{v:''},{v:''}]}, store.get('hot.ca', {}));
+if (!Array.isArray(CA.alts) || CA.alts.length!==4) CA.alts=[{v:''},{v:''},{v:''},{v:''}];
 const num = v => { const x=Number(String(v).trim().replace(',', '.').replace('−','-').replace(/^M/i,'-')); return String(v).trim()==='' || isNaN(x) ? null : x; };
 function renderCA(){
   const B=$('#caBody'), u=CA.unit, U=u==='ft'?'ft':'m';
-  let h = `<div class="seg"><button data-caunit="ft" class="${u==='ft'?'sel':''}">${tr('Pieds','Feet')}</button><button data-caunit="m" class="${u==='m'?'sel':''}">${tr('Mètres','Metres')}</button></div>
+  let h = `<div class="card how"><h3>${tr('Comment faire','How to')}</h3><ol class="notes" style="font-size:15px;padding-left:20px;margin:0">
+      <li>${tr('Entrez la <b>température de l\'aérodrome</b> (ou le METAR) et son <b>élévation</b> lue sur la carte Jeppesen.','Enter the <b>aerodrome temperature</b> (or the METAR) and its <b>elevation</b> from the Jeppesen chart.')}</li>
+      <li>${tr('Recopiez les <b>altitudes de la carte d\'approche</b> : FAF, DA/MDA, remise des gaz…','Copy the <b>altitudes from the approach chart</b>: FAF, DA/MDA, missed approach…')}</li>
+      <li>${tr('Lisez la colonne <b>« Corrigée »</b> : c\'est l\'altitude à voler. Affichez la valeur <b>MCP</b> et réglez la DA/MDA corrigée. Prévenez l\'ATC.','Read the <b>"Corrected"</b> column: that is the altitude to fly. Set the <b>MCP</b> value and the corrected DA/MDA. Advise ATC.')}</li></ol>
+      <p class="mhelp">${tr('Seulement si la température de l\'aérodrome est de <b>0 °C ou moins</b>.','Only if the aerodrome temperature is <b>0 °C or below</b>.')}</p>
+      <button class="btn ghost block" id="caEx" style="margin-top:8px">${tr('Voir un exemple','Show an example')}</button></div>
+    <div class="seg"><button data-caunit="ft" class="${u==='ft'?'sel':''}">${tr('Pieds','Feet')}</button><button data-caunit="m" class="${u==='m'?'sel':''}">${tr('Mètres','Metres')}</button></div>
     <div class="card"><h3>📡 ${tr('Température de l\'aérodrome depuis le METAR (facultatif)','Aerodrome temperature from the METAR (optional)')}</h3><div class="mrow"><input class="txt" id="caMet" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${tr('LOWW — ou collez le METAR','LOWW — or paste the METAR')}"><button class="btn primary" id="caMetGo">OK</button></div><div id="caMetOut"></div></div>
     <div class="cagrid"><div><label class="lbl" for="caTemp">${tr('TEMP. AÉRODROME (°C)','AERODROME TEMP (°C)')}</label><input class="num" id="caTemp" inputmode="text" placeholder="-25" value="${esc(CA.temp)}"></div>
     <div><label class="lbl" for="caElev">${tr('ÉLÉVATION SOURCE QNH','QNH SOURCE ELEVATION')} (${U})</label><input class="num" id="caElev" inputmode="numeric" placeholder="${u==='ft'?'600':'180'}" value="${esc(CA.elev)}"></div></div>
     <p class="mhelp" style="margin-top:-4px">${tr('Élévation de l\'aérodrome qui fournit le QNH (normalement celui de départ ou d\'arrivée), lue sur la carte Jeppesen.','Elevation of the aerodrome providing the QNH (normally departure or destination), read on the Jeppesen chart.')}</p>
     <label class="lbl">${tr('ALTITUDES MINIMALES PUBLIÉES','PUBLISHED MINIMUM ALTITUDES')} (${U})</label>
-    ${CA.alts.map((a,i)=>`<div class="carow"><input class="txt calbl" data-cal="${i}" value="${esc(a.l)}"><input class="num caval" data-cav="${i}" inputmode="numeric" placeholder="—" value="${esc(a.v)}"></div>`).join('')}
+    ${CA_ROWS().map((r,i)=>`<div class="carow"><label class="calbl" for="cav${i}"><b>${r.l}</b><small>${r.d}</small></label><input class="num caval" id="cav${i}" data-cav="${i}" inputmode="numeric" placeholder="—" value="${esc(CA.alts[i].v)}"></div>`).join('')}
     <div id="caOut"></div>`;
   B.innerHTML=h; caCompute();
 }
@@ -2053,14 +2068,14 @@ function caCompute(){
   const out=$('#caOut'); if (!out) return;
   const u=CA.unit, U=u==='ft'?'ft':'m', t=num(CA.temp), el=num(CA.elev);
   if (t===null || el===null){ out.innerHTML=`<div class="infobox">${tr('Entrez la température et l\'élévation, puis les altitudes.','Enter the temperature and elevation, then the altitudes.')}</div>`; return; }
-  if (t>0){ out.innerHTML=`<div class="res" style="border-color:var(--ok);background:rgba(6,42,28,.6)"><div class="lab" style="color:var(--ok)">${tr('PAS DE CORRECTION NÉCESSAIRE','NO CORRECTION NEEDED')}</div><p style="margin:8px 0 0">${tr('Température de l\'aérodrome au-dessus de 0 °C.','Aerodrome temperature above 0 °C.')}</p></div>`; return; }
+  if (t>0){ out.innerHTML=`<div class="res" style="border-color:var(--ok);background:rgba(6,42,28,.6)"><div class="lab" style="color:var(--ok)">${tr('PAS DE CORRECTION NÉCESSAIRE','NO CORRECTION NEEDED')}</div><p style="margin:8px 0 0">${tr(`Avec ${t} °C, on vole les altitudes publiées telles quelles : le tableau du FCOM ne s'applique qu'à 0 °C et en dessous.`,`At ${t} °C, fly the published altitudes as they are: the FCOM table only applies at 0 °C and below.`)}</p></div>`; return; }
   if (t<-50){ out.innerHTML=`<div class="badbox">${tr('Température sous −50 °C : hors du tableau du FCOM.','Temperature below −50 °C: outside the FCOM table.')}</div>`; return; }
   let rows='', hiMax=-1, ti=null, extra=false;
-  CA.alts.forEach(a=>{
+  CA.alts.forEach((a,i)=>{
     const v=num(a.v); if (v===null) return;
     const H=v-el, c=coldCorr(t, H, u); ti=c.ti; if (c.hi>hiMax) hiMax=c.hi; extra = extra || c.extra;
     const corr=v+c.corr, mcp = u==='ft' ? Math.ceil(corr/100-1e-9)*100 : corr;
-    rows += `<tr><th class="rh">${esc(a.l)}</th><td>${v}</td><td>${H<=0?'—':H}</td><td>+${c.corr}</td><td class="hx">${corr}</td>${u==='ft'?`<td><b>${mcp}</b></td>`:''}</tr>`;
+    rows += `<tr><th class="rh">${esc(CA_ROWS()[i].l)}</th><td>${v}</td><td>${H<=0?'—':H}</td><td>+${c.corr}</td><td class="hx">${corr}</td>${u==='ft'?`<td><b>${mcp}</b></td>`:''}</tr>`;
   });
   if (ti===null) ti=Math.ceil(-t/10-1e-9);
   let h = rows ? `<div class="tblwrap"><table class="mx cat"><thead><tr><th class="rh"></th><th>${tr('Publiée','Published')}</th><th>${tr('Hauteur','Height')}</th><th>Correction</th><th>${tr('Corrigée','Corrected')}</th>${u==='ft'?'<th>MCP</th>':''}</tr></thead><tbody>${rows}</tbody></table></div>` : '';
@@ -2080,6 +2095,7 @@ function saveCA(){ store.set('hot.ca', CA); }
 $('#caBody').addEventListener('click', async e=>{
   const t=e.target.closest('button'); if (!t) return;
   if (t.dataset.caunit){ CA.unit=t.dataset.caunit; saveCA(); renderCA(); return; }
+  if (t.id==='caEx'){ Object.assign(CA,{unit:'ft', temp:'-20', elev:'400', alts:[{v:'2400'},{v:'600'},{v:'3000'},{v:''}]}); saveCA(); renderCA(); setTimeout(()=>$('#caOut').scrollIntoView({behavior:'smooth',block:'start'}),50); return; }
   if (t.id==='caMetGo'){
     const v=($('#caMet').value||'').trim().toUpperCase(); if (!v) return;
     let raw=v; if (/^[A-Z]{4}$/.test(v)){ $('#caMetOut').innerHTML=`<p class="mhelp">⏳ ${tr('Recherche du METAR…','Fetching the METAR…')}</p>`; raw=await fetchMetar(v); if (!raw){ $('#caMetOut').innerHTML=`<div class="badbox">${tr('METAR introuvable. Collez le METAR officiel.','METAR not found. Paste the official METAR.')}</div>`; return; } }
@@ -2090,7 +2106,7 @@ $('#caBody').addEventListener('click', async e=>{
 $('#caBody').addEventListener('input', e=>{
   const d=e.target.dataset;
   if (e.target.id==='caTemp') CA.temp=e.target.value; else if (e.target.id==='caElev') CA.elev=e.target.value;
-  else if (d.cav!==undefined) CA.alts[d.cav].v=e.target.value; else if (d.cal!==undefined) CA.alts[d.cal].l=e.target.value; else return;
+  else if (d.cav!==undefined) CA.alts[d.cav].v=e.target.value; else return;
   saveCA(); caCompute();
 });
 

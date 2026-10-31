@@ -246,6 +246,10 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   await p.fill('#caTemp', '-20'); await p.fill('#caElev', '400'); await p.fill('[data-cav="1"]', '1400'); await p.waitForTimeout(100);
   const caTxt = await p.textContent('#caOut');
   ok(caTxt.includes('1540') && caTxt.includes('1600'), 'UI grand froid : DA 1400 ft, élévation 400 ft, −20 °C → 1540 ft, MCP 1600');
+  await p.click('#caEx'); await p.waitForTimeout(150);
+  ok((await p.textContent('#caOut')).includes('2680') && (await p.textContent('#caOut')).includes('630') && (await p.textContent('#caOut')).includes('3420'), 'UI grand froid : exemple (−20 °C, 400 ft) → FAF 2400 → 2680, DA 600 → 630, GA 3000 → 3420');
+  await p.fill('#caTemp', '9'); await p.waitForTimeout(100);
+  ok((await p.textContent('#caOut')).includes('ne s\'applique qu\'à 0 °C'), 'UI grand froid : +9 °C → message clair, pas de correction');
   // ---- Anti-givrage & run-ups ----
   await p.evaluate(() => { localStorage.removeItem('hot.ai'); Object.assign(AI,{oat:'',moist:false,contam:false,severe:false,src:null}); FLEET='ng'; location.hash = '#antiice'; });
   await p.waitForTimeout(150);
