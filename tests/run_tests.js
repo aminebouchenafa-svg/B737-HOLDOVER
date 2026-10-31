@@ -174,6 +174,17 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   ok(await p.evaluate(() => location.hash === '#timer' && !!T), 'Minuteur lancé avec « Maintenant »');
   await p.evaluate(() => stopTimer());
 
+  // ---- Procédure : choix NG / MAX ----
+  await p.evaluate(() => { location.hash = '#proc'; }); await p.waitForTimeout(200);
+  await p.click('[data-fleet="ng"]');
+  let txt = await p.textContent('#procBody');
+  ok(txt.includes('70 % N1') && !txt.includes('≥ 31 °C') && txt.includes('FCOM NG SP.16'), 'Procédure NG : run-up 70 % N1, pas de contrôle huile MAX');
+  await p.click('[data-fleet="max"]');
+  txt = await p.textContent('#procBody');
+  ok(txt.includes('≥ 50 % N1') && txt.includes('≥ 31 °C') && !txt.includes('70 % N1') && txt.includes('FCOM MAX SP.16'), 'Procédure MAX : run-up 50 % N1 et huile ≥ 31 °C');
+  ok(await p.evaluate(() => store.get('hot.fleet','') === 'max'), 'Choix MAX mémorisé');
+  await p.click('[data-fleet="ng"]');
+
   // ---- Autres écrans ----
   for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
     await p.evaluate(s => location.hash = '#' + s, s); await p.waitForTimeout(150);

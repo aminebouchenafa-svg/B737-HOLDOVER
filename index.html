@@ -237,6 +237,8 @@ table.mx td.hx.na{background:var(--bad) !important;color:#fff !important;box-sha
 .chk .ci .dots{flex:1;border-bottom:1px dotted var(--dim);min-width:12px;transform:translateY(-4px)}
 .chk .ci .act{color:var(--ice2);text-align:right}
 .chk .who{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--ice);border:1px solid #1d5a70;border-radius:6px;padding:1px 6px;margin-top:4px}
+.chk .who.fl{color:#d6c8ff;border-color:rgba(146,108,255,.6);margin-right:6px}
+.fleetseg{margin:0 0 12px}
 .chk .cn{display:block;color:var(--mut);font-size:13.5px;margin-top:4px}
 .dlg{display:flex;flex-direction:column;gap:10px;margin:10px 0}
 .bub{max-width:88%;padding:10px 14px;border-radius:16px;font-family:var(--mono);font-size:15px}
@@ -569,7 +571,7 @@ body.calm #sky i{animation-play-state:paused}
   <div class="card">
     <h3>Source</h3>
     <p>MANEX A Air Algérie, §8.2.4 « Dégivrage et antigivrage au sol » — Éd. 02, TR 39-4, OCT.26. Tableaux FAA Holdover Time Guidelines Winter 2026-2027.</p>
-    <p>Procédure pas à pas complétée par l'OPS INFO B737 « Cold Weather Operations » (CL-AH-DOA-DOC-B737-002 Éd. 06, NOV 22) et le FCOM 737-8D6 SP.16 « Cold Weather Operations ».</p>
+    <p>Procédure pas à pas complétée par l'OPS INFO B737 « Cold Weather Operations » (CL-AH-DOA-DOC-B737-002 Éd. 06, NOV 22) et le FCOM 737-8D6 SP.16 « Cold Weather Operations » (NG) et le FCOM 737 MAX SP.16 (MAX).</p>
     <p>Tableaux intégrés : 1 (givre actif), 2 (Type I aluminium), 4 (Type II générique), 20 (Type IV générique), 53 (intensité de la neige), 54 et 55 (application des fluides).</p>
     <p>Aucune valeur n'est interpolée : l'app lit la case du tableau, et retient la valeur basse (règle Air Algérie, 8.2.4.9 NOTE).</p>
   </div>
@@ -1391,6 +1393,12 @@ const PROC = [
     ['Flight controls','CHECK','C',{fr:"Neige ou glace sur l'aile : envisager de retarder ce contrôle après le dégivrage. Efforts plus élevés à basse température.",en:'Snow or ice on the wing: consider delaying this check until after de-icing. Higher control forces at low temperature.'}],
     ['Flaps','CHECK','F/O',{fr:"UP → 40 → UP (course complète). Surveiller l'indicateur de volets et le panneau des becs.",en:'UP → 40 → UP (full travel). Watch the flap indicator and the leading-edge devices panel.'}],
     ['Flaps',{fr:'UP pour rouler',en:'UP for taxi'},'',{fr:'Si roulage contaminé, précipitations sous 0 °C ou dégivrage prévu : rouler volets rentrés.',en:'Contaminated taxi route, precipitation below 0 °C or de-icing planned: taxi with flaps up.'}]]},
+  {t:{fr:'Après mise en route et roulage',en:'After start and taxi'}, r:OI+'7-8 · FCOM SP.16', items:[
+    ['ENGINE START switches','CONT','F/O',{fr:'Juste après la mise en route, si conditions givrantes : OAT ≤ 10 °C avec humidité visible (brouillard ≤ 1600 m, pluie, neige…) ou contamination au sol.',en:'Right after engine start, in icing conditions: OAT ≤ 10 °C with visible moisture (fog ≤ 1600 m, rain, snow…) or ground contamination.'}],
+    ['ENGINE ANTI-ICE switches','ON','F/O',{fr:"Pendant tout le roulage en conditions givrantes. Ne pas attendre de voir du givre sur l'avion. Jamais au-dessus de 10 °C.",en:'Throughout taxi in icing conditions. Do not wait for visible ice on the airframe. Never above 10 °C.'}],
+    ['WING ANTI-ICE switch',{fr:'ON si besoin',en:'ON as needed'},'F/O',{fr:"Conditions givrantes au sol, sauf si l'avion est protégé par du Type II ou IV. Ne remplace jamais le dégivrage.",en:'Icing conditions on the ground, unless the aircraft is protected by Type II or IV. Never a substitute for de-icing.'}],
+    {only:'ng', it:['Engine run-up',{fr:'70 % N1 · 30 s',en:'70% N1 · 30 s'},'PF',{fr:'Anti-givrage moteur requis et OAT ≤ 3 °C : toutes les 30 min au plus. En FZRA, FZDZ, FZFG ou neige forte : 70 % N1 pendant 1 s toutes les 10 min au plus.',en:'Engine anti-ice required and OAT ≤ 3 °C: at intervals of 30 min or less. In FZRA, FZDZ, FZFG or heavy snow: 70% N1 for 1 s at intervals of 10 min or less.'}]},
+    {only:'max', it:['Engine run-up',{fr:'≥ 50 % N1 → IDLE',en:'≥ 50% N1 → IDLE'},'PF',{fr:"Anti-givrage moteur requis et OAT ≤ 3 °C, ou vibrations fan dues à la glace : au moins 50 % N1 puis ralenti, toutes les 60 min au plus. Vibrations élevées pendant le délestage de glace : sans conséquence.",en:'Engine anti-ice required and OAT ≤ 3 °C, or fan vibration from ice: at least 50% N1 then idle, at intervals of 60 min or less. High vibration during ice shedding: no adverse effect.'}]}]},
   {t:{fr:'Avant dégivrage',en:'Before de-icing'}, r:OI+'8 · '+FC+' · MANEX 8.2.4.6.4', items:[
     ['Cabin crew and passengers','ADVISE','C','MANEX 8.2.4.8.'],
     ['APU','AS NEEDED','F/O',{fr:"À arrêter sauf si nécessaire : l'ingestion de fluide donne fumées et odeurs en cabine et peut endommager l'APU.",en:'Shut down unless needed: fluid ingestion causes fumes and odours in the cabin and can damage the APU.'}],
@@ -1417,6 +1425,9 @@ const PROC = [
   {t:{fr:'Avant le décollage',en:'Before takeoff'}, r:OI+'9 · '+FC+' · MANEX 8.2.4.6.1', crit:true, items:[
     ['Holdover time','CHECK within limits','',''],
     [{fr:'« FLAPS __ » → Flap lever',en:'"FLAPS __" → Flap lever'},'SET takeoff flaps','PF / PM',{fr:'Vérifier le voyant vert LE FLAPS EXT.',en:'Check the green LE FLAPS EXT light.'}],
+    {only:'ng', it:['Static run-up',{fr:'70 % N1',en:'70% N1'},'PF',{fr:'Anti-givrage moteur requis et OAT ≤ 3 °C : run-up avant la course au décollage, fonctionnement stable confirmé. 30 s fortement recommandé.',en:'Engine anti-ice required and OAT ≤ 3 °C: run-up before the takeoff roll, stable operation confirmed. 30 s highly recommended.'}]},
+    {only:'max', it:['Engine oil temperature',{fr:'≥ 31 °C',en:'≥ 31 °C'},'PF / PM',{fr:'Avant la poussée décollage. Moteur froid au ralenti : ≈ 3 min à 0 °C, 4 min à −7 °C, 6 min à −18 °C, 8 min à −32 °C.',en:'Before setting takeoff thrust. Cold engine at idle: ≈ 3 min at 0 °C, 4 min at −7 °C, 6 min at −18 °C, 8 min at −32 °C.'}]},
+    {only:'max', it:['Run-up',{fr:'≥ 50 % N1 · 5 s',en:'≥ 50% N1 · 5 s'},'PF',{fr:'Anti-givrage moteur requis et OAT ≤ 3 °C : dans les 5 min avant ou avec le décollage, au moins 50 % N1 pendant 5 s, fonctionnement stable confirmé avant la poussée décollage.',en:'Engine anti-ice required and OAT ≤ 3 °C: within 5 min of or with the takeoff, at least 50% N1 for 5 s, stable operation confirmed before takeoff thrust.'}]},
     ['Before takeoff checklist','COMPLETE','',''],
     {fr:"HOT dépassé ou moindre doute → contrôle des surfaces critiques par une personne qualifiée (OPL) juste avant d'entrer sur la piste", en:'HOT exceeded or any doubt → critical surfaces checked by a qualified person (F/O) just before entering the runway'},
     {fr:'Doute sur un dépôt pouvant affecter les performances → PAS DE DÉCOLLAGE', en:'Doubt about a deposit that may affect performance → NO TAKEOFF'}]}
@@ -1429,43 +1440,51 @@ const PITFALLS = [
   {fr:"Sur une flaque de fluide de dégivrage, limiter la poussée au minimum : l'ingestion peut provoquer pompage et décrochage compresseur.", en:'Over a puddle of de-icing fluid, keep thrust to the minimum: ingestion can cause compressor surge and stall.'},
   {fr:"Du fluide reste sur l'aile à la rotation (portance réduite, traînée accrue, effet temporaire) : garder le taux de rotation normal.", en:'Some fluid stays on the wing at rotation (less lift, more drag, temporary): keep the normal rotation rate.'}
 ];
-let checks = store.get('hot.proc2', {});
+let checks = store.get('hot.proc3', {});
+let FLEET = store.get('hot.fleet', 'ng') === 'max' ? 'max' : 'ng';
+const visItems = p => p.items.map((it,j)=>[it,j]).filter(([it])=>!it.only || it.only===FLEET);
+const fcLabel = () => FLEET==='max' ? 'FCOM MAX SP.16' : 'FCOM NG SP.16';
 function itemHTML(it){
+  const tag = it.only ? `<span class="who fl">${it.only==='max'?'MAX':'NG'}</span>` : '';
+  if (it.only) it = it.it;
   if (!Array.isArray(it)) return `<span>${esc(L(it))}</span>`;
   const [el,act,who,note]=it.map(L);
-  return `<span style="flex:1"><span class="ci"><span class="el">${esc(el)}</span><span class="dots"></span><span class="act">${esc(act)}</span></span>${who?`<span class="who">${esc(who)}</span>`:''}${note?`<small class="cn">${esc(note)}</small>`:''}</span>`;
+  return `<span style="flex:1"><span class="ci"><span class="el">${esc(el)}</span><span class="dots"></span><span class="act">${esc(act)}</span></span>${tag}${who?`<span class="who">${esc(who)}</span>`:''}${note?`<small class="cn">${esc(note)}</small>`:''}</span>`;
 }
 function renderProc(){
-  let h='';
+  let h=`<div class="seg fleetseg"><button data-fleet="ng" class="${FLEET==='ng'?'sel':''}">B737 NG</button><button data-fleet="max" class="${FLEET==='max'?'sel':''}">B737 MAX</button></div>
+    <p class="lead" style="margin-top:-6px;font-size:14px">${tr('Les points marqués <b>NG</b> ou <b>MAX</b> dépendent de l\'avion choisi (FCOM 737-800 ou FCOM 737 MAX).','Items marked <b>NG</b> or <b>MAX</b> depend on the aircraft selected (737-800 FCOM or 737 MAX FCOM).')}</p>`;
   PROC.forEach((p,i)=>{
-    const all = p.items.every((_,j)=>checks[i+'.'+j]);
-    h += `<div class="pstep ${all?'done':''}" data-n="${i+1}"><h3>${L(p.t)} <span class="ref">${p.r}</span></h3>`;
+    const vis = visItems(p), all = vis.every(([,j])=>checks[i+'.'+j]);
+    h += `<div class="pstep ${all?'done':''}" data-n="${i+1}"><h3>${L(p.t)} <span class="ref">${p.r.replace('FCOM SP.16', fcLabel())}</span></h3>`;
     if (p.dialog){
       h += `<p style="font-size:14px;color:var(--mut);margin:0 0 8px">${tr("Dialogue CREW / GROUND du MANEX A 8.2.4.8. * Coordonner avec le personnel au sol l'état des moteurs (tournants ou non).","CREW / GROUND dialogue from MANEX A 8.2.4.8. * Coordinate the engine status (running or not) with ground personnel.")}</p><button class="btn block" id="listenBtn">${tr('🎧 Mode écoute','🎧 Listen mode')}</button><div class="dlg" id="dlg"></div>`;
     }
-    h += p.items.map((it,j)=>{ const k=i+'.'+j; return `<label class="chk ${checks[k]?'on':''} ${p.crit?'crit':''}"><input type="checkbox" data-chk="${k}" ${checks[k]?'checked':''}>${itemHTML(it)}</label>`; }).join('');
+    h += vis.map(([it,j])=>{ const k=i+'.'+j; return `<label class="chk ${checks[k]?'on':''} ${p.crit?'crit':''}"><input type="checkbox" data-chk="${k}" ${checks[k]?'checked':''}>${itemHTML(it)}</label>`; }).join('');
     if (p.calc) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#calc">${tr('Calculateur HOT','HOT calculator')}</a></div>`;
     if (p.after) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#decode">${tr('Décoder le code','Decode the code')}</a><a class="btn" href="#timer">${tr('Minuteur','Timer')}</a></div>`;
     h += '</div>';
   });
-  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">${tr('Pièges','Pitfalls')} <span class="ref">MANEX 8.2.4.6.5 · ${tr('Tableau','Table')} 55 · ${FC}</span></h3>${PITFALLS.map(x=>`<div class="warnbox">${L(x)}</div>`).join('')}</div>`;
+  h += `<div class="pstep" data-n="!"><h3 style="color:var(--warn)">${tr('Pièges','Pitfalls')} <span class="ref">MANEX 8.2.4.6.5 · ${tr('Tableau','Table')} 55 · ${fcLabel()}</span></h3>${PITFALLS.map(x=>`<div class="warnbox">${L(x)}</div>`).join('')}</div>`;
   $('#procBody').innerHTML = h;
 }
 $('#procBody').addEventListener('change', e=>{
   const k=e.target.dataset.chk; if(!k) return;
-  checks[k]=e.target.checked; store.set('hot.proc2',checks);
+  checks[k]=e.target.checked; store.set('hot.proc3',checks);
   e.target.closest('.chk').classList.toggle('on', e.target.checked);
   const st=e.target.closest('.pstep'); st.classList.toggle('done', [...st.querySelectorAll('input[data-chk]')].every(x=>x.checked));
 });
 let dlgTimer=null;
 $('#procBody').addEventListener('click', e=>{
+  const fb = e.target.closest('[data-fleet]');
+  if (fb){ FLEET = fb.dataset.fleet; store.set('hot.fleet', FLEET); renderProc(); return; }
   if (e.target.closest('#listenBtn')){
     clearTimeout(dlgTimer); const box=$('#dlg'); box.innerHTML=''; let i=0;
     const add=()=>{ if(i>=DIALOG.length) return; const [c,w,txt]=DIALOG[i++]; box.insertAdjacentHTML('beforeend',`<div class="bub ${c} pop"><small>${w}</small>${esc(txt)}</div>`); if(i<DIALOG.length) dlgTimer=setTimeout(add,1300); };
     add();
   }
 });
-$('#procReset').onclick = ()=>{ if (!confirm(tr('Décocher toute la procédure ?','Untick the whole procedure?'))) return; checks={}; store.set('hot.proc2',checks); renderProc(); };
+$('#procReset').onclick = ()=>{ if (!confirm(tr('Décocher toute la procédure ?','Untick the whole procedure?'))) return; checks={}; store.set('hot.proc3',checks); renderProc(); };
 renderProc();
 
 /* ================= DECODER ================= */
@@ -1601,7 +1620,7 @@ function renderHome(){
     const sum = withS(e.s, summaryTxt) || e.sum || '';
     const ref = e.tid && REF[e.tid] ? tr('Tableau','Table')+' '+REF[e.tid].n : (e.ref ? (LANG==='en' ? String(e.ref).replace('Tableau','Table') : e.ref) : '');
     return `<button class="hitem" data-h="${i}"><span class="hv ${e.hot?'':'no'}">${e.hot?esc(e.hot):tr('AUCUN<br>HOT','NO<br>HOT')}</span><span><b>${esc(sum)}</b><small>${whenTxt(e.ts)}${ref?' · '+esc(ref):''}</small></span><span class="chev">›</span></button>`; }).join('')}</div>` : '';
-  const total = PROC.reduce((n,p)=>n+p.items.length,0), done = Object.values(checks).filter(Boolean).length;
+  const total = PROC.reduce((n,p)=>n+visItems(p).length,0), done = PROC.reduce((n,p,i)=>n+visItems(p).filter(([,j])=>checks[i+'.'+j]).length,0);
   $('#tProc').textContent = done ? tr(`${done} / ${total} étapes cochées`,`${done} / ${total} items ticked`) : tr('Du parking au décollage, à cocher','From gate to takeoff, tick as you go');
   const best = store.get('hot.quizBest', -1);
   $('#tQuiz').textContent = best>=0 ? tr(`10 cas pratiques · meilleur score ${best}/10`,`10 practical cases · best score ${best}/10`) : tr('10 cas pratiques tirés du MANEX','10 practical cases from the MANEX');
@@ -1678,7 +1697,7 @@ const I18N = {
   <div class="card">
     <h3>Source</h3>
     <p>Air Algérie MANEX A, §8.2.4 "Ground de-icing and anti-icing" — Ed. 02, TR 39-4, OCT.26. FAA Holdover Time Guidelines Winter 2026-2027 tables.</p>
-    <p>Step-by-step procedure completed with the B737 OPS INFO "Cold Weather Operations" (CL-AH-DOA-DOC-B737-002 Ed. 06, NOV 22) and the FCOM 737-8D6 SP.16 "Cold Weather Operations".</p>
+    <p>Step-by-step procedure completed with the B737 OPS INFO "Cold Weather Operations" (CL-AH-DOA-DOC-B737-002 Ed. 06, NOV 22) and the FCOM 737-8D6 SP.16 "Cold Weather Operations" (NG) and the 737 MAX FCOM SP.16 (MAX).</p>
     <p>Tables included: 1 (active frost), 2 (Type I aluminium), 4 (generic Type II), 20 (generic Type IV), 53 (snowfall intensity), 54 and 55 (fluid application).</p>
     <p>No value is interpolated: the app reads the table cell and uses the lowest value (Air Algérie rule, 8.2.4.9 NOTE).</p>
   </div>
