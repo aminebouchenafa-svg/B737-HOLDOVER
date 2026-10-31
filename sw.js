@@ -1,5 +1,5 @@
 // Service worker : réseau d'abord (mises à jour), avec délai max 3 s puis cache (hors ligne / Wi-Fi faible).
-const CACHE = '737-holdover-2026-10-31-383b8a49';
+const CACHE = '737-holdover-2026-10-31-d8ec64a1';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))));

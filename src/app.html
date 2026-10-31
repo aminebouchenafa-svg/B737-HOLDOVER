@@ -332,10 +332,11 @@ body.calm #sky i{animation-play-state:paused}
 .dn.n{color:#c9b8ff;border-color:rgba(146,108,255,.5)} .dn.d{color:#ffe2b0;border-color:rgba(255,181,71,.5)}
 /* --- METAR --- */
 .mcard{border-color:rgba(var(--acc),.35)}
-.mrow{display:flex;gap:8px}.mrow .txt{margin:0;font-size:18px;min-height:52px}.mrow .btn{min-width:72px}
+.mrow{display:flex;gap:8px}.mrow .txt{margin:0;font-size:19px;min-height:54px}.mrow .btn{min-width:72px}
 .mhelp{font-size:13px;color:var(--mut);margin:8px 0 0}
 .mres{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(6,24,38,.7);border:1px solid rgba(var(--acc),.3)}
-.mraw{font-size:13px;color:var(--ice2);word-break:break-word}
+.mraw{font-size:19px;line-height:1.45;color:var(--ice2);word-break:break-word;letter-spacing:.02em}
+.mrawbox{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(6,24,38,.7);border:1px solid rgba(var(--acc),.3)}
 .mchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.mchips span{font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--mut)}.mchips b{color:var(--txt)}
 .linkbtn{background:none;border:0;color:var(--ice);text-decoration:underline;font-size:13px;cursor:pointer;padding:6px}
 /* --- guide --- */
@@ -2011,7 +2012,7 @@ function aiFromMetar(M){
 function renderAI(){
   const B=$('#aiBody'), st=icingState(), t=aiOat();
   let h = `<div class="seg fleetseg"><button data-aifleet="ng" class="${FLEET==='ng'?'sel':''}">B737 NG</button><button data-aifleet="max" class="${FLEET==='max'?'sel':''}">B737 MAX</button></div>`;
-  h += `<div class="card"><h3>📡 ${tr('METAR (facultatif)','METAR (optional)')}</h3><div class="mrow"><input class="txt" id="aiMet" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${tr('LFPG — ou collez le METAR','LFPG — or paste the METAR')}"><button class="btn primary" id="aiMetGo">OK</button></div><div id="aiMetOut">${AI.src?`<p class="mhelp mono">${esc(AI.src.raw)}<br>→ ${AI.src.why}</p>`:''}</div></div>`;
+  h += `<div class="card"><h3>📡 ${tr('METAR (facultatif)','METAR (optional)')}</h3><div class="mrow"><input class="txt" id="aiMet" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${tr('LFPG — ou collez le METAR','LFPG — or paste the METAR')}"><button class="btn primary" id="aiMetGo">OK</button></div><div id="aiMetOut">${AI.src?`<div class="mrawbox"><div class="mono mraw">${esc(AI.src.raw)}</div><p class="mhelp" style="margin:6px 0 0">→ ${AI.src.why}</p></div>`:''}</div></div>`;
   h += `<label class="lbl" for="aiOat">OAT (°C)</label><input class="num" id="aiOat" inputmode="text" placeholder="-3" value="${esc(AI.oat)}">`;
   h += `<label class="toggle"><input type="checkbox" id="aiMoist" ${AI.moist?'checked':''}><span>${tr('<b>Humidité visible</b> : brouillard avec visibilité ≤ 1600 m, pluie, neige, bruine, grésil, cristaux de glace…','<b>Visible moisture</b>: fog with visibility ≤ 1600 m, rain, snow, drizzle, sleet, ice crystals…')}</span></label>`;
   h += `<label class="toggle"><input type="checkbox" id="aiContam" ${AI.contam?'checked':''}><span>${tr('<b>Glace, neige, slush ou eau stagnante</b> sur l\'aire de trafic, les taxiways ou la piste','<b>Ice, snow, slush or standing water</b> on ramps, taxiways or runways')}</span></label>`;
@@ -2161,7 +2162,7 @@ $('#caBody').addEventListener('click', async e=>{
     const v=($('#caMet').value||'').trim().toUpperCase(); if (!v) return;
     let raw=v; if (/^[A-Z]{4}$/.test(v)){ $('#caMetOut').innerHTML=`<p class="mhelp">⏳ ${tr('Recherche du METAR…','Fetching the METAR…')}</p>`; raw=await fetchMetar(v); if (!raw){ $('#caMetOut').innerHTML=`<div class="badbox">${tr('METAR introuvable. Collez le METAR officiel.','METAR not found. Paste the official METAR.')}</div>`; return; } }
     const M=parseMetar(raw); if (M.oat===null){ $('#caMetOut').innerHTML=`<div class="badbox">${tr('Température absente du METAR.','No temperature in the METAR.')}</div>`; return; }
-    CA.temp=String(M.oat===0?0:M.oat); saveCA(); renderCA(); $('#caMetOut').innerHTML=`<p class="mhelp mono">${esc(M.raw)}</p>`; return;
+    CA.temp=String(M.oat===0?0:M.oat); saveCA(); renderCA(); $('#caMetOut').innerHTML=`<div class="mrawbox"><div class="mono mraw">${esc(M.raw)}</div></div>`; return;
   }
 });
 $('#caBody').addEventListener('input', e=>{
