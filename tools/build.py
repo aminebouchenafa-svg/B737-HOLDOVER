@@ -5,6 +5,7 @@ import base64, json, pathlib, datetime, hashlib
 R = pathlib.Path(__file__).resolve().parent.parent
 b64 = lambda p: base64.b64encode((R / p).read_bytes()).decode()
 data = json.loads((R / 'data/hot_tables_manexA_2026-2027.json').read_text(encoding='utf-8'))
+apt = json.loads((R / 'data/airports.json').read_text(encoding='utf-8'))
 version = datetime.date.today().isoformat()
 html = (R / 'src/app.html').read_text(encoding='utf-8')
 for k, v in {
@@ -13,6 +14,7 @@ for k, v in {
     '__FONT_STM__': b64('src/fonts/stm.woff2'),
     '__FONT_CINZEL__': b64('src/fonts/cinzel.woff2'),
     '__ICON_180__': b64('icons/icon-180.png'),
+    '__APT_JSON__': json.dumps(apt, separators=(',', ':')),
     '__LOGO__': b64('src/img/airalgerie-logo.png'),
     '__VERSION__': version,
 }.items():

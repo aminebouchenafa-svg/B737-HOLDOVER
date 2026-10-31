@@ -185,6 +185,17 @@ const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fail++;
   ok(await p.evaluate(() => store.get('hot.fleet','') === 'max'), 'Choix MAX mémorisé');
   await p.click('[data-fleet="ng"]');
 
+  // ---- METAR collé → calcul pré-rempli ----
+  await p.evaluate(() => { location.hash = '#calc'; resetCalc(); });
+  await p.fill('#metIn', 'LFPG 150630Z 00000KT 0300 R27L/0450N FZFG VV001 M03/M04 Q1027'); await p.click('#metGo'); await p.waitForTimeout(150);
+  ok((await p.textContent('#metOut')).includes('-3 °C') && (await p.textContent('#metOut')).includes('300 m'), 'METAR collé : OAT et visibilité pré-remplies');
+  await p.click('[data-fluid="IV"]');
+  ok((await p.textContent('.oatdisp')).includes('-3'), 'METAR : OAT −3 déjà saisie');
+  await p.click('#oatOk'); await p.click('[data-conc="100/0"]');
+  ok(await p.$eval('[data-cond="FZFG"]', e => e.classList.contains('sel')), 'METAR : FZFG présélectionné');
+  await p.click('[data-cond="FZFG"]');
+  ok((await p.textContent('.res .big')).trim() === '1:15', 'METAR : résultat 1:15 (Type IV 100/0, −3 °C, FZFG)');
+
   // ---- Autres écrans ----
   for (const s of ['learn', 'proc', 'decode', 'quiz', 'yul', 'about']) {
     await p.evaluate(s => location.hash = '#' + s, s); await p.waitForTimeout(150);

@@ -311,6 +311,14 @@ body.calm #sky i{animation-play-state:paused}
 .gate-sub{color:var(--mut);margin:6px 0 16px;font-size:15px}
 .gate-box input.txt{font-size:20px}
 .gate-foot{font-family:var(--mono);font-size:11.5px;color:var(--dim);text-align:center;margin:18px 0 0;line-height:1.6}
+/* --- METAR --- */
+.mcard{border-color:rgba(95,216,255,.35)}
+.mrow{display:flex;gap:8px}.mrow .txt{margin:0;font-size:18px;min-height:52px}.mrow .btn{min-width:72px}
+.mhelp{font-size:13px;color:var(--mut);margin:8px 0 0}
+.mres{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(6,24,38,.7);border:1px solid rgba(95,216,255,.3)}
+.mraw{font-size:13px;color:var(--ice2);word-break:break-word}
+.mchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.mchips span{font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--mut)}.mchips b{color:var(--txt)}
+.linkbtn{background:none;border:0;color:var(--ice);text-decoration:underline;font-size:13px;cursor:pointer;padding:6px}
 /* --- guide --- */
 .gstep{display:flex;gap:14px;padding:16px;margin:0 0 12px;border-radius:18px;background:rgba(11,19,31,.86);border:1px solid rgba(160,210,255,.13)}
 .gstep .gn{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:800;color:#001018;background:var(--ice);box-shadow:0 0 14px var(--iceglow)}
@@ -740,6 +748,76 @@ function computeHOT({fluid, conc, oat, key}){
 
 function fmtC(t){ return (t>0?'+':'')+t+' °C'; }
 
+/* ================= METAR : lecture automatique ================= */
+const APT = __APT_JSON__;   /* coordonnées (aviationweather.gov) pour le calcul jour / nuit */
+/* Hauteur du soleil (degrés) — algorithme NOAA simplifié */
+function sunElev(lat, lon, ms){
+  const rad=Math.PI/180, d = ms/86400000 + 2440587.5 - 2451545.0;
+  const g=(357.529+0.98560028*d)*rad, q=280.459+0.98564736*d;
+  const Lm=(q+1.915*Math.sin(g)+0.020*Math.sin(2*g))*rad, e=(23.439-0.00000036*d)*rad;
+  const ra=Math.atan2(Math.cos(e)*Math.sin(Lm), Math.cos(Lm)), dec=Math.asin(Math.sin(e)*Math.sin(Lm));
+  const gmst=((18.697374558+24.06570982441908*d)%24+24)%24;
+  const H=(gmst*15+lon)*rad-ra;
+  return Math.asin(Math.sin(lat*rad)*Math.sin(dec)+Math.cos(lat*rad)*Math.cos(dec)*Math.cos(H))/rad;
+}
+/* Nuit = soleil sous l'horizon (choix prudent : la nuit donne une intensité de neige plus forte) */
+function isNight(icao, ms){ const c=APT[icao]; return c ? sunElev(c[0], c[1], ms) < -0.833 : null; }
+
+function parseMetar(raw){
+  const t=(raw||'').toUpperCase().replace(/=/g,' ').replace(/\s+/g,' ').trim();
+  const body=t.split(/ (?:RMK|TEMPO|BECMG|NOSIG|TREND)\b/)[0];
+  const toks=body.split(' ');
+  const R={raw:t, icao:null, oat:null, vis:null, wx:[], night:null};
+  const m0=body.match(/\b([A-Z]{4}) \d{6}Z\b/) || body.match(/^(?:METAR |SPECI )?(?:COR )?([A-Z]{4})\b/);
+  if (m0) R.icao=m0[1];
+  const tm=body.match(/\b(\d{2})(\d{2})(\d{2})Z\b/); if (tm) R.time=tm[2]+':'+tm[3];
+  const tp=body.match(/(?:^| )(M?\d{2})\/(M?\d{2}|\/\/)?(?= |$)/);
+  if (tp){ const v=Number(tp[1].replace('M','-')); R.oat = (v===0 && tp[1].startsWith('M')) ? -0 : v; R.oatM = tp[1].startsWith('M'); }
+  if (/\bCAVOK\b/.test(body)) R.vis=10000;
+  const sm=body.match(/(?:^| )(M|P)?(?:(\d+) )?(\d+\/\d+|\d+)SM\b/);
+  if (sm){ let v=0; if (sm[2]) v+=Number(sm[2]); const f=sm[3]; v += f.includes('/') ? Number(f.split('/')[0])/Number(f.split('/')[1]) : Number(f); R.vis=Math.round(v*1609.34); R.visSM=(sm[2]?sm[2]+' ':'')+sm[3]; }
+  if (R.vis===null){ for (const k of toks.slice(2)){ const m=k.match(/^(\d{4})(NDV)?$/); if (m){ R.vis=Number(m[1]); break; } } }
+  const WX=/^(\+|-|VC)?(MI|PR|BC|DR|BL|SH|TS|FZ)?((?:DZ|RA|SN|SG|IC|PL|GR|GS|UP)+)?(BR|FG|FU|VA|DU|SA|HZ|PY)?$/;
+  for (const k of toks.slice(2)){ const m=k.match(WX); if (m && (m[3]||m[4]) && m[1]!=='VC') R.wx.push({int:m[1]||'', desc:m[2]||'', ph:m[3]||'', obs:m[4]||'', tok:k}); }
+  return R;
+}
+/* Condition du calculateur proposée à partir des phénomènes du METAR (le plus pénalisant d'abord) */
+function metarCond(M){
+  const has=f=>M.wx.some(f), ph=(w,x)=>w.ph.includes(x);
+  const snow=has(w=>ph(w,'SN')||ph(w,'SG')), liquid=has(w=>(ph(w,'RA')||ph(w,'DZ')) && w.desc!=='FZ');
+  const r={cond:null, sub:null, metarInt:'', note:null};
+  const snw=M.wx.find(w=>ph(w,'SN')); if (snw) r.metarInt = snw.int==='-'?'-SN':snw.int==='+'?'+SN':'SN';
+  if (has(w=>ph(w,'PL')||ph(w,'GR')||ph(w,'GS'))){ r.cond='OTHER'; r.note=tr('Granules de glace ou grêle (PL/GR/GS) : aucun HOT.','Ice pellets or hail (PL/GR/GS): no HOT.'); return r; }
+  const fzra=M.wx.find(w=>w.desc==='FZ'&&ph(w,'RA'));
+  if (fzra){ r.cond = fzra.int==='-' ? 'FZRA_L' : 'FZRA_MH'; return r; }
+  if (has(w=>w.desc==='FZ'&&ph(w,'DZ'))){ r.cond='FZDZ'; r.sub='sure'; return r; }
+  if (snow && liquid){ r.cond='SNRA'; return r; }
+  if (snow){ r.cond = has(w=>w.desc==='FZ'&&w.obs==='FG') ? 'SN_FZFG' : 'SNOW'; return r; }
+  if (has(w=>w.desc==='FZ'&&w.obs==='FG') || has(w=>ph(w,'IC'))){ r.cond='FZFG'; return r; }
+  if (has(w=>w.obs==='BR'||w.obs==='FG') && M.oat!==null && M.oat<=0){ r.cond='FZFG'; r.note=tr('Brume ou brouillard à 0 °C ou moins : brume givrante probable (jamais codée dans le METAR). À confirmer visuellement.','Mist or fog at 0 °C or below: freezing mist likely (never coded in METARs). Confirm visually.'); return r; }
+  if (liquid){ r.note=tr("Pluie ou bruine au-dessus de 0 °C : HOT seulement si l'aile est froide (choisir « Pluie sur aile froide »).","Rain or drizzle above 0 °C: HOT only if the wing is cold-soaked (choose \"Rain on cold-soaked wing\")."); return r; }
+  r.note=tr('Aucune précipitation givrante dans le METAR. Si du givre se forme sur l\'avion : « Givre actif ».','No freezing precipitation in the METAR. If frost is forming on the aircraft: "Active frost".');
+  return r;
+}
+/* Applique un METAR au calcul en cours (le pilote confirme ensuite chaque étape) */
+function applyMetar(M, src){
+  const c=metarCond(M);
+  if (M.oat!==null) S.oatStr = (M.oatM ? '-' : '') + String(Math.abs(M.oat));
+  if (S.oatStr==='-0') S.oatStr='0';
+  if (c.cond){ S.cond=c.cond; S.sub=c.sub; }
+  if (M.vis!==null) S.vis = Math.min(M.vis, 9999);
+  S.metarInt = c.metarInt;
+  const n = M.icao ? isNight(M.icao, Date.now()) : null;
+  S.night = n;
+  S.metar = {raw:M.raw, icao:M.icao, time:M.time||null, src, note:c.note, auto:n!==null, wx:M.wx.map(w=>w.tok).join(' ')};
+}
+async function fetchMetar(icao){
+  const ctl = new AbortController(), to = setTimeout(()=>ctl.abort(), 8000);
+  try { const r = await fetch('https://metar.vatsim.net/'+encodeURIComponent(icao), {signal:ctl.signal, cache:'no-store'});
+        const txt = (await r.text()).trim(); return /^[A-Z]{4} \d{6}Z/.test(txt) ? txt : null; }
+  catch(e){ return null; } finally { clearTimeout(to); }
+}
+
 /* Ground code decoder — "Type IV/75 1432" */
 function decodeCode(s){
   const u = (s||'').toUpperCase()
@@ -908,7 +986,7 @@ function go(s){ step=s; renderCalc(); scrollTo(0,0); }
 function saveCalc(){ store.set('hot.calc', {S, step}); }
 function next(){ const l=stepList(); go(l[Math.min(l.indexOf(step)+1,l.length-1)]); }
 function calcBack(){ const l=stepList(), i=l.indexOf(step); if (i>0){ go(l[i-1]); return true; } return false; }
-const RESET_S = () => ({fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:null,metarInt:null,start:null});
+const RESET_S = () => ({fluid:null,oatStr:'',coldWing:false,conc:null,cond:null,sub:null,vis:null,night:null,metarInt:null,start:null,metar:null});
 function resetCalc(){ Object.assign(S, RESET_S()); lastSavedKey=null; go('fluid'); }
 
 const COND_UI = [
@@ -999,12 +1077,43 @@ function crumbs(){
   l.slice(0,i).forEach(k=>{ const v=lab[k]&&lab[k](); if (v) c.push(`<button class="crumb" data-goto="${k}">${esc(v)} <i>✎</i></button>`); });
   return c.length ? `<div class="crumbs">${c.join('')}</div>` : '';
 }
+function metarCard(){
+  const M=S.metar;
+  let h=`<div class="card mcard"><h3>📡 ${tr('Remplir avec le METAR','Fill in from the METAR')}</h3>
+    <div class="mrow"><input class="txt" id="metIn" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${tr('LFPG — ou collez le METAR','LFPG — or paste the METAR')}"><button class="btn primary" id="metGo">${tr('OK','OK')}</button></div>
+    <p class="mhelp">${tr("4 lettres : METAR récupéré en ligne (metar.vatsim.net, copie non officielle des METAR réels). Ou collez le METAR officiel : marche sans réseau.","4 letters: METAR fetched online (metar.vatsim.net, unofficial copy of real METARs). Or paste the official METAR: works offline.")}</p>
+    <div id="metOut">${M ? metarSummary() : ''}</div></div>`;
+  return h;
+}
+function metarSummary(){
+  const M=S.metar; if (!M) return '';
+  const u=COND_UI.find(c=>c.k===S.cond);
+  const nightTxt = S.night===null ? tr('jour / nuit à choisir','day / night to choose') : (S.night?tr('nuit','night'):tr('jour','day'))+(M.auto?tr(' (calculé)',' (computed)'):'');
+  return `<div class="mres"><div class="mono mraw">${esc(M.raw)}</div>
+    <div class="mchips"><span>OAT <b>${S.oatStr!==''?fmtC(oatVal()):'—'}</b></span><span>${tr('Visibilité','Visibility')} <b>${S.vis!=null?S.vis+' m':'—'}</b></span><span>${tr('Météo','Weather')} <b>${u?esc(L(u.t)):'—'}</b></span><span><b>${nightTxt}</b></span></div>
+    ${M.note?`<div class="warnbox" style="margin:8px 0 0">${M.note}</div>`:''}
+    <p class="mhelp" style="margin:8px 0 0">✓ ${tr('Pré-rempli. Choisissez le fluide, puis confirmez chaque étape.','Pre-filled. Choose the fluid, then confirm each step.')} <button class="linkbtn" id="metClr">${tr('Effacer','Clear')}</button></p></div>`;
+}
+async function runMetar(){
+  const v=($('#metIn').value||'').trim().toUpperCase(), out=$('#metOut');
+  if (!v){ $('#metIn').focus(); return; }
+  let raw=v, src='paste';
+  if (/^[A-Z]{4}$/.test(v)){
+    out.innerHTML=`<p class="mhelp">⏳ ${tr('Recherche du METAR…','Fetching the METAR…')}</p>`;
+    raw = await fetchMetar(v); src='online';
+    if (!raw){ out.innerHTML=`<div class="badbox">${tr(`METAR de ${v} introuvable (pas de réseau ?). Collez le METAR officiel dans le champ.`,`No METAR found for ${v} (no network?). Paste the official METAR into the field.`)}</div>`; return; }
+  }
+  const M=parseMetar(raw);
+  if (M.oat===null && M.vis===null && !M.wx.length){ out.innerHTML=`<div class="badbox">${tr('METAR non reconnu.','METAR not recognised.')}</div>`; return; }
+  applyMetar(M, src); saveCalc(); out.innerHTML=metarSummary();
+}
 function renderCalc(){
   const B = $('#calcBody'); let h='';
   if (step!=='result') h += stepsBar() + crumbs();
   const oat = oatVal();
 
   if (step==='fluid'){
+    h += metarCard();
     h += qhead('fluid', label(), tr('Quel fluide le sol applique-t-il ?','Which fluid is the ground crew applying?'));
     h += '<div class="choices">';
     [['I','Type I',tr('Fluide fin, chauffé, HOT court · Tableau 2 (aluminium)','Thin, heated fluid, short HOT · Table 2 (aluminium)')],
@@ -1045,6 +1154,7 @@ function renderCalc(){
 
   else if (step==='cond'){
     h += qhead('cond', label(), tr('Quelle condition météo ?','Which weather condition?'));
+    if (S.metar && S.cond) h += `<div class="infobox">📡 ${tr('Proposé par le METAR : touchez la condition en surbrillance pour confirmer, ou choisissez-en une autre.','Suggested by the METAR: tap the highlighted condition to confirm, or choose another one.')}</div>`;
     h += '<div class="choices two">';
     COND_UI.forEach(c=>{
       h += `<button class="choice ${S.cond===c.k?'sel':''} ${c.red?'red':''}" data-cond="${c.k}">${icon(c.k)}<span><b>${L(c.t)}</b><small>${esc(L(c.d))}</small></span></button>`;
@@ -1065,6 +1175,7 @@ function renderCalc(){
     h += `<label class="lbl" for="visIn">${tr('VISIBILITÉ METAR (m)','METAR VISIBILITY (m)')}</label><input class="num" id="visIn" inputmode="numeric" pattern="[0-9]*" placeholder="${tr('ex. 1600','e.g. 1600')}" value="${S.vis??''}">`;
     h += '<div class="chips">' + [400,800,1200,1600,2000,2400,2800,3200,4000,4800,6000,9999].map(v=>`<button data-vis="${v}" class="${S.vis===v?'sel':''}">${v}</button>`).join('') + '</div>';
     h += `<label class="lbl">${tr('OU EN MILES TERRESTRES (METAR Canada / US)','OR IN STATUTE MILES (Canada / US METAR)')}</label><div class="chips">` + SM.map(([l,v])=>`<button data-vis="${v}" data-sm="${l}">${l} SM</button>`).join('') + '</div>';
+    if (S.metar && S.metar.auto) h += `<div class="infobox" style="margin:4px 0 8px">📡 ${tr(`${S.night?'Nuit':'Jour'} à ${S.metar.icao} calculé avec l'heure actuelle (nuit = soleil sous l'horizon). Corrigez si besoin.`,`${S.night?'Night':'Day'} at ${S.metar.icao} computed for the current time (night = sun below the horizon). Change it if needed.`)}</div>`;
     h += `<label class="lbl">${tr('JOUR / NUIT','DAY / NIGHT')}</label><div class="seg"><button data-night="0" class="${S.night===false?'sel':''}">${tr('☀ JOUR','☀ DAY')}</button><button data-night="1" class="${S.night===true?'sel':''}">${tr('☾ NUIT','☾ NIGHT')}</button></div>`;
     h += `<label class="lbl">${tr('INTENSITÉ ANNONCÉE PAR LE METAR (facultatif)','INTENSITY REPORTED IN THE METAR (optional)')}</label><div class="chips">${[['-SN','-SN'],['SN','SN'],['+SN','+SN'],['',tr('non précisé','not reported')]].map(([v,t])=>`<button data-metar="${v}" class="${S.metarInt===v?'sel':''}">${t}</button>`).join('')}</div>`;
     h += '<div id="snowOut"></div>';
@@ -1201,6 +1312,8 @@ function renderResult(){
 /* calc events (delegated) */
 $('#calcBody').addEventListener('click', e=>{
   const t = e.target.closest('button,input'); if (!t) return;
+  if (t.id==='metGo'){ runMetar(); return; }
+  if (t.id==='metClr'){ S.metar=null; saveCalc(); renderCalc(); return; }
   if (t.dataset.goto){ go(t.dataset.goto); return; }
   if (t.dataset.why){ $('#why-'+t.dataset.why).classList.toggle('on'); return; }
   if (t.dataset.fluid){
@@ -1249,6 +1362,7 @@ $('#calcBody').addEventListener('click', e=>{
   if (t.id==='modBtn'){ calcBack(); return; }
   if (t.id==='newBtn'){ resetCalc(); return; }
 });
+$('#calcBody').addEventListener('keydown', e=>{ if (e.target.id==='metIn' && e.key==='Enter'){ e.preventDefault(); runMetar(); } });
 $('#calcBody').addEventListener('input', e=>{
   if (e.target.id==='visIn'){ const v=parseInt(e.target.value,10); S.vis = isNaN(v)?null:v; document.querySelectorAll('[data-vis]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.vis)===S.vis)); updateSnow(); }
   if (e.target.id==='startIn'){ S.start=e.target.value; }
