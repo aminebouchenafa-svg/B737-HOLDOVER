@@ -447,6 +447,50 @@ body.calm #sky i{animation-play-state:paused}
 @media(max-height:700px){.qhead h2{font-size:17px}.qhead{margin-bottom:8px}.steps{margin-bottom:8px}.crumbs{margin-bottom:8px}.crumb{min-height:40px}.keypad button{min-height:48px;font-size:22px}.keypad{gap:6px}.oatdisp{font-size:40px}.oatrow .btn{min-height:56px}.why{min-height:40px;padding:6px 12px}.top h1{font-size:14px}header.top{padding-top:calc(6px + var(--sat));padding-bottom:6px}}
 @media(max-width:380px){.top h1{font-size:13px}.utc{font-size:13px;padding:5px 7px}.utc b{display:none}.tabbar a{font-size:9.5px}.tabbar a svg{width:23px;height:23px}#tbBtn{padding:6px 8px;font-size:13px}}
 @media(min-width:390px){.tabbar a{font-size:11.5px}}
+
+/* ================= LISIBILITÉ (textes plus grands) ================= */
+html,body{font-size:18px}
+.lead{font-size:17px}
+.card p,.lcard li{font-size:17px}
+.notes{font-size:16px}
+.whybox{font-size:16.5px}
+.infobox,.warnbox,.badbox{font-size:16px}
+.mhelp{font-size:14.5px}
+.choice b{font-size:17px} .choice small{font-size:15px}
+.chk{font-size:17px} .chk .ci{font-size:16px} .chk .cn{font-size:15px}
+.qopt{font-size:18px;min-height:62px;line-height:1.35}
+.qmeta{font-size:14.5px}
+.tile small{font-size:15px}
+.sect{font-size:14px}
+.res .range{font-size:16px} .res .summary{font-size:15px}
+table.mx{font-size:14px}
+.dec{font-size:19px}
+.gstep p{font-size:17px}
+.strow{font-size:15.5px}
+.status small{font-size:14.5px}
+@media(max-width:619px){.tile small{font-size:14px}.tile b{font-size:14.5px}}
+
+/* ================= TUILES : COULEURS D'HIVER + HALO ================= */
+.tile{--tcr:95,216,255}
+.tile[href="#calc"]{--tcr:95,216,255}      /* bleu glace */
+.tile[href="#guide"]{--tcr:180,156,255}    /* aurore violette */
+.tile[href="#learn"]{--tcr:62,230,196}     /* vert glacier */
+.tile[href="#proc"]{--tcr:120,190,255}     /* bleu ciel polaire */
+.tile[href="#decode"]{--tcr:255,154,213}   /* aurore rose */
+.tile[href="#quiz"]{--tcr:255,211,110}     /* soleil d'hiver */
+.tile[href="#antiice"]{--tcr:255,170,95}   /* lever du jour ambré */
+.tile[href="#coldalt"]{--tcr:110,150,255}  /* bleu arctique */
+.tile[href="#stations"]{--tcr:124,242,154} /* vert boréal */
+.tile[href="#timer"]{--tcr:168,240,255}    /* givre */
+.tile[href="#about"]{--tcr:200,214,224}    /* argent */
+.tile{border-color:rgba(var(--tcr),.38);background:linear-gradient(150deg,rgba(var(--tcr),.13),rgba(11,19,31,.72) 58%);
+  box-shadow:0 0 22px rgba(var(--tcr),.16),inset 0 1px 0 rgba(var(--tcr),.10)}
+.tile .ic{border-color:rgb(var(--tcr));color:rgb(var(--tcr));background:radial-gradient(circle at 50% 30%,rgba(var(--tcr),.26),rgba(var(--tcr),.04));
+  box-shadow:0 0 16px rgba(var(--tcr),.5),inset 0 0 12px rgba(var(--tcr),.18)}
+.tile b{color:rgb(var(--tcr));text-shadow:0 0 12px rgba(var(--tcr),.35)}
+.tile.hero{border-color:rgba(var(--tcr),.75);box-shadow:0 0 30px rgba(var(--tcr),.28)}
+.tile:active{border-color:rgb(var(--tcr)) !important;box-shadow:0 0 0 1px rgb(var(--tcr)),0 0 34px rgba(var(--tcr),.65),inset 0 0 20px rgba(var(--tcr),.16) !important}
+@media (hover:hover){.tile:hover{border-color:rgba(var(--tcr),.8);box-shadow:0 0 28px rgba(var(--tcr),.35)}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
@@ -1643,7 +1687,7 @@ function renderProc(){
     const vis = visItems(p), all = vis.every(([,j])=>checks[i+'.'+j]);
     h += `<div class="pstep ${all?'done':''}" data-n="${i+1}"><h3>${L(p.t)} <span class="ref">${p.r.replace('FCOM SP.16', fcLabel())}</span></h3>`;
     if (p.dialog){
-      h += `<p style="font-size:14px;color:var(--mut);margin:0 0 8px">${tr("Dialogue CREW / GROUND du MANEX A 8.2.4.8. * Coordonner avec le personnel au sol l'état des moteurs (tournants ou non).","CREW / GROUND dialogue from MANEX A 8.2.4.8. * Coordinate the engine status (running or not) with ground personnel.")}</p><button class="btn block" id="listenBtn">${tr('🎧 Mode écoute','🎧 Listen mode')}</button><div class="dlg" id="dlg"></div>`;
+      h += `<p style="font-size:15.5px;color:var(--mut);margin:0 0 8px">${tr("Dialogue CREW / GROUND du MANEX A 8.2.4.8. * Coordonner avec le personnel au sol l'état des moteurs (tournants ou non).","CREW / GROUND dialogue from MANEX A 8.2.4.8. * Coordinate the engine status (running or not) with ground personnel.")}</p><button class="btn block" id="listenBtn">${tr('🎧 Mode écoute','🎧 Listen mode')}</button><div class="dlg" id="dlg"></div>`;
     }
     h += vis.map(([it,j])=>{ const k=i+'.'+j; return `<label class="chk ${checks[k]?'on':''} ${p.crit?'crit':''}"><input type="checkbox" data-chk="${k}" ${checks[k]?'checked':''}>${itemHTML(it)}</label>`; }).join('');
     if (p.calc) h += `<div class="row" style="margin-bottom:8px"><a class="btn" href="#calc">${tr('Calculateur HOT','HOT calculator')}</a></div>`;
@@ -1666,7 +1710,7 @@ $('#procBody').addEventListener('click', e=>{
   if (fb){ FLEET = fb.dataset.fleet; store.set('hot.fleet', FLEET); renderProc(); return; }
   if (e.target.closest('#listenBtn')){
     clearTimeout(dlgTimer); const box=$('#dlg'); box.innerHTML=''; let i=0;
-    const add=()=>{ if(i>=DIALOG.length) return; const [c,w,txt]=DIALOG[i++]; box.insertAdjacentHTML('beforeend',`<div class="bub ${c} pop"><small>${w}</small>${esc(txt)}</div>`); if(i<DIALOG.length) dlgTimer=setTimeout(add,1300); };
+    const add=()=>{ if(i>=DIALOG.length) return; const [c,w,txt]=DIALOG[i++]; box.insertAdjacentHTML('beforeend',`<div class="bub ${c} pop" style="font-size:16px"><small>${w}</small>${esc(txt)}</div>`); if(i<DIALOG.length) dlgTimer=setTimeout(add,1300); };
     add();
   }
 });
@@ -1742,7 +1786,7 @@ function renderQuiz(){
     $('#qRe').onclick=()=>{ Q.i=0; Q.score=0; Q.answered=false; Q.choice=null; renderQuiz(); }; return;
   }
   const it=QUIZ[Q.i];
-  B.innerHTML = `<div class="qmeta">QUESTION ${Q.i+1} / ${QUIZ.length} · SCORE ${Q.score}</div><div class="card"><h3 style="font-family:var(--body);font-size:18px;color:var(--txt);letter-spacing:0">${esc(L(it.q))}</h3></div>
+  B.innerHTML = `<div class="qmeta">QUESTION ${Q.i+1} / ${QUIZ.length} · SCORE ${Q.score}</div><div class="card"><h3 style="font-family:var(--body);font-size:20px;line-height:1.4;color:var(--txt);letter-spacing:0">${esc(L(it.q))}</h3></div>
     ${L(it.o).map((o,j)=>`<button class="qopt" data-o="${j}">${esc(o)}</button>`).join('')}<div id="qfb"></div>`;
   if (Q.answered) showFb(false);
 }
@@ -2183,12 +2227,12 @@ function renderGuide(){
   h += st(6, tr('Le résultat','The result'),
     `<div class="gmock"><div class="big">1:15</div><small>${tr('Fourchette MANEX : 1:15 – 2:15','MANEX range: 1:15 – 2:15')}</small></div>
      <p>${tr('Le chiffre en gros est <b>le HOT à retenir</b> (la valeur basse de la case). En dessous, la case du MANEX est surlignée (Tableau 20, page 35).','The big number is <b>the HOT to use</b> (the lowest value in the cell). Below, the MANEX cell is highlighted (Table 20, page 35).')}</p>
-     <p style="font-size:14px;color:var(--mut)">${tr(`Erreur de saisie ? Touchez la pastille en haut (ex. ${K('−3 °C ✎')}) pour corriger sans tout refaire.`,`Typing mistake? Tap the chip at the top (e.g. ${K('−3 °C ✎')}) to fix it without starting again.`)}</p>`);
+     <p style="font-size:15.5px;color:var(--mut)">${tr(`Erreur de saisie ? Touchez la pastille en haut (ex. ${K('−3 °C ✎')}) pour corriger sans tout refaire.`,`Typing mistake? Tap the chip at the top (e.g. ${K('−3 °C ✎')}) to fix it without starting again.`)}</p>`);
   h += st(7, tr('Le minuteur','The timer'),
     `<p>${tr(`Dans « Démarrer le minuteur », tapez l'heure annoncée par le sol : ${K('0658')}. Puis ${KP('▶ Démarrer le HOT')}.`,`In "Start the timer", type the time announced by the ground crew: ${K('0658')}. Then ${KP('▶ Start HOT')}.`)}</p>
      <p>${tr('L\'app affiche <b>FIN HOT 08:13 UTC</b> et compte à rebours. Orange 5 min avant, rouge à la fin.','The app shows <b>HOT ENDS 08:13 UTC</b> and counts down. Amber 5 min before, red at the end.')}</p>
-     <p style="font-size:14px;color:var(--mut)">${tr(`L'heure à taper est toujours <b>déjà passée</b> : c'est l'heure annoncée par le sol à la fin du dégivrage, en UTC. Pour essayer tout de suite, touchez ${K('⏱ Maintenant')}.`,`The time to type is always <b>in the past</b>: it is the time announced by the ground crew at the end of de-icing, in UTC. To try it right now, tap ${K('⏱ Now')}.`)}</p>
-     <p style="font-size:14px;color:var(--mut)">${tr(`Raccourci : onglet ${K('Décoder')}, tapez <span class="mono">Type I/IV/100 0658</span> → ${KP('Calculer le HOT')}. Le fluide, la concentration et l'heure sont remplis tout seuls.`,`Shortcut: ${K('Decode')} tab, type <span class="mono">Type I/IV/100 0658</span> → ${KP('Calculate HOT')}. Fluid, concentration and time are filled in for you.`)}</p>`);
+     <p style="font-size:15.5px;color:var(--mut)">${tr(`L'heure à taper est toujours <b>déjà passée</b> : c'est l'heure annoncée par le sol à la fin du dégivrage, en UTC. Pour essayer tout de suite, touchez ${K('⏱ Maintenant')}.`,`The time to type is always <b>in the past</b>: it is the time announced by the ground crew at the end of de-icing, in UTC. To try it right now, tap ${K('⏱ Now')}.`)}</p>
+     <p style="font-size:15.5px;color:var(--mut)">${tr(`Raccourci : onglet ${K('Décoder')}, tapez <span class="mono">Type I/IV/100 0658</span> → ${KP('Calculer le HOT')}. Le fluide, la concentration et l'heure sont remplis tout seuls.`,`Shortcut: ${K('Decode')} tab, type <span class="mono">Type I/IV/100 0658</span> → ${KP('Calculate HOT')}. Fluid, concentration and time are filled in for you.`)}</p>`);
   h += st(8, tr('Pendant le roulage, avec Jeppesen FD à l\'écran','While taxiing, with Jeppesen FD on screen'),
     `<p>${tr("Quand Jeppesen est devant, 737 HOLDOVER est en pause : le temps reste juste quand vous revenez, mais <b>elle ne peut pas sonner</b>. Trois solutions :","When Jeppesen is in front, 737 HOLDOVER is paused: the time is still right when you come back, but <b>it cannot ring</b>. Three solutions:")}</p>
      <div class="opt"><span class="oi">✍️</span><div><b>${tr('Toujours : notez l\'heure de FIN HOT','Always: write down the HOT END time')}</b>${tr('Sur le log de vol (ex. 08:13 UTC), et comparez avec l\'horloge de bord.','On the flight log (e.g. 08:13 UTC), and compare with the aircraft clock.')}</div></div>
